@@ -14,7 +14,7 @@ setup(
     description="Django models for Omise",
     long_description=README,
     long_description_content_type="text/markdown",
-    # url="https://github.com/realpython/reader",
+    url="https://github.com/siwatjames/django-omise",
     author="James Tansiri",
     author_email="tansirijames@gmail.com",
     license="MIT",
@@ -23,7 +23,6 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    # packages=["django_omise"],
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
