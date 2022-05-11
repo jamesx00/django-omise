@@ -1,0 +1,18 @@
+{% extends 'django_omise/base.html' %}
+{% load i18n static %}
+
+{% block head_title %}{% trans "Delete Payment Method" %}{% endblock %}
+
+{% block content %}
+<div>
+    <h1>{% trans 'Delete Card' %}</h1>
+
+    <form method="post">{% csrf_token %}
+        <p>Are you sure you want to delete the card that ends with {{ object.last_digits }}</p>
+        <a href="{% url 'django_omise:manage_payment_methods' %}">{% trans 'Cancel' %}</a>
+        <button id="submit_button" type="submit" name="remove_card">{% trans "Delete card" %}</button>
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'django_omise/base.html' %}
+{% load i18n static %}
+
+{% block head_title %}{% trans "Manage Payment Methods" %}{% endblock %}
+
+{% block content %}
+<div>
+    <div id="token_errors">
+        {% for hidden_field in form.hidden_fields %}
+            {% for error in  hidden_field.errors %}
+                {{ error }}<br />
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <h1>{% trans 'Add new card' %}</h1>
+
+    <form id="checkout" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <button id="submit_button" type="submit" name="add_card">{% trans "Add card" %}</button>
+    </form>
+
+    {{ form.media }}
+</div>
+
+<div>
+    {% trans 'Your payment methods' %}
+    <ul>
+        {% for card in customer.cards.all %}
+        <li>XXXX XXXX XXXX {{ card.last_digits }}</li><a href="{% url 'django_omise:delete_payment_method' card.id %}">delete</a>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
