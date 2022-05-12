@@ -1,6 +1,14 @@
 # django-omise Django + Omise
 
-Django models for Omise
+Django models for Omise. Currently, we support the following features:
+
+-   Creating a customer
+-   Allowing customer to add/delete credit/debit cards
+-   Charge customer with a card
+-   Basic event webhook handler, saving raw data as an Event object
+-   3DS pending charges handling
+
+See the [roadmap](#roadmap) for the plan of this project. Contributions are welcome!
 
 ### Quick start
 
@@ -32,4 +40,105 @@ OMISE_CHARGE_RETURN_HOST = localhost:8000
 
 4. Run `python manage.py migrate` to create the Omise models.
 
-5. Add Omise endpoint webhook url `https://host.com/payments/webhook/`
+5. Add Omise endpoint webhook url `https://www.your-own-domain.com/payments/webhook/`
+
+### Basic usage
+
+---
+
+1. Create an Omise customer from User:
+
+    ```python
+    from django.contrib.auth import get_user_model
+    from django_omise.models.core import Customer
+
+    User = get_user_model()
+    user = User.objects.first()
+    customer = Customer.get_or_create(user=user)
+    ```
+
+2. Add card to Customer
+
+    2.1 With the built-in view (Recommended)
+
+    We have built a basic card collecting view where logged in users can add and remove their cards. Run Django server and visit _/payments/payment_methods/_ to see it in action. You could override the template used in the view by creating a new template in your project's directory _/templates/django_omise/manage_payment_methods.html_.
+
+    2.2 Manually
+
+    ```python
+    from django_omise.models.core import Customer
+    from django_omise.omise import omise
+
+    omise_token = omise.Token.retrieve(token_id)
+    Customer.objects.first().add_card(token=omise_token)
+    ```
+
+3. Charge a customer (Currently supporting only credit/debit card payment)
+
+    3.1 With the build-in mixin
+
+    This package comes with a built-in mixin, with which you can create a class-based-view and write a few methods to charge a customer. See below for an example:
+
+    ```python
+    from django.contrib.auth.mixins import LoginRequiredMixin
+    from django_omise.mixins import CheckoutWithCardsMixin
+    from django_omise.models.choices import Currency
+
+    # Your own class-based-view
+    class CheckoutView(LoginRequiredMixin, CheckoutWithCardsMixin):
+
+        template_name = "yourapp/template.html"
+
+        def get_form_kwargs(self, *args, **kwargs):
+            kwargs = super().get_form_kwargs(*args, **kwargs)
+            kwargs["user"] = self.request.user
+            return kwargs
+
+        def get_charge_details(self):
+            return {
+                "amount": 100000,
+                "currency": Currency.THB,
+            }
+
+        def process_new_charge(self, charge):
+            if charge.status in [ChargeStatus.SUCCESSFUL, ChargeStatus.PENDING]:
+                # Create new order and attach a charge object
+    ```
+
+    3.2 Manually
+
+    ```python
+    from django_omise.models.choices import Currency, ChargeStatus
+    from django_omise.models.core import Customer
+
+    customer = Customer.objects.first()
+    card = customer.cards.live().first()
+
+    charge = customer.charge_with_card(
+        amount=100000,
+        currency=Currency.THB,
+        card=card,
+    )
+
+    if charge.status == ChargeStatus.SUCCESSFUL:
+        # Do something
+    elif charge.status == ChargeStatus.FAILED:
+        # Do something else
+    ```
+
+### Roadmap and contributions
+
+---
+
+Here are our immediate plans for this package, and more will be added! All contributions are welcome. I am new to publishing a public package, so if you have any recommendations, please feel free to create an issue on this repository or feel free to send me an email at siwatjames@gmail.com.
+
+Omise Features
+
+-   Handle refunds API
+-   Handle webhook events and update related objects
+-   Create charge with Sources
+
+Others
+
+-   Implement tests
+-   Add documentations

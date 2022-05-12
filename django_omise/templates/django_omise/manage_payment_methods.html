@@ -25,7 +25,7 @@
 <div>
     {% trans 'Your payment methods' %}
     <ul>
-        {% for card in customer.cards.all %}
+        {% for card in customer.cards.live %}
         <li>XXXX XXXX XXXX {{ card.last_digits }}</li><a href="{% url 'django_omise:delete_payment_method' card.id %}">delete</a>
         {% endfor %}
     </ul>
