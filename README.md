@@ -14,7 +14,7 @@ Django models for Omise. Currently, we support the following features:
 -   Basic event webhook handler, saving raw data as an Event object
 -   3DS pending charges handling
 
-See the [roadmap](#roadmap) for the plan of this project. Contributions are welcome!
+See the [roadmap](#roadmap-and-contributions) for the plan of this project. Contributions are welcome!
 
 ### Quick start
 
