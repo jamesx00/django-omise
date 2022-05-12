@@ -1,3 +1,9 @@
+> :warning: The latest pypi package for omise has a metadata error. Please install omise from this command instead:
+
+```
+pip install git+https://github.com/omise/omise-python@bfcf283378a823139b9f19f10e84d42a98c5b1ac
+```
+
 # django-omise Django + Omise
 
 Django models for Omise. Currently, we support the following features:
