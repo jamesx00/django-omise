@@ -1,6 +1,7 @@
-> :warning: The latest pypi package for omise has a metadata error. Please install omise from this command instead:
+> :warning: The latest pypi package for Omise has a metadata error. Please reinstall omise from this command:
 
 ```
+pip uninstall omise
 pip install git+https://github.com/omise/omise-python@bfcf283378a823139b9f19f10e84d42a98c5b1ac
 ```
 
