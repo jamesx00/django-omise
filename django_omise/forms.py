@@ -87,9 +87,19 @@ class CheckoutWithCardsForm(forms.Form):
 
     card = forms.ModelChoiceField(queryset=None, widget=forms.RadioSelect)
 
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user = user
-        self.omise_customer = self.user.extension.omise_customer
+    def __init__(self, *args, **kwargs):
 
+        user = kwargs.pop("user", None)
+
+        super().__init__(*args, **kwargs)
+
+        self.user = user
+
+        if user is None:
+            return
+
+        if not user.is_authenticated:
+            return
+
+        self.omise_customer = self.user.extension.omise_customer
         self.fields["card"].queryset = self.omise_customer.cards.live()
