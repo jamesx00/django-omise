@@ -190,7 +190,26 @@ class PayWithExistingCardForm(forms.Form):
     )
 
 
-class CheckoutForm(PayWithExistingCardForm, PayWithNewCardForm):
+class PayWithInternetBankingForm(forms.Form):
+
+    bank = forms.ChoiceField(
+        choices=(
+            ("internet_banking_bay", _("Krungsri Bank")),
+            ("internet_banking_bbl", _("Bangkok Bank")),
+            ("internet_banking_ktb", _("Krungthai Bank")),
+            ("internet_banking_scb", _("SCB Bank")),
+        ),
+        widget=forms.RadioSelect,
+        required=False,
+        initial="internet_banking_bay",
+    )
+
+
+class CheckoutForm(
+    PayWithExistingCardForm,
+    PayWithNewCardForm,
+    PayWithInternetBankingForm,
+):
 
     payment_method = forms.ChoiceField(
         choices=(), required=True, widget=forms.RadioSelect
@@ -212,6 +231,7 @@ class CheckoutForm(PayWithExistingCardForm, PayWithNewCardForm):
         payment_methods = {
             "old_card": _("Pay with your card"),
             "new_card": _("Pay with a new card"),
+            "internet_banking": _("Internet banking"),
         }
 
         if user is None or user.is_authenticated == False:
@@ -249,6 +269,7 @@ class CheckoutForm(PayWithExistingCardForm, PayWithNewCardForm):
         payment_method = cleaned_data["payment_method"]
         omise_token = cleaned_data.get("omise_token")
         card = cleaned_data.get("card")
+        bank = cleaned_data.get("bank")
 
         if payment_method == "new_card" and omise_token is None:
             raise forms.ValidationError(
@@ -258,6 +279,11 @@ class CheckoutForm(PayWithExistingCardForm, PayWithNewCardForm):
         if payment_method == "old_card" and card is None:
             raise forms.ValidationError(
                 {"card": _("You need to select at least one card")}
+            )
+
+        if payment_method == "internet_banking" and not bank:
+            raise forms.ValidationError(
+                {"bank": _("You need to select at least one bank")}
             )
 
     def get_selected_payment_method(self) -> Card:
@@ -273,6 +299,9 @@ class CheckoutForm(PayWithExistingCardForm, PayWithNewCardForm):
 
         if payment_method == "old_card":
             return self.cleaned_data["card"]
+
+        if payment_method == "internet_banking":
+            return self.cleaned_data["bank"]
 
     def add_card_to_user(self) -> Card:
         """
