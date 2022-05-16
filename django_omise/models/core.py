@@ -164,6 +164,15 @@ class Card(OmiseBaseModel):
         on_delete=models.PROTECT,
     )
 
+    name = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=255, blank=True)
+
+    postal_code = models.CharField(max_length=255, blank=True)
+    state = models.CharField(max_length=255, blank=True)
+    street1 = models.CharField(max_length=255, blank=True)
+    street2 = models.CharField(max_length=255, blank=True)
+    tokenization_method = models.CharField(max_length=255, blank=True)
+    first_digits = models.CharField(max_length=6, blank=True)
     last_digits = models.CharField(max_length=4)
     bank = models.CharField(max_length=255, blank=True)
     brand = models.CharField(max_length=255, blank=True)
