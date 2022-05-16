@@ -81,7 +81,7 @@ class OmiseReturnURIView(View):
 
         charge = Charge.objects.get(uid=uid)
         omise_charge = omise.Charge.retrieve(charge.id)
-        charge = Charge.update_or_create_from_omise_charge(charge=omise_charge)
+        charge = Charge.update_or_create_from_omise_object(omise_object=omise_charge)
 
         if charge.status == ChargeStatus.SUCCESSFUL:
             messages.success(request, _("Payment successful"))

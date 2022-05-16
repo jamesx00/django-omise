@@ -63,22 +63,12 @@ class Customer(OmiseBaseModel):
 
         card = token.card
 
-        new_card, created = Card.objects.update_or_create(
-            id=card.id,
-            livemode=card.livemode,
-            defaults={
-                "customer": self,
-                "last_digits": card.last_digits,
-                "bank": card.bank or "",
-                "brand": card.brand or "",
-                "city": card.city or "",
-                "country": card.country or "",
-                "expiration_month": card.expiration_month or "",
-                "expiration_year": card.expiration_year or "",
-                "financing": card.financing or "",
-                "deleted": card.deleted,
-            },
+        new_card = Card.update_or_create_from_omise_object(
+            omise_object=card,
         )
+
+        new_card.customer = self
+        new_card.save()
 
         return new_card
 
@@ -160,6 +150,11 @@ class Card(OmiseBaseModel):
     """
 
     omise_class = omise.Card
+
+    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
+        "charges",
+        "customer",
+    ]
 
     customer = models.ForeignKey(
         Customer,
@@ -422,7 +417,7 @@ class Charge(OmiseBaseModel):
             **charge_details,
         )
 
-        return cls.update_or_create_from_omise_charge(charge=charge, uid=uid)
+        return cls.update_or_create_from_omise_object(omise_object=charge, uid=uid)
 
     def set_metadata(self, metadata: Optional[Dict] = None) -> "Charge":
         """
@@ -443,107 +438,6 @@ class Charge(OmiseBaseModel):
         self.save()
 
         return self
-
-    @classmethod
-    def update_or_create_from_omise_charge(
-        cls,
-        charge: omise.Charge,
-        uid: Optional[uuid.UUID] = None,
-    ) -> "Charge":
-        """
-        Update existing charge or create a new charge from Omise Charge object.
-
-        :param charge: An instance of Omise Charge object
-        :param uid: A unique id for this charge. This is not charge id from Omise.
-
-        :returns: An instance of Charge
-        """
-        charge_fields = cls._meta.get_fields()
-
-        defaults = {}
-
-        for field in charge_fields:
-            if field.name == "metadata":
-                defaults["metadata"] = getattr(
-                    charge,
-                    field.name,
-                ).__dict__.get("_attributes")
-                continue
-
-            if field.name in cls.NON_DEFAULT_FIELDS:
-                continue
-
-            if callable(getattr(charge, field.name, None)):
-                continue
-
-            if type(field) is models.ForeignKey:
-                value = getattr(charge, field.name, None)
-
-                if value is None:
-                    defaults[f"{field.name}_id"] = value
-                elif type(value) is str:
-                    defaults[f"{field.name}_id"] = value
-                else:
-                    if type(value) == omise.Card:
-                        card = value
-                        new_card, created = Card.objects.update_or_create(
-                            id=card.id,
-                            livemode=card.livemode,
-                            defaults={
-                                "last_digits": card.last_digits,
-                                "bank": card.bank or "",
-                                "brand": card.brand or "",
-                                "city": card.city or "",
-                                "country": card.country or "",
-                                "expiration_month": card.expiration_month or "",
-                                "expiration_year": card.expiration_year or "",
-                                "financing": card.financing or "",
-                                "deleted": card.deleted,
-                            },
-                        )
-
-                    if type(value) == omise.Source:
-                        source = value
-                        new_source = Source.update_or_create_from_omise_source(
-                            source=source,
-                        )
-
-                    defaults[f"{field.name}_id"] = getattr(charge, field.name).id
-
-                continue
-
-            if is_omise_object_instances(getattr(charge, field.name, None)):
-                defaults[f"{field.name}_id"] = getattr(charge, field.name).id
-                continue
-
-            if (
-                isinstance(field, (models.TextField, models.CharField))
-                and getattr(charge, field.name, None) is None
-            ):
-                defaults[field.name] = ""
-                continue
-
-            if (
-                getattr(charge, field.name, None) is None
-                and field.null == False
-                and field.default
-            ):
-                defaults[field.name] = field.default()
-                continue
-
-            defaults[field.name] = getattr(charge, field.name, None)
-
-        charge_object, created = cls.objects.update_or_create(
-            pk=charge.id,
-            livemode=charge.livemode,
-            defaults=defaults,
-        )
-
-        if uid:
-            charge_object.uid = uid
-            charge_object.save()
-
-        return charge_object
 
 
 class Source(OmiseBaseModel):
