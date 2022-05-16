@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import FormView, DeleteView, View
+from django.views.generic import FormView, UpdateView, View
 
 from django.http import JsonResponse
 
@@ -126,11 +126,15 @@ class ManagePaymentMethodsView(LoginRequiredMixin, SuccessMessageMixin, FormView
         )
 
 
-class PaymentMethodDeleteView(LoginRequiredMixin, DeleteView):
+class PaymentMethodDeleteView(LoginRequiredMixin, UpdateView):
 
     model = Card
+    fields = [
+        "deleted",
+    ]
     success_message = _("A card has been deleted.")
     success_url = reverse_lazy("django_omise:manage_payment_methods")
+    template_name = "django_omise/card_confirm_delete.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -150,15 +154,12 @@ class PaymentMethodDeleteView(LoginRequiredMixin, DeleteView):
         )
         return customer
 
-    def delete(self, *args, **kwargs):
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.deleted = True
 
         messages.success(self.request, self.success_message)
-
-        card = self.get_object()
-        card.deleted = True
-        card.save()
-
-        return redirect(self.success_url)
+        return super().form_valid(form)
 
     def post(self, *args, **kwargs):
 
