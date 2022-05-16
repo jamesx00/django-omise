@@ -105,25 +105,13 @@ class Customer(OmiseBaseModel):
 
         :returns: An instace of Charge object.
         """
-        uid = uuid.uuid4()
-
-        host = settings.OMISE_CHARGE_RETURN_HOST
-        if return_uri is None:
-            return_uri = f'https://{host}{reverse("django_omise:return_uri", kwargs={"uid": uid})}'
-
-        if metadata is None:
-            metadata = {}
-
-        charge = omise.Charge.create(
-            customer=self.id,
-            card=card.id,
-            amount=int(amount),
+        return Charge.charge(
+            amount=amount,
             currency=currency,
-            metadata=metadata,
+            card=card,
             return_uri=return_uri,
+            metadata=metadata,
         )
-
-        return Charge.update_or_create_from_omise_charge(charge=charge, uid=uid)
 
     @classmethod
     def get_or_create(cls, user: "User") -> "Customer":
