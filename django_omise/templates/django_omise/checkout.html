@@ -19,14 +19,14 @@
                 {{ choice.choice_label }}
 
                 {% if choice.data.value == 'old_card' %}
-                <div class="payment_options_container mt-4 border p-4 {% if forloop.counter != 1 %}hidden{% endif %}">
+                <div class="payment_options_container mt-4 border p-4 hidden">
 
                     {{ form.card.errors }}
                     {{ form.card }}
 
                 </div>
                 {% elif choice.data.value == 'new_card' %}
-                <div class="payment_options_container mt-4 border p-4 {% if forloop.counter != 1 %}hidden{% endif %}">
+                <div class="payment_options_container mt-4 border p-4 hidden">
 
                     <div id="token_errors" class="p-4 bg-red-300 hidden mb-4">
                         {% for hidden_field in form.hidden_fields %}

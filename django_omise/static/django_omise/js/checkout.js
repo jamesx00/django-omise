@@ -74,6 +74,18 @@ const paymentOptionsContainer = document.getElementsByClassName(
 );
 
 for (const paymentOption of paymentOptions) {
+	if (paymentOption.checked) {
+		const paymentOptionsContainerList =
+			paymentOption.parentNode.getElementsByClassName(
+				'payment_options_container'
+			);
+
+		if (paymentOptionsContainerList.length > 0) {
+			const optionContainer = paymentOptionsContainerList[0];
+			optionContainer.classList.remove('hidden');
+		}
+	}
+
 	paymentOption.addEventListener('change', function (e) {
 		for (const optionContainer of paymentOptionsContainer) {
 			optionContainer.classList.add('hidden');
