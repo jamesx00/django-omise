@@ -159,6 +159,8 @@ class Card(OmiseBaseModel):
     Official documentation: https://www.omise.co/cards-api
     """
 
+    omise_class = omise.Card
+
     customer = models.ForeignKey(
         Customer,
         blank=True,
@@ -194,6 +196,8 @@ class Charge(OmiseBaseModel):
 
     Official documentation: https://www.omise.co/charges-api
     """
+
+    omise_class = omise.Charge
 
     status = models.CharField(
         max_length=10,
@@ -548,6 +552,8 @@ class Source(OmiseBaseModel):
 
     Official documentation: https://www.omise.co/sources-api
     """
+
+    omise_class = omise.Source
 
     NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
         "charges",
