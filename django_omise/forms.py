@@ -264,10 +264,25 @@ class CheckoutForm(PayWithExistingCardForm, PayWithNewCardForm):
         payment_method = self.cleaned_data["payment_method"]
 
         if payment_method == "new_card":
+
+            if self.cleaned_data.get("keep_card", None) == True:
+                card = self.add_card_to_user()
+                return card
+
             return self.cleaned_data["omise_token"]
 
         if payment_method == "old_card":
             return self.cleaned_data["card"]
+
+    def add_card_to_user(self) -> Card:
+        """
+        Add the new card to the user.
+
+        :params customer: The customer instance
+
+        :returns: The new Card instance
+        """
+        return self.omise_customer.add_card(self.cleaned_data["omise_token"])
 
     @property
     def new_card_fields(self) -> List[forms.fields.Field]:
