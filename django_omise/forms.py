@@ -212,7 +212,7 @@ class CheckoutForm(
 ):
 
     payment_method = forms.ChoiceField(
-        choices=(), required=True, widget=forms.RadioSelect
+        choices=(), required=True, widget=forms.RadioSelect, initial="new_card"
     )
 
     omise_public_key = forms.CharField(
@@ -236,8 +236,6 @@ class CheckoutForm(
 
         if user is None or user.is_authenticated == False:
 
-            self.fields["payment_method"].initial = "new_card"
-
             del self.fields["keep_card"]
             del self.fields["card"]
 
@@ -255,7 +253,6 @@ class CheckoutForm(
 
             else:
 
-                self.fields["payment_method"].initial = "new_card"
                 del payment_methods["old_card"]
                 del self.fields["card"]
 
