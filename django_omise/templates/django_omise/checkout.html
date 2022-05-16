@@ -16,31 +16,34 @@
         <div style="margin-bottom: 1rem">
             {{ choice.tag }}
             {{ choice.choice_label }}
+
+            {% if choice.data.value == 'old_card' %}
             <div style="margin-left: 1rem; margin-top: 0.5rem;">
-                {% if choice.data.value == 'old_card' %}
 
-                    {{ form.card.errors }}
-                    {{ form.card }}
+                {{ form.card.errors }}
+                {{ form.card }}
 
-                {% elif choice.data.value == 'new_card' %}
-
-                    <div id="token_errors">
-                        {% for hidden_field in form.hidden_fields %}
-                            {% for error in  hidden_field.errors %}
-                                {{ error }}<br />
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                    {% for field in form.new_card_fields %}
-                    <div style="margin-bottom: 0.5rem">
-                        {{ field.errors }}
-                        {{ field.label_tag }}
-                        {{ field }}
-                    </div>
-                    {% endfor %}
-
-                {% endif %}
             </div>
+            {% elif choice.data.value == 'new_card' %}
+            <div style="margin-left: 1rem; margin-top: 0.5rem;">
+
+                <div id="token_errors">
+                    {% for hidden_field in form.hidden_fields %}
+                        {% for error in  hidden_field.errors %}
+                            {{ error }}<br />
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% for field in form.new_card_fields %}
+                <div style="margin-bottom: 0.5rem">
+                    {{ field.errors }}
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+                {% endfor %}
+
+            </div>
+            {% endif %}
         </div>
     {% endfor %}
     <button type="submit" id="submit_button">{% trans 'Make the payment' %}</button>
