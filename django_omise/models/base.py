@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from django.apps import apps
 from django.db import models
@@ -42,7 +44,7 @@ class OmiseBaseModel(models.Model):
         cls,
         omise_object: omise.Base,
         uid: Optional[uuid.UUID] = None,
-    ) -> "__class__":
+    ) -> OmiseBaseModel:
         """
         Update existing charge or create a new charge from Omise Charge object.
 
