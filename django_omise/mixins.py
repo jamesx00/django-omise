@@ -27,26 +27,33 @@ class CheckoutMixin(FormView):
         amount = charge_details["amount"]
         currency = charge_details["currency"]
 
+        charge_kwargs = self.get_charge_kwargs()
+
         if payment_method_type == omise.Token:
-            charge = Charge.charge_with_token(
+            charge = Charge.charge(
                 amount=amount,
                 currency=currency,
                 token=payment_method,
+                **charge_kwargs,
             )
-            return charge
 
-        if payment_method_type == Card:
-            customer = self.get_omise_customer()
+        elif payment_method_type == Card:
+            charge = Charge.charge(
+                amount=amount,
+                currency=currency,
+                card=payment_method,
+                **charge_kwargs,
+            )
 
-            if customer is not None:
-                charge = customer.charge_with_card(
-                    amount=charge_details["amount"],
-                    currency=charge_details["currency"],
-                    card=payment_method,
-                )
-                return charge
         else:
-            pass
+            charge = Charge.charge(
+                amount=amount,
+                currency=currency,
+                source={"type": payment_method},
+                **charge_kwargs,
+            )
+
+        return charge
 
     def get_success_url(self):
         return self.request.get_full_path()

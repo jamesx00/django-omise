@@ -370,19 +370,34 @@ class Charge(OmiseBaseModel):
     )
 
     @classmethod
-    def charge_with_token(
+    def charge(
         cls,
         amount: int,
         currency: Currency.choices,
-        token: omise.Token,
+        token: Optional[omise.Token] = None,
+        card: Optional[Card] = None,
+        source: Optional[Dict] = None,
         return_uri: str = None,
         metadata: dict = None,
     ) -> "Charge":
         """
-        Charge the customer with provided card.
+        Charge the customer with provided payment_method.
 
+        :param amount: The amount to charge in the smallest unit.
+        :param currency: The currency to charge.
+        :param token: The token to charge.
+        :param card: The card to charge.
+        :param source: The source to charge.
+        :param return_uri optional: The return uri.
+        :param metadata optional: The charge metadata.
         :returns: An instace of Charge object.
         """
+        if [token, card, source].count(None) == 3:
+            raise ValueError("At least a token, a card, or a source is required")
+
+        if [token, card, source].count(None) != 2:
+            raise ValueError("Only one of token, card, or source must be specified")
+
         uid = uuid.uuid4()
 
         host = settings.OMISE_CHARGE_RETURN_HOST
@@ -392,12 +407,27 @@ class Charge(OmiseBaseModel):
         if metadata is None:
             metadata = {}
 
+        charge_details = {}
+
+        if token is not None:
+            if type(token) == str:
+                charge_details["card"] = token
+            else:
+                charge_details["card"] = token.id
+
+        if card is not None:
+            charge_details["card"] = card.id
+            charge_details["customer"] = card.customer.id
+
+        if source is not None:
+            charge_details["source"] = source
+
         charge = omise.Charge.create(
             amount=int(amount),
             currency=currency,
-            card=token.id,
             metadata=metadata,
             return_uri=return_uri,
+            **charge_details,
         )
 
         return cls.update_or_create_from_omise_charge(charge=charge, uid=uid)
@@ -479,6 +509,13 @@ class Charge(OmiseBaseModel):
                                 "deleted": card.deleted,
                             },
                         )
+
+                    if type(value) == omise.Source:
+                        source = value
+                        new_source = Source.update_or_create_from_omise_source(
+                            source=source,
+                        )
+
                     defaults[f"{field.name}_id"] = getattr(charge, field.name).id
 
                 continue
@@ -523,6 +560,10 @@ class Source(OmiseBaseModel):
 
     Official documentation: https://www.omise.co/sources-api
     """
+
+    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
+        "charges",
+    ]
 
     amount = models.IntegerField(
         help_text=_("Source amount in smallest unit of source currency")
@@ -580,3 +621,61 @@ class Source(OmiseBaseModel):
     type = models.CharField(max_length=255)
 
     zero_interest_installments = models.BooleanField(blank=True, null=True)
+
+    @classmethod
+    def update_or_create_from_omise_source(
+        cls,
+        source: omise.Source,
+    ) -> "Source":
+        fields = cls._meta.get_fields()
+
+        defaults = {}
+
+        for field in fields:
+
+            if field.name in cls.NON_DEFAULT_FIELDS:
+                continue
+
+            if callable(getattr(source, field.name, None)):
+                continue
+
+            if type(field) is models.ForeignKey:
+                value = getattr(source, field.name, None)
+
+                if value is None:
+                    defaults[f"{field.name}_id"] = value
+                elif type(value) is str:
+                    defaults[f"{field.name}_id"] = value
+                else:
+                    defaults[f"{field.name}_id"] = getattr(source, field.name).id
+
+                continue
+
+            if is_omise_object_instances(getattr(source, field.name, None)):
+                defaults[f"{field.name}_id"] = getattr(source, field.name).id
+                continue
+
+            if (
+                isinstance(field, (models.TextField, models.CharField))
+                and getattr(source, field.name, None) is None
+            ):
+                defaults[field.name] = ""
+                continue
+
+            if (
+                getattr(source, field.name, None) is None
+                and field.null == False
+                and field.default
+            ):
+                defaults[field.name] = field.default()
+                continue
+
+            defaults[field.name] = getattr(source, field.name, None)
+
+        new_source, created = cls.objects.update_or_create(
+            pk=source.id,
+            livemode=source.livemode,
+            defaults=defaults,
+        )
+
+        return new_source
