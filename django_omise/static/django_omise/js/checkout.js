@@ -65,3 +65,28 @@ checkoutForm.addEventListener('submit', function (e) {
 
 	return false;
 });
+
+const paymentOptions = document.querySelectorAll(
+	'input[name="payment_method"]'
+);
+const paymentOptionsContainer = document.getElementsByClassName(
+	'payment_options_container'
+);
+
+for (const paymentOption of paymentOptions) {
+	paymentOption.addEventListener('change', function (e) {
+		for (const optionContainer of paymentOptionsContainer) {
+			optionContainer.style.display = 'none';
+		}
+
+		const paymentOptionsContainerList =
+			paymentOption.parentNode.getElementsByClassName(
+				'payment_options_container'
+			);
+
+		if (paymentOptionsContainerList.length > 0) {
+			const optionContainer = paymentOptionsContainerList[0];
+			optionContainer.style.display = 'block';
+		}
+	});
+}
