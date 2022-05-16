@@ -1,5 +1,8 @@
 module.exports = {
-	content: ['./templates/*.{html,js}', './**/templates/**/*.{html,js}'],
+	content: [
+		'./django_omise/templates/**/*.{html,js}',
+		'./django_omise/static/**/*.js',
+	],
 	corePlugins: {
 		preflight: true,
 	},
