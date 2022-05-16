@@ -21,49 +21,47 @@ checkoutForm.addEventListener('submit', function (e) {
 	const selectedPaymentMethod = document.querySelector(
 		'input[name="payment_method"]:checked'
 	).value;
-	if (selectedPaymentMethod == 'new_card') {
-		e.preventDefault();
-		tokenError.classList.add('hidden');
-
-		submitButton.setAttribute('disabled', true);
-
-		const card = {
-			number: cardNumberInput.value,
-			name: nameOnCardInput.value,
-			expiration_month: expirationMonthInput.value,
-			expiration_year: expirationYearInput.value,
-			security_code: securityCodeInput.value,
-		};
-
-		Omise.createToken('card', card, function (statusCode, response) {
-			if (
-				response.object == 'error' ||
-				!response.card.security_code_check
-			) {
-				tokenError.classList.remove('hidden');
-
-				var message_text =
-					'SET YOUR SECURITY CODE CHECK FAILED MESSAGE';
-
-				if (response.object == 'error') {
-					message_text = response.message;
-				}
-
-				tokenError.innerHTML = message_text;
-
-				submitButton.removeAttribute('disabled');
-			} else {
-				omiseTokenInput.value = response.id;
-				cardNumberInput.value = '';
-				nameOnCardInput.value = '';
-				expirationMonthInput.value = '';
-				expirationYearInput.value = '';
-				securityCodeInput.value = '';
-
-				checkoutForm.submit();
-			}
-		});
-
-		return false;
+	if (selectedPaymentMethod != 'new_card') {
+		return;
 	}
+
+	e.preventDefault();
+	tokenError.classList.add('hidden');
+
+	submitButton.setAttribute('disabled', true);
+
+	const card = {
+		number: cardNumberInput.value,
+		name: nameOnCardInput.value,
+		expiration_month: expirationMonthInput.value,
+		expiration_year: expirationYearInput.value,
+		security_code: securityCodeInput.value,
+	};
+
+	Omise.createToken('card', card, function (statusCode, response) {
+		if (response.object == 'error' || !response.card.security_code_check) {
+			tokenError.classList.remove('hidden');
+
+			var message_text = 'SET YOUR SECURITY CODE CHECK FAILED MESSAGE';
+
+			if (response.object == 'error') {
+				message_text = response.message;
+			}
+
+			tokenError.innerHTML = message_text;
+
+			submitButton.removeAttribute('disabled');
+		} else {
+			omiseTokenInput.value = response.id;
+			cardNumberInput.value = '';
+			nameOnCardInput.value = '';
+			expirationMonthInput.value = '';
+			expirationYearInput.value = '';
+			securityCodeInput.value = '';
+
+			checkoutForm.submit();
+		}
+	});
+
+	return false;
 });
