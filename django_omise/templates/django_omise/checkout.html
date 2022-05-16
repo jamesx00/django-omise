@@ -18,14 +18,14 @@
             {{ choice.choice_label }}
 
             {% if choice.data.value == 'old_card' %}
-            <div class="payment_options_container" style="margin-left: 1rem; margin-top: 0.5rem; {% if forloop.counter != 1 %}display:none;{% endif %}">
+            <div class="payment_options_container ml-4 {% if forloop.counter != 1 %}hidden{% endif %}">
 
                 {{ form.card.errors }}
                 {{ form.card }}
 
             </div>
             {% elif choice.data.value == 'new_card' %}
-            <div class="payment_options_container" style="margin-left: 1rem; margin-top: 0.5rem; {% if forloop.counter != 1 %}display:none;{% endif %}">
+            <div class="payment_options_container ml-4 {% if forloop.counter != 1 %}hidden{% endif %}">
 
                 <div id="token_errors">
                     {% for hidden_field in form.hidden_fields %}

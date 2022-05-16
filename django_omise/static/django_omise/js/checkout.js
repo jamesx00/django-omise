@@ -76,7 +76,7 @@ const paymentOptionsContainer = document.getElementsByClassName(
 for (const paymentOption of paymentOptions) {
 	paymentOption.addEventListener('change', function (e) {
 		for (const optionContainer of paymentOptionsContainer) {
-			optionContainer.style.display = 'none';
+			optionContainer.classList.add('hidden');
 		}
 
 		const paymentOptionsContainerList =
@@ -86,7 +86,7 @@ for (const paymentOption of paymentOptions) {
 
 		if (paymentOptionsContainerList.length > 0) {
 			const optionContainer = paymentOptionsContainerList[0];
-			optionContainer.style.display = 'block';
+			optionContainer.classList.remove('hidden');
 		}
 	});
 }

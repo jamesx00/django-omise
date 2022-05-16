@@ -140,6 +140,9 @@ class PayWithNewCardForm(forms.Form):
             "django_omise/js/omise.js",
             "django_omise/js/checkout.js",
         )
+        css = {
+            "all": ("django_omise/css/tailwind_output.css",),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
