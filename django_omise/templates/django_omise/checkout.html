@@ -1,0 +1,51 @@
+{% extends 'django_omise/base.html' %}
+{% load i18n %}
+{% block head_title %}Checkout{% endblock %}
+
+{% block content %}
+<form action="" method="post" id="checkout">{% csrf_token %}
+
+    {{ form.has_error }}
+    {{ form.non_field_errors }}
+
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    {% for choice in form.payment_method %}
+        <div style="margin-bottom: 1rem">
+            {{ choice.tag }}
+            {{ choice.choice_label }}
+            <div style="margin-left: 1rem; margin-top: 0.5rem;">
+                {% if choice.data.value == 'old_card' %}
+
+                    {{ form.card.errors }}
+                    {{ form.card }}
+
+                {% elif choice.data.value == 'new_card' %}
+
+                    <div id="token_errors">
+                        {% for hidden_field in form.hidden_fields %}
+                            {% for error in  hidden_field.errors %}
+                                {{ error }}<br />
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% for field in form.new_card_fields %}
+                    <div style="margin-bottom: 0.5rem">
+                        {{ field.errors }}
+                        {{ field.label_tag }}
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    <button type="submit" id="submit_button">{% trans 'Make the payment' %}</button>
+</form>
+
+{{ form.media }}
+
+{% endblock %}

@@ -50,20 +50,20 @@ class Customer(OmiseBaseModel):
             return f"Omise{self.__class__.__name__}: {str(self.user)}"
         return f"Omise{self.__class__.__name__}: {self.id}"
 
-    def add_card(self, token: omise.Token) -> "Customer":
+    def add_card(self, token: omise.Token) -> "Card":
         """
         Add a new card to the user
 
         :param token: The token retrieved from Omise API.
 
-        :returns: Current Customer instance
+        :returns: A new card instance.
         """
         omise_customer = omise.Customer.retrieve(self.id)
         omise_customer.update(card=token.id)
 
         card = token.card
 
-        Card.objects.update_or_create(
+        new_card, created = Card.objects.update_or_create(
             id=card.id,
             livemode=card.livemode,
             defaults={
@@ -80,7 +80,7 @@ class Customer(OmiseBaseModel):
             },
         )
 
-        return self
+        return new_card
 
     def remove_card(self, card: "Card") -> None:
         """
@@ -369,6 +369,39 @@ class Charge(OmiseBaseModel):
         ),
     )
 
+    @classmethod
+    def charge_with_token(
+        cls,
+        amount: int,
+        currency: Currency.choices,
+        token: omise.Token,
+        return_uri: str = None,
+        metadata: dict = None,
+    ) -> "Charge":
+        """
+        Charge the customer with provided card.
+
+        :returns: An instace of Charge object.
+        """
+        uid = uuid.uuid4()
+
+        host = settings.OMISE_CHARGE_RETURN_HOST
+        if return_uri is None:
+            return_uri = f'https://{host}{reverse("django_omise:return_uri", kwargs={"uid": uid})}'
+
+        if metadata is None:
+            metadata = {}
+
+        charge = omise.Charge.create(
+            amount=int(amount),
+            currency=currency,
+            card=token.id,
+            metadata=metadata,
+            return_uri=return_uri,
+        )
+
+        return cls.update_or_create_from_omise_charge(charge=charge, uid=uid)
+
     def set_metadata(self, metadata: Optional[Dict] = None) -> "Charge":
         """
         Set the charge's medata both on Omise and the Charge object.
@@ -429,6 +462,23 @@ class Charge(OmiseBaseModel):
                 elif type(value) is str:
                     defaults[f"{field.name}_id"] = value
                 else:
+                    if type(value) == omise.Card:
+                        card = value
+                        new_card, created = Card.objects.update_or_create(
+                            id=card.id,
+                            livemode=card.livemode,
+                            defaults={
+                                "last_digits": card.last_digits,
+                                "bank": card.bank or "",
+                                "brand": card.brand or "",
+                                "city": card.city or "",
+                                "country": card.country or "",
+                                "expiration_month": card.expiration_month or "",
+                                "expiration_year": card.expiration_year or "",
+                                "financing": card.financing or "",
+                                "deleted": card.deleted,
+                            },
+                        )
                     defaults[f"{field.name}_id"] = getattr(charge, field.name).id
 
                 continue

@@ -5,11 +5,13 @@ from .views import (
     ManagePaymentMethodsView,
     PaymentMethodDeleteView,
     OmiseReturnURIView,
+    CheckoutView,
 )
 
 app_name = "django_omise"
 
 urlpatterns = [
+    path("checkout/", CheckoutView.as_view(), name="checkout"),
     path("return/<uuid:uid>/", OmiseReturnURIView.as_view(), name="return_uri"),
     path("webhook/", omise_webhook_view, name="webhook"),
     path(

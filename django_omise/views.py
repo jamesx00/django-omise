@@ -14,6 +14,7 @@ from django.views.generic import FormView, UpdateView, View
 from django.http import JsonResponse
 
 from .forms import AddCardForm
+from .mixins import CheckoutMixin
 from .models.core import Customer, Card, Charge
 from .models.event import Event
 from .models.choices import ChargeStatus
@@ -176,3 +177,7 @@ class PaymentMethodDeleteView(LoginRequiredMixin, UpdateView):
             return redirect(reverse("django_omise:manage_payment_methods"))
 
         return super().get(*args, **kwargs)
+
+
+class CheckoutView(CheckoutMixin):
+    pass
