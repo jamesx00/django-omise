@@ -17,8 +17,10 @@ from .forms import AddCardForm
 from .mixins import CheckoutMixin
 from .models.core import Customer, Card, Charge
 from .models.event import Event
-from .models.choices import ChargeStatus
+from .models.choices import ChargeStatus, Currency
 from .omise import omise
+
+from typing import Dict
 
 # Create your views here.
 @csrf_exempt
@@ -180,4 +182,33 @@ class PaymentMethodDeleteView(LoginRequiredMixin, UpdateView):
 
 
 class CheckoutView(CheckoutMixin):
-    pass
+    template_name = "django_omise/checkout.html"
+
+    def get_success_url(self, *args, **kwargs):
+        return self.request.get_full_path()
+
+    def get_charge_details(self) -> Dict[int, Currency]:
+        """
+        Overwrite this method to provide the charge amount and currency.
+
+        Read more on the amount and currency here https://www.omise.co/currency-and-amount
+
+        :returns: Dictionary of charge amount in the smallest unit (int) and the 3-digit currency code. {"amount": int, "currency": str}
+        """
+        return dict(
+            amount=self.request.GET.get("amount", 100000),
+            currency=self.request.GET.get("currency", "THB"),
+        )
+
+    def get_charge_kwargs(self) -> Dict:
+        """
+        Overwrite this method to add charge parameters.
+
+        :return: A dictionary of charge parameters
+        """
+        return dict(
+            metadata=dict(
+                successful_url=self.request.get_full_path(),
+                failed_url=self.request.get_full_path(),
+            )
+        )

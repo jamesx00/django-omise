@@ -13,7 +13,6 @@ from typing import Dict, Optional
 
 class CheckoutMixin(FormView):
     form_class = CheckoutForm
-    template_name = "django_omise/checkout.html"
 
     def charge(self, charge_type_details: Dict) -> Charge:
         """
@@ -41,15 +40,15 @@ class CheckoutMixin(FormView):
 
         return charge
 
-    def get_success_url(self):
-        return self.request.get_full_path()
+    def get_form_kwargs(self, *args, **kwargs) -> Dict:
+        """
+        Overwrite this method to provide data for the form.
 
-    def get_form_kwargs(self, *args, **kwargs):
+        :returns: A dictionary in the form of {'user': auth.User, 'amount': int, 'currency': Currency}
+        """
         kwargs = super().get_form_kwargs(*args, **kwargs)
         kwargs["user"] = self.request.user
-        kwargs["amount"] = 100000
-        kwargs["currency"] = Currency.THB
-        return kwargs
+        return {**kwargs, **self.get_charge_details()}
 
     def get_charge_details(self) -> Dict[int, Currency]:
         """
@@ -59,10 +58,7 @@ class CheckoutMixin(FormView):
 
         :returns: Dictionary of charge amount in the smallest unit (int) and the 3-digit currency code. {"amount": int, "currency": str}
         """
-        return dict(
-            amount=self.request.GET.get("amount", 100000),
-            currency=self.request.GET.get("currency", "THB"),
-        )
+        raise NotImplementedError("Must rewrite get_charge_details method.")
 
     def get_omise_customer(self) -> Optional[Customer]:
         """
@@ -83,18 +79,11 @@ class CheckoutMixin(FormView):
         """
         Overwrite this method to add charge parameters.
 
+        E.g. You could return {'metadata': {'successful_url': ..., 'failed_url': ...}} to redirect to specific view
+        when a user complete actions from pending charges.
+
         :return: A dictionary of charge parameters
         """
-        return {
-            "metadata": {
-                "successful_url": self.request.build_absolute_uri(
-                    self.request.get_full_path()
-                ),
-                "failed_url": self.request.build_absolute_uri(
-                    self.request.get_full_path()
-                ),
-            }
-        }
         return dict()
 
     def form_valid(self, form):

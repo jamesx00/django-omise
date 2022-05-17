@@ -347,3 +347,10 @@ class CheckoutForm(
             for field in self
             if field.name in new_card_field_names and not field.is_hidden
         ]
+
+    @property
+    def human_amount(self) -> float:
+        if self.currency.upper() == Currency.JPY:
+            return float(self.amount)
+
+        return self.amount / 100
