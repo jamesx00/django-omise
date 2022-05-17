@@ -12,8 +12,9 @@ Django models for Omise. Currently, we support the following features:
 -   Creating a customer
 -   Allowing customer to add/delete credit/debit cards
 -   Collect payments with new card with the option to keep the card
--   Collect payments with saved card
+-   Collect payments with saved cards
 -   Collect payments with online banking
+-   Collect payments with TrueMoney Wallet
 -   Basic event webhook handler, saving raw data as an Event object
 -   3DS pending charges handling
 
