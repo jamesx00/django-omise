@@ -4,6 +4,7 @@ from django.conf import settings
 from .models.core import Customer, Card
 from .models.choices import Currency
 from .omise import omise
+from .utils import get_payment_methods_for_form
 
 from django.utils.translation import gettext_lazy as _
 
@@ -228,10 +229,16 @@ class CheckoutForm(
         self.amount = amount
         self.currency = currency
 
-        payment_methods = {
+        all_payment_methods = {
             "old_card": _("Pay with your card"),
             "new_card": _("Pay with a new card"),
             "internet_banking": _("Internet banking"),
+        }
+
+        payment_methods = {
+            key: value
+            for key, value in all_payment_methods.items()
+            if key in get_payment_methods_for_form()
         }
 
         if user is None or user.is_authenticated == False:

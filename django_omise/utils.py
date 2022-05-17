@@ -5,11 +5,55 @@ import omise
 from django.apps import apps
 from django.conf import settings
 
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from django.db import models
     from django_omise.models.base import OmiseBaseModel
+
+
+def get_payment_methods_for_form() -> List[str]:
+    """
+    Get the payment method as per setting for checkout form
+
+    :returns: List of payment methods by setting OMISE_PAYMENT_METHODS or default to credit card only.
+    """
+    payment_methods = get_payment_methods()
+    if "card" in payment_methods:
+        payment_methods += ["old_card", "new_card"]
+
+    return payment_methods
+
+
+def get_payment_methods() -> List[str]:
+    """
+    Get the payment method as per setting
+
+    :returns: List of payment methods by setting OMISE_PAYMENT_METHODS or default to credit card only.
+    """
+    payment_methods = setting("OMISE_PAYMENT_METHODS", ["card"])
+    return payment_methods
+
+
+def get_payment_methods_by_country(country: Optional[str] = None) -> List[str]:
+    """
+    Get the payment methods supported by country
+
+    :param country: 3-digit country code.
+
+    :returns: List of supported payment methods
+    """
+    payment_methods = [
+        "card",
+    ]
+
+    if country is None:
+        country = setting("OMISE_COUNTRY", "THA")
+
+    if country in ["THA", "JPN"]:
+        payment_methods.append("internet_banking")
+
+    return payment_methods
 
 
 def setting(name: str, default: Optional[Any] = None) -> Optional[Any]:
