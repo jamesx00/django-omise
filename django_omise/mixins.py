@@ -99,7 +99,7 @@ class CheckoutMixin(FormView):
             )
             return super().form_invalid(form)
 
-        self.process_new_charge(charge)
+        self.process_charge_and_form(charge, form)
 
         if charge.status == ChargeStatus.FAILED:
             messages.error(
@@ -116,11 +116,12 @@ class CheckoutMixin(FormView):
 
         return super().form_valid(form)
 
-    def process_new_charge(self, charge: Charge):
+    def process_charge_and_form(self, charge: Charge, form):
         """
-        Overwrite this method to process the new charge object.
+        Overwrite this method to process the new charge object with the form.
 
         :params charge: The new Charge object.
+        :params form: The form instance
         """
         pass
 
