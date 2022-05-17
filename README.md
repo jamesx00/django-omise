@@ -101,7 +101,7 @@ OMISE_PAYMENT_METHODS = [
     from django_omise.models.choices import Currency
 
     # Your own class-based-view
-    class CheckoutView(LoginRequiredMixin, CheckoutWithCardsMixin):
+    class CheckoutView(LoginRequiredMixin, CheckoutMixin):
 
         template_name = "yourapp/template.html"
         success_url = ...
