@@ -14,19 +14,19 @@
 
     {% for choice in form.payment_method %}
         <div>
-            <div class="p-4 border">
+            <div>
                 {{ choice.tag }}
                 {{ choice.choice_label }}
 
                 {% if choice.data.value == 'old_card' %}
-                <div class="payment_options_container mt-4 border p-4 hidden">
+                <div class="payment_options_container ml-4 hidden">
 
                     {{ form.card.errors }}
                     {{ form.card }}
 
                 </div>
                 {% elif choice.data.value == 'new_card' %}
-                <div class="payment_options_container mt-4 border p-4 hidden">
+                <div class="payment_options_container ml-4 hidden">
 
                     <div id="token_errors" class="p-4 bg-red-300 hidden mb-4">
                         {% for hidden_field in form.hidden_fields %}
@@ -36,13 +36,18 @@
                         {% endfor %}
                     </div>
                     {% for field in form.new_card_fields %}
-                    <div style="margin-bottom: 0.5rem">
+                    <div class="mb-2">
                         {{ field.errors }}
                         {{ field.label_tag }}
                         {{ field }}
                     </div>
                     {% endfor %}
 
+                </div>
+                {% elif choice.data.value == 'internet_banking' %}
+                <div class="payment_options_container ml-4 hidden">
+                    {{ form.bank.errors }}
+                    {{ form.bank }}
                 </div>
                 {% endif %}
             </div>
