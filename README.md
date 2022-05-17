@@ -154,8 +154,9 @@ Omise Features
 -   Handle webhook events and update related objects
 -   Create charge with Sources
     -   [x] Internet banking
-    -   [] Promptpay
-    -   [] Installment
+    -   [x] TrueMoney Wallet
+    -   [ ] Promptpay
+    -   [ ] Installment
 
 Others
 
