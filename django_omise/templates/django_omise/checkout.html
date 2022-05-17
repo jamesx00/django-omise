@@ -1,0 +1,61 @@
+{% extends 'django_omise/base.html' %}
+{% load i18n %}
+{% block head_title %}Checkout{% endblock %}
+
+{% block content %}
+<form action="" method="post" id="checkout">{% csrf_token %}
+
+    {{ form.has_error }}
+    {{ form.non_field_errors }}
+
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    {% for choice in form.payment_method %}
+        <div>
+            <div>
+                {{ choice.tag }}
+                {{ choice.choice_label }}
+
+                {% if choice.data.value == 'old_card' %}
+                <div class="payment_options_container ml-4 hidden">
+
+                    {{ form.card.errors }}
+                    {{ form.card }}
+
+                </div>
+                {% elif choice.data.value == 'new_card' %}
+                <div class="payment_options_container ml-4 hidden">
+
+                    <div id="token_errors" class="p-4 bg-red-300 hidden mb-4">
+                        {% for hidden_field in form.hidden_fields %}
+                            {% for error in  hidden_field.errors %}
+                                {{ error }}<br />
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% for field in form.new_card_fields %}
+                    <div class="mb-2">
+                        {{ field.errors }}
+                        {{ field.label_tag }}
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+
+                </div>
+                {% elif choice.data.value == 'internet_banking' %}
+                <div class="payment_options_container ml-4 hidden">
+                    {{ form.bank.errors }}
+                    {{ form.bank }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    <button class="border p-4 mt-4 bg-blue-700 text-white" type="submit" id="submit_button">{% trans 'Make the payment' %}</button>
+</form>
+
+{{ form.media }}
+
+{% endblock %}

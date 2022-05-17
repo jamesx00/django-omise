@@ -9,15 +9,18 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import FormView, DeleteView, View
+from django.views.generic import FormView, UpdateView, View
 
 from django.http import JsonResponse
 
 from .forms import AddCardForm
+from .mixins import CheckoutMixin
 from .models.core import Customer, Card, Charge
 from .models.event import Event
-from .models.choices import ChargeStatus
+from .models.choices import ChargeStatus, Currency
 from .omise import omise
+
+from typing import Dict
 
 # Create your views here.
 @csrf_exempt
@@ -80,7 +83,7 @@ class OmiseReturnURIView(View):
 
         charge = Charge.objects.get(uid=uid)
         omise_charge = omise.Charge.retrieve(charge.id)
-        charge = Charge.update_or_create_from_omise_charge(charge=omise_charge)
+        charge = Charge.update_or_create_from_omise_object(omise_object=omise_charge)
 
         if charge.status == ChargeStatus.SUCCESSFUL:
             messages.success(request, _("Payment successful"))
@@ -126,11 +129,15 @@ class ManagePaymentMethodsView(LoginRequiredMixin, SuccessMessageMixin, FormView
         )
 
 
-class PaymentMethodDeleteView(LoginRequiredMixin, DeleteView):
+class PaymentMethodDeleteView(LoginRequiredMixin, UpdateView):
 
     model = Card
+    fields = [
+        "deleted",
+    ]
     success_message = _("A card has been deleted.")
     success_url = reverse_lazy("django_omise:manage_payment_methods")
+    template_name = "django_omise/card_confirm_delete.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -150,15 +157,12 @@ class PaymentMethodDeleteView(LoginRequiredMixin, DeleteView):
         )
         return customer
 
-    def delete(self, *args, **kwargs):
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.deleted = True
 
         messages.success(self.request, self.success_message)
-
-        card = self.get_object()
-        card.deleted = True
-        card.save()
-
-        return redirect(self.success_url)
+        return super().form_valid(form)
 
     def post(self, *args, **kwargs):
 
@@ -175,3 +179,36 @@ class PaymentMethodDeleteView(LoginRequiredMixin, DeleteView):
             return redirect(reverse("django_omise:manage_payment_methods"))
 
         return super().get(*args, **kwargs)
+
+
+class CheckoutView(CheckoutMixin):
+    template_name = "django_omise/checkout.html"
+
+    def get_success_url(self, *args, **kwargs):
+        return self.request.get_full_path()
+
+    def get_charge_details(self) -> Dict[int, Currency]:
+        """
+        Overwrite this method to provide the charge amount and currency.
+
+        Read more on the amount and currency here https://www.omise.co/currency-and-amount
+
+        :returns: Dictionary of charge amount in the smallest unit (int) and the 3-digit currency code. {"amount": int, "currency": str}
+        """
+        return dict(
+            amount=self.request.GET.get("amount", 100000),
+            currency=self.request.GET.get("currency", "THB"),
+        )
+
+    def get_charge_kwargs(self) -> Dict:
+        """
+        Overwrite this method to add charge parameters.
+
+        :return: A dictionary of charge parameters
+        """
+        return dict(
+            metadata=dict(
+                successful_url=self.request.get_full_path(),
+                failed_url=self.request.get_full_path(),
+            )
+        )

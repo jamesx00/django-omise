@@ -11,7 +11,9 @@ Django models for Omise. Currently, we support the following features:
 
 -   Creating a customer
 -   Allowing customer to add/delete credit/debit cards
--   Charge customer with a card
+-   Collect payments with new card with the option to keep the card
+-   Collect payments with saved card
+-   Collect payments with online banking
 -   Basic event webhook handler, saving raw data as an Event object
 -   3DS pending charges handling
 
@@ -43,6 +45,13 @@ OMISE_PUBLIC_KEY = xxxx
 OMISE_SECRET_KEY = xxxx
 OMISE_LIVE_MODE = True | False
 OMISE_CHARGE_RETURN_HOST = localhost:8000
+
+# Optional. The default payment method is credit/debit card only.
+# You must specify additional payment methods.
+OMISE_PAYMENT_METHODS = [
+    "card",
+    "internet_banking", # Additional for internet banking
+]
 ```
 
 4. Run `python manage.py migrate` to create the Omise models.
@@ -77,7 +86,7 @@ OMISE_CHARGE_RETURN_HOST = localhost:8000
     from django_omise.omise import omise
 
     omise_token = omise.Token.retrieve(token_id)
-    Customer.objects.first().add_card(token=omise_token)
+    Customer.objects.live().first().add_card(token=omise_token)
     ```
 
 3. Charge a customer (Currently supporting only credit/debit card payment)
@@ -88,18 +97,14 @@ OMISE_CHARGE_RETURN_HOST = localhost:8000
 
     ```python
     from django.contrib.auth.mixins import LoginRequiredMixin
-    from django_omise.mixins import CheckoutWithCardsMixin
+    from django_omise.mixins import CheckoutMixin
     from django_omise.models.choices import Currency
 
     # Your own class-based-view
     class CheckoutView(LoginRequiredMixin, CheckoutWithCardsMixin):
 
         template_name = "yourapp/template.html"
-
-        def get_form_kwargs(self, *args, **kwargs):
-            kwargs = super().get_form_kwargs(*args, **kwargs)
-            kwargs["user"] = self.request.user
-            return kwargs
+        success_url = ...
 
         def get_charge_details(self):
             return {
@@ -107,9 +112,11 @@ OMISE_CHARGE_RETURN_HOST = localhost:8000
                 "currency": Currency.THB,
             }
 
-        def process_new_charge(self, charge):
+        def process_charge_and_form(self, charge, form):
             if charge.status in [ChargeStatus.SUCCESSFUL, ChargeStatus.PENDING]:
                 # Create new order and attach a charge object
+                # And handle form data
+                handle_form_data(form.cleaned_data)
     ```
 
     3.2 Manually
@@ -144,6 +151,9 @@ Omise Features
 -   Handle refunds API
 -   Handle webhook events and update related objects
 -   Create charge with Sources
+    -   [x] Internet banking
+    -   [] Promptpay
+    -   [] Installment
 
 Others
 

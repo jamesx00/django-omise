@@ -209,3 +209,6 @@ class SourceAdmin(admin.ModelAdmin):
         "name",
     )
     readonly_fields = ("uid",)
+
+    def has_change_permission(self, request, obj=None):
+        return False

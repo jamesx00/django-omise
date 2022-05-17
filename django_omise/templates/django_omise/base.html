@@ -1,7 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
   <head>
     <title>{% block head_title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'django_omise/css/tailwind_output.css' %}">
     {% block extra_head %}
     {% endblock %}
   </head>
@@ -10,7 +12,6 @@
 
     {% if messages %}
     <div>
-      <strong>Messages:</strong>
       <ul>
         {% for message in messages %}
         <li>{{message}}</li>

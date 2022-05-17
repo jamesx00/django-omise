@@ -50,37 +50,27 @@ class Customer(OmiseBaseModel):
             return f"Omise{self.__class__.__name__}: {str(self.user)}"
         return f"Omise{self.__class__.__name__}: {self.id}"
 
-    def add_card(self, token: omise.Token) -> "Customer":
+    def add_card(self, token: omise.Token) -> "Card":
         """
         Add a new card to the user
 
         :param token: The token retrieved from Omise API.
 
-        :returns: Current Customer instance
+        :returns: A new card instance.
         """
         omise_customer = omise.Customer.retrieve(self.id)
         omise_customer.update(card=token.id)
 
         card = token.card
 
-        Card.objects.update_or_create(
-            id=card.id,
-            livemode=card.livemode,
-            defaults={
-                "customer": self,
-                "last_digits": card.last_digits,
-                "bank": card.bank or "",
-                "brand": card.brand or "",
-                "city": card.city or "",
-                "country": card.country or "",
-                "expiration_month": card.expiration_month or "",
-                "expiration_year": card.expiration_year or "",
-                "financing": card.financing or "",
-                "deleted": card.deleted,
-            },
+        new_card = Card.update_or_create_from_omise_object(
+            omise_object=card,
         )
 
-        return self
+        new_card.customer = self
+        new_card.save()
+
+        return new_card
 
     def remove_card(self, card: "Card") -> None:
         """
@@ -105,25 +95,13 @@ class Customer(OmiseBaseModel):
 
         :returns: An instace of Charge object.
         """
-        uid = uuid.uuid4()
-
-        host = settings.OMISE_CHARGE_RETURN_HOST
-        if return_uri is None:
-            return_uri = f'https://{host}{reverse("django_omise:return_uri", kwargs={"uid": uid})}'
-
-        if metadata is None:
-            metadata = {}
-
-        charge = omise.Charge.create(
-            customer=self.id,
-            card=card.id,
-            amount=int(amount),
+        return Charge.charge(
+            amount=amount,
             currency=currency,
-            metadata=metadata,
+            card=card,
             return_uri=return_uri,
+            metadata=metadata,
         )
-
-        return Charge.update_or_create_from_omise_charge(charge=charge, uid=uid)
 
     @classmethod
     def get_or_create(cls, user: "User") -> "Customer":
@@ -171,6 +149,13 @@ class Card(OmiseBaseModel):
     Official documentation: https://www.omise.co/cards-api
     """
 
+    omise_class = omise.Card
+
+    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
+        "charges",
+        "customer",
+    ]
+
     customer = models.ForeignKey(
         Customer,
         blank=True,
@@ -179,6 +164,15 @@ class Card(OmiseBaseModel):
         on_delete=models.PROTECT,
     )
 
+    name = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=255, blank=True)
+
+    postal_code = models.CharField(max_length=255, blank=True)
+    state = models.CharField(max_length=255, blank=True)
+    street1 = models.CharField(max_length=255, blank=True)
+    street2 = models.CharField(max_length=255, blank=True)
+    tokenization_method = models.CharField(max_length=255, blank=True)
+    first_digits = models.CharField(max_length=6, blank=True)
     last_digits = models.CharField(max_length=4)
     bank = models.CharField(max_length=255, blank=True)
     brand = models.CharField(max_length=255, blank=True)
@@ -206,6 +200,8 @@ class Charge(OmiseBaseModel):
 
     Official documentation: https://www.omise.co/charges-api
     """
+
+    omise_class = omise.Charge
 
     status = models.CharField(
         max_length=10,
@@ -369,6 +365,69 @@ class Charge(OmiseBaseModel):
         ),
     )
 
+    @classmethod
+    def charge(
+        cls,
+        amount: int,
+        currency: Currency.choices,
+        token: Optional[omise.Token] = None,
+        card: Optional[Card] = None,
+        source: Optional[Dict] = None,
+        return_uri: str = None,
+        metadata: dict = None,
+    ) -> "Charge":
+        """
+        Charge the customer with provided payment_method.
+
+        :param amount: The amount to charge in the smallest unit.
+        :param currency: The currency to charge.
+        :param token: The token to charge.
+        :param card: The card to charge.
+        :param source: The source to charge.
+        :param return_uri optional: The return uri.
+        :param metadata optional: The charge metadata.
+        :returns: An instace of Charge object.
+        """
+        if [token, card, source].count(None) == 3:
+            raise ValueError("At least a token, a card, or a source is required")
+
+        if [token, card, source].count(None) != 2:
+            raise ValueError("Only one of token, card, or source must be specified")
+
+        uid = uuid.uuid4()
+
+        host = settings.OMISE_CHARGE_RETURN_HOST
+        if return_uri is None:
+            return_uri = f'https://{host}{reverse("django_omise:return_uri", kwargs={"uid": uid})}'
+
+        if metadata is None:
+            metadata = {}
+
+        charge_details = {}
+
+        if token is not None:
+            if type(token) == str:
+                charge_details["card"] = token
+            else:
+                charge_details["card"] = token.id
+
+        if card is not None:
+            charge_details["card"] = card.id
+            charge_details["customer"] = card.customer.id
+
+        if source is not None:
+            charge_details["source"] = source
+
+        charge = omise.Charge.create(
+            amount=int(amount),
+            currency=currency,
+            metadata=metadata,
+            return_uri=return_uri,
+            **charge_details,
+        )
+
+        return cls.update_or_create_from_omise_object(omise_object=charge, uid=uid)
+
     def set_metadata(self, metadata: Optional[Dict] = None) -> "Charge":
         """
         Set the charge's medata both on Omise and the Charge object.
@@ -389,83 +448,6 @@ class Charge(OmiseBaseModel):
 
         return self
 
-    @classmethod
-    def update_or_create_from_omise_charge(
-        cls,
-        charge: omise.Charge,
-        uid: Optional[uuid.UUID] = None,
-    ) -> "Charge":
-        """
-        Update existing charge or create a new charge from Omise Charge object.
-
-        :param charge: An instance of Omise Charge object
-        :param uid: A unique id for this charge. This is not charge id from Omise.
-
-        :returns: An instance of Charge
-        """
-        charge_fields = cls._meta.get_fields()
-
-        defaults = {}
-
-        for field in charge_fields:
-            if field.name == "metadata":
-                defaults["metadata"] = getattr(
-                    charge,
-                    field.name,
-                ).__dict__.get("_attributes")
-                continue
-
-            if field.name in cls.NON_DEFAULT_FIELDS:
-                continue
-
-            if callable(getattr(charge, field.name, None)):
-                continue
-
-            if type(field) is models.ForeignKey:
-                value = getattr(charge, field.name, None)
-
-                if value is None:
-                    defaults[f"{field.name}_id"] = value
-                elif type(value) is str:
-                    defaults[f"{field.name}_id"] = value
-                else:
-                    defaults[f"{field.name}_id"] = getattr(charge, field.name).id
-
-                continue
-
-            if is_omise_object_instances(getattr(charge, field.name, None)):
-                defaults[f"{field.name}_id"] = getattr(charge, field.name).id
-                continue
-
-            if (
-                isinstance(field, (models.TextField, models.CharField))
-                and getattr(charge, field.name, None) is None
-            ):
-                defaults[field.name] = ""
-                continue
-
-            if (
-                getattr(charge, field.name, None) is None
-                and field.null == False
-                and field.default
-            ):
-                defaults[field.name] = field.default()
-                continue
-
-            defaults[field.name] = getattr(charge, field.name, None)
-
-        charge_object, created = cls.objects.update_or_create(
-            pk=charge.id,
-            livemode=charge.livemode,
-            defaults=defaults,
-        )
-
-        if uid:
-            charge_object.uid = uid
-            charge_object.save()
-
-        return charge_object
-
 
 class Source(OmiseBaseModel):
     """
@@ -473,6 +455,12 @@ class Source(OmiseBaseModel):
 
     Official documentation: https://www.omise.co/sources-api
     """
+
+    omise_class = omise.Source
+
+    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
+        "charges",
+    ]
 
     amount = models.IntegerField(
         help_text=_("Source amount in smallest unit of source currency")
