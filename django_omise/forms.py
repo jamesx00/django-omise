@@ -2,7 +2,7 @@ from django import forms
 from django.conf import settings
 
 from .models.core import Customer, Card
-from .models.choices import Currency
+from .models.choices import Currency, ChargeSourceType
 from .omise import omise
 from .utils import get_payment_methods_for_form
 
@@ -196,10 +196,10 @@ class PayWithInternetBankingForm(forms.Form):
 
     bank = forms.ChoiceField(
         choices=(
-            ("internet_banking_bay", _("Krungsri Bank")),
-            ("internet_banking_bbl", _("Bangkok Bank")),
-            ("internet_banking_ktb", _("Krungthai Bank")),
-            ("internet_banking_scb", _("SCB Bank")),
+            (ChargeSourceType.INTERNET_BANKING_BAY, _("Krungsri Bank")),
+            (ChargeSourceType.INTERNET_BANKING_BBL, _("Bangkok Bank")),
+            (ChargeSourceType.INTERNET_BANKING_KTB, _("Krungthai Bank")),
+            (ChargeSourceType.INTERNET_BANKING_SCB, _("SCB Bank")),
         ),
         widget=forms.RadioSelect,
         required=False,
@@ -240,6 +240,7 @@ class CheckoutForm(
             "new_card": _("Pay with a new card"),
             "internet_banking": _("Internet banking"),
             "truemoney_wallet": _("TrueMoney Wallet"),
+            ChargeSourceType.PROMPTPAY: _("Promptpay"),
         }
 
         payment_methods = {
@@ -336,9 +337,12 @@ class CheckoutForm(
 
         if payment_method == "truemoney_wallet":
             charge_details["source"] = {
-                "type": "truemoney",
+                "type": ChargeSourceType.TRUEMONEY_WALLET,
                 "phone_number": self.cleaned_data["phone_number"],
             }
+
+        if payment_method == ChargeSourceType.PROMPTPAY:
+            charge_details["source"] = {"type": ChargeSourceType.PROMPTPAY}
 
         return charge_details
 
