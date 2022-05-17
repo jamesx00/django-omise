@@ -207,10 +207,15 @@ class PayWithInternetBankingForm(forms.Form):
     )
 
 
+class PayWithTrueMoneyForm(forms.Form):
+    phone_number = forms.CharField(max_length=10, required=False)
+
+
 class CheckoutForm(
     PayWithExistingCardForm,
     PayWithNewCardForm,
     PayWithInternetBankingForm,
+    PayWithTrueMoneyForm,
 ):
 
     payment_method = forms.ChoiceField(
@@ -234,6 +239,7 @@ class CheckoutForm(
             "old_card": _("Pay with your card"),
             "new_card": _("Pay with a new card"),
             "internet_banking": _("Internet banking"),
+            "truemoney_wallet": _("TrueMoney Wallet"),
         }
 
         payment_methods = {
@@ -291,6 +297,16 @@ class CheckoutForm(
                 {"bank": _("You need to select at least one bank")}
             )
 
+        phone_number = cleaned_data.get("phone_number")
+        if payment_method == "truemoney_wallet" and not phone_number:
+            raise forms.ValidationError(
+                {
+                    "phone_number": _(
+                        "Mobile number is required for TrueMoney Wallet payment"
+                    )
+                }
+            )
+
     def get_charge_type_details(self) -> Dict:
         """
         Build the charge type details from selected payment method and options
@@ -317,6 +333,12 @@ class CheckoutForm(
 
         if payment_method == "internet_banking":
             charge_details["source"] = {"type": self.cleaned_data["bank"]}
+
+        if payment_method == "truemoney_wallet":
+            charge_details["source"] = {
+                "type": "truemoney",
+                "phone_number": self.cleaned_data["phone_number"],
+            }
 
         return charge_details
 
@@ -348,6 +370,15 @@ class CheckoutForm(
             for field in self
             if field.name in new_card_field_names and not field.is_hidden
         ]
+
+    @property
+    def truemoney_fields(self) -> List[forms.fields.Field]:
+
+        fields = [
+            "phone_number",
+        ]
+
+        return [field for field in self if field.name in fields and not field.is_hidden]
 
     @property
     def human_amount(self) -> float:

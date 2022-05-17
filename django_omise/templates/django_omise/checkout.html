@@ -16,7 +16,7 @@
         <div>
             <div>
                 {{ choice.tag }}
-                {{ choice.choice_label }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
 
                 {% if choice.data.value == 'old_card' %}
                 <div class="payment_options_container ml-4 hidden">
@@ -48,6 +48,16 @@
                 <div class="payment_options_container ml-4 hidden">
                     {{ form.bank.errors }}
                     {{ form.bank }}
+                </div>
+                {% elif choice.data.value == 'truemoney_wallet' %}
+                <div class="payment_options_container ml-4 hidden">
+                    {% for field in form.truemoney_fields %}
+                    <div class="mb-2">
+                        {{ field.errors }}
+                        {{ field.label_tag }}
+                        {{ field }}
+                    </div>
+                    {% endfor %}
                 </div>
                 {% endif %}
             </div>
