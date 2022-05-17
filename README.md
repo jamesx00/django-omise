@@ -52,6 +52,7 @@ OMISE_CHARGE_RETURN_HOST = localhost:8000
 OMISE_PAYMENT_METHODS = [
     "card",
     "internet_banking", # Additional for internet banking
+    "truemoney_wallet", # Required for TrueMoney Wallet
 ]
 ```
 
