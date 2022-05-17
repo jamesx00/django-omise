@@ -150,11 +150,12 @@ class PayWithNewCardForm(forms.Form):
         self.fields["expiration_year"].widget.attrs["placeholder"] = "2030"
         self.fields["security_number"].widget.attrs["placeholder"] = "***"
 
-        self.fields["card_number"].initial = "4111 1111 1111 1111"
-        self.fields["name_on_card"].initial = "James"
-        self.fields["expiration_month"].initial = "10"
-        self.fields["expiration_year"].initial = "2030"
-        self.fields["security_number"].initial = "123"
+        if settings.DEBUG and settings.OMISE_LIVE_MODE is False:
+            self.fields["card_number"].initial = "4111 1111 1111 1111"
+            self.fields["name_on_card"].initial = "James"
+            self.fields["expiration_month"].initial = "10"
+            self.fields["expiration_year"].initial = "2030"
+            self.fields["security_number"].initial = "123"
 
     def clean_omise_token(self) -> omise.Token:
         """
