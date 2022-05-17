@@ -1,5 +1,5 @@
 from .base import OmiseBaseModel
-from .choices import Currency, ChargeStatus
+from .choices import Currency, ChargeStatus, ChargeSourceType, SourceFlow
 from .managers import NotDeletedManager
 
 import uuid
@@ -494,6 +494,7 @@ class Source(OmiseBaseModel):
         help_text=_(
             "The payment flow payers need to go through to complete the payment. One of redirect, offline, or app_redirect"
         ),
+        choices=SourceFlow.choices,
     )
 
     installment_term = models.IntegerField(
@@ -515,7 +516,7 @@ class Source(OmiseBaseModel):
     store_name = models.CharField(max_length=255, blank=True)
     terminal_id = models.CharField(max_length=255, blank=True)
 
-    type = models.CharField(max_length=255)
+    type = models.CharField(max_length=255, choices=ChargeSourceType.choices)
 
     zero_interest_installments = models.BooleanField(blank=True, null=True)
 
