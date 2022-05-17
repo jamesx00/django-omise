@@ -5,7 +5,10 @@ from django.apps import apps
 from django.db import models
 
 from django_omise.omise import omise
-from django_omise.utils import is_omise_object_instances
+from django_omise.utils import (
+    is_omise_object_instances,
+    update_or_create_from_omise_object,
+)
 
 from typing import Optional
 
@@ -74,42 +77,21 @@ class OmiseBaseModel(models.Model):
             if type(field) is models.ForeignKey:
                 value = getattr(omise_object, field.name, None)
 
-                if value is None:
-                    defaults[f"{field.name}_id"] = value
-                elif type(value) is str:
+                if value is None or type(value) is str:
                     defaults[f"{field.name}_id"] = value
                 else:
-                    if type(value) == omise.Card:
-                        card = value
-                        Card = apps.get_model(
-                            app_label="django_omise", model_name="Card"
-                        )
-                        Card.update_or_create_from_omise_object(
-                            omise_object=card,
+
+                    if type(value) in [omise.Card, omise.Source]:
+                        new_object = update_or_create_from_omise_object(
+                            omise_object=value
                         )
 
-                    elif type(value) == omise.Source:
-                        source = value
-                        Source = apps.get_model(
-                            app_label="django_omise", model_name="Source"
-                        )
-                        Source.update_or_create_from_omise_object(
-                            omise_object=source,
-                        )
+                        defaults[field.name] = new_object
 
-                    else:
-                        raise ValueError("Field not implemented")
-
-                    defaults[f"{field.name}_id"] = getattr(omise_object, field.name).id
-
-                continue
-
-            if is_omise_object_instances(getattr(omise_object, field.name, None)):
-                defaults[f"{field.name}_id"] = getattr(omise_object, field.name).id
                 continue
 
             if (
-                isinstance(field, (models.TextField, models.CharField))
+                type(field) in [models.TextField, models.CharField]
                 and getattr(omise_object, field.name, None) is None
             ):
                 defaults[field.name] = ""
