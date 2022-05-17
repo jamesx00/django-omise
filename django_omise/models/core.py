@@ -523,9 +523,9 @@ class Source(OmiseBaseModel):
     def source_type_name(self):
         source_types = {
             "truemoney": _("TrueMoney Wallet"),
-            "internet_banking_bay": _("Internet Bangkok Krungsri Bank"),
-            "internet_banking_bbl": _("Internet Bangkok Bangkok Bank"),
-            "internet_banking_ktb": _("Internet Bangkok Krungthai Bank"),
-            "internet_banking_scb": _("Internet Bangkok SCB Bank"),
+            "internet_banking_bay": _("Internet Banking Krungsri Bank"),
+            "internet_banking_bbl": _("Internet Banking Bangkok Bank"),
+            "internet_banking_ktb": _("Internet Banking Krungthai Bank"),
+            "internet_banking_scb": _("Internet Banking SCB Bank"),
         }
         return source_types[self.type]
