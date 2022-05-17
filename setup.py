@@ -14,7 +14,7 @@ setup(
     description="Django models for Omise",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/siwatjames/django-omise",
+    url="https://github.com/jamesx00/django-omise",
     author="James Tansiri",
     author_email="tansirijames@gmail.com",
     license="MIT",
