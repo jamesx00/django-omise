@@ -15,43 +15,29 @@ class CheckoutMixin(FormView):
     form_class = CheckoutForm
     template_name = "django_omise/checkout.html"
 
-    def charge(self, payment_method) -> Charge:
+    def charge(self, charge_type_details: Dict) -> Charge:
         """
         Created a charge with selected payment method.
 
+        :param charge_type_details: Dict of charge type details.
+                                    E.g. {'card': core.Card}
+                                    or {'token': omise.Token}
+                                    or {'source': {'type': 'internet_banking_bbl'}}
+
         :returns: A new Charge instance.
         """
-        payment_method_type = type(payment_method)
         charge_details = self.get_charge_details()
+        charge_kwargs = self.get_charge_kwargs()
 
         amount = charge_details["amount"]
         currency = charge_details["currency"]
 
-        charge_kwargs = self.get_charge_kwargs()
-
-        if payment_method_type == omise.Token:
-            charge = Charge.charge(
-                amount=amount,
-                currency=currency,
-                token=payment_method,
-                **charge_kwargs,
-            )
-
-        elif payment_method_type == Card:
-            charge = Charge.charge(
-                amount=amount,
-                currency=currency,
-                card=payment_method,
-                **charge_kwargs,
-            )
-
-        else:
-            charge = Charge.charge(
-                amount=amount,
-                currency=currency,
-                source={"type": payment_method},
-                **charge_kwargs,
-            )
+        charge = Charge.charge(
+            amount=amount,
+            currency=currency,
+            **charge_type_details,
+            **charge_kwargs,
+        )
 
         return charge
 
@@ -99,14 +85,24 @@ class CheckoutMixin(FormView):
 
         :return: A dictionary of charge parameters
         """
+        return {
+            "metadata": {
+                "successful_url": self.request.build_absolute_uri(
+                    self.request.get_full_path()
+                ),
+                "failed_url": self.request.build_absolute_uri(
+                    self.request.get_full_path()
+                ),
+            }
+        }
         return dict()
 
     def form_valid(self, form):
 
-        payment_method = form.get_selected_payment_method()
+        charge_type_details = form.get_charge_type_details()
 
         try:
-            charge = self.charge(payment_method=payment_method)
+            charge = self.charge(charge_type_details=charge_type_details)
         except omise.errors.InvalidChargeError as e:
             messages.error(
                 self.request,

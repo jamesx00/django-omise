@@ -7,7 +7,7 @@ from .omise import omise
 
 from django.utils.translation import gettext_lazy as _
 
-from typing import List
+from typing import List, Dict
 
 
 class AddCardForm(forms.Form):
@@ -283,22 +283,34 @@ class CheckoutForm(
                 {"bank": _("You need to select at least one bank")}
             )
 
-    def get_selected_payment_method(self) -> Card:
+    def get_charge_type_details(self) -> Dict:
+        """
+        Build the charge type details from selected payment method and options
+
+        :returns: Dict of charge type details.
+                    If card is charged, it will be {'card': core.Card}
+                    if token is charged, it will be {'token': omise.Token}
+                    If source is charged, it will be {'source': {'type': source_type_string, ...}}
+        """
+
         payment_method = self.cleaned_data["payment_method"]
+        charge_details = {}
 
         if payment_method == "new_card":
 
             if self.cleaned_data.get("keep_card", None) == True:
                 card = self.add_card_to_user()
-                return card
-
-            return self.cleaned_data["omise_token"]
+                charge_details["card"] = card
+            else:
+                charge_details["token"] = self.cleaned_data["omise_token"]
 
         if payment_method == "old_card":
-            return self.cleaned_data["card"]
+            charge_details["card"] = self.cleaned_data["card"]
 
         if payment_method == "internet_banking":
-            return self.cleaned_data["bank"]
+            charge_details["source"] = {"type": self.cleaned_data["bank"]}
+
+        return charge_details
 
     def add_card_to_user(self) -> Card:
         """
