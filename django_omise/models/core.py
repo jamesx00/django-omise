@@ -518,3 +518,14 @@ class Source(OmiseBaseModel):
     type = models.CharField(max_length=255)
 
     zero_interest_installments = models.BooleanField(blank=True, null=True)
+
+    @property
+    def source_type_name(self):
+        source_types = {
+            "truemoney": _("TrueMoney Wallet"),
+            "internet_banking_bay": _("Internet Bangkok Krungsri Bank"),
+            "internet_banking_bbl": _("Internet Bangkok Bangkok Bank"),
+            "internet_banking_ktb": _("Internet Bangkok Krungthai Bank"),
+            "internet_banking_scb": _("Internet Bangkok SCB Bank"),
+        }
+        return source_types[self.type]
