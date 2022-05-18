@@ -167,7 +167,7 @@ class PaymentMethodDeleteView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         instance = form.save(commit=False)
-        instance.deleted = True
+        instance.delete()
 
         messages.success(self.request, self.success_message)
         return super().form_valid(form)

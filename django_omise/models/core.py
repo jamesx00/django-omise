@@ -193,6 +193,14 @@ class Card(OmiseBaseModel):
     def __str__(self) -> str:
         return f"Omise{self.__class__.__name__}: {self.last_digits}"
 
+    def delete(self):
+        omise_customer = self.customer.get_omise_object()
+        card = omise_customer.cards.retrieve(self.id)
+        card.destroy()
+
+        self.deleted = True
+        self.save()
+
 
 class Charge(OmiseBaseModel):
     """
