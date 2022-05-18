@@ -43,9 +43,11 @@ class OmiseBaseModel(models.Model):
         ]
 
     def get_omise_object(self) -> omise.Base:
+        """Fetch the object from Omise's server."""
         return self.omise_class.retrieve(self.id)
 
-    def reload_from_omise(self) -> "__class__":
+    def reload_from_omise(self) -> OmiseBaseModel:
+        """Reload the data from Omise's server and return the saved object"""
         omise_object = self.omise_class.retrieve(self.id)
         return self.__class__.update_or_create_from_omise_object(
             omise_object=omise_object
