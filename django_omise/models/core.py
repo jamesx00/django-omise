@@ -365,6 +365,12 @@ class Charge(OmiseBaseModel):
         ),
     )
 
+    @property
+    def human_amount(self) -> float:
+        if self.currency == Currency.JPY:
+            return self.amount
+        return self.amount / 100
+
     @classmethod
     def charge(
         cls,
@@ -530,3 +536,9 @@ class Source(OmiseBaseModel):
             "internet_banking_scb": _("Internet Banking SCB Bank"),
         }
         return source_types[self.type]
+    
+    @property
+    def human_amount(self) -> float:
+        if self.currency == Currency.JPY:
+            return self.amount
+        return self.amount / 100
