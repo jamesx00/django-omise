@@ -85,6 +85,12 @@ class OmiseBaseModel(models.Model):
             if callable(getattr(omise_object, field.name, None)):
                 continue
 
+            if type(getattr(omise_object, field.name, None)) == omise.Collection:
+                values = getattr(omise_object, field.name)
+                for value in values:
+                    update_or_create_from_omise_object(omise_object=value)
+                continue
+
             if type(field) is models.ForeignKey:
                 value = getattr(omise_object, field.name, None)
 
