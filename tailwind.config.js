@@ -4,7 +4,7 @@ module.exports = {
 		'./django_omise/static/**/*.js',
 	],
 	corePlugins: {
-		preflight: false,
+		preflight: true,
 	},
 	darkMode: 'class',
 	theme: {
