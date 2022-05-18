@@ -1,10 +1,11 @@
 from .forms import CheckoutWithCardsForm, CheckoutForm
 from .models.core import Customer, Charge, Card
-from .models.choices import Currency, ChargeStatus
+from .models.choices import Currency, ChargeStatus, SourceFlow, ChargeSourceType
 from .omise import omise
 
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import FormView
 
@@ -109,7 +110,19 @@ class CheckoutMixin(FormView):
             return super().form_invalid(form)
 
         if charge.status == ChargeStatus.PENDING:
-            return redirect(charge.authorize_uri)
+            if not charge.source:
+                return redirect(charge.authorize_uri)
+
+            if charge.source.flow != SourceFlow.OFFLINE:
+                return redirect(charge.authorize_uri)
+
+            if charge.source.type == ChargeSourceType.PROMPTPAY:
+                return redirect(
+                    reverse(
+                        "django_omise:promptpay_checkout",
+                        kwargs={"pk": charge.id},
+                    )
+                )
 
         if charge.status == ChargeStatus.SUCCESSFUL:
             messages.success(self.request, _("Payment successful."))

@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import FormView, UpdateView, View
+from django.views.generic import FormView, UpdateView, View, DetailView
 
 from django.http import JsonResponse
 
@@ -108,6 +108,26 @@ class OmiseReturnURIView(View):
             messages.warning(request, charge.failure_message)
 
         return redirect(self.get_redirect_url(charge))
+
+
+class PromptpayCheckoutView(DetailView):
+    model = Charge
+    template_name = "django_omise/promptpay_checkout.html"
+    context_object_name = "charge"
+
+    def dispatch(self, *args, **kwargs):
+        charge = self.get_object()
+        source = charge.source
+
+        if source.charge_status == ChargeStatus.PENDING:
+            source = source.reload_from_omise()
+
+        if source.charge_status != ChargeStatus.PENDING:
+            return redirect(
+                reverse("django_omise:return_uri", kwargs={"uid": charge.uid})
+            )
+
+        return super().dispatch(*args, **kwargs)
 
 
 class ManagePaymentMethodsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
