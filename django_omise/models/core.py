@@ -29,6 +29,11 @@ class Customer(OmiseBaseModel):
     Official documentation: https://www.omise.co/customers-api
     """
 
+    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
+        "charges",
+        "user",
+    ]
+
     omise_class = omise.Customer
 
     user = models.ForeignKey(
@@ -544,7 +549,7 @@ class Source(OmiseBaseModel):
             "internet_banking_scb": _("Internet Banking SCB Bank"),
         }
         return source_types[self.type]
-    
+
     @property
     def human_amount(self) -> float:
         if self.currency == Currency.JPY:
