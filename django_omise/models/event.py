@@ -1,5 +1,8 @@
 from .base import OmiseBaseModel
 
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
 from django.db import models
 
 from django_omise.omise import omise
@@ -68,3 +71,14 @@ class Event(OmiseBaseModel):
     event_type = models.CharField(max_length=50, choices=event_type_choices)
 
     data = models.JSONField(default=dict)
+
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, blank=True, null=True
+    )
+    object_id = models.CharField(max_length=255, blank=True, null=True)
+    event_object = GenericForeignKey("content_type", "object_id")
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
