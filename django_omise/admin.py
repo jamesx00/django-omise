@@ -101,10 +101,24 @@ class EventAdmin(admin.ModelAdmin):
         "event_type",
         "date_created",
     )
-    readonly_fields = ("uid",)
+    readonly_fields = (
+        "uid",
+        "event_object",
+        "content_type",
+        "object_id",
+    )
     list_filter = ("livemode", "date_created", "date_updated", "event_type")
 
-    fields = ("id", "livemode", "event_type", "event_data", "uid")
+    fields = (
+        "id",
+        "livemode",
+        "event_type",
+        "event_data",
+        "uid",
+        "event_object",
+        "content_type",
+        "object_id",
+    )
 
     def event_data(self, obj=None):
         return format_html("<pre>{}</pre>", json.dumps(obj.data, indent=4))
