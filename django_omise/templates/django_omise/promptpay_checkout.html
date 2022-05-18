@@ -1,5 +1,7 @@
 {% extends 'django_omise/base.html' %}
 {% load i18n %}
+{% load static %}
+
 {% block head_title %}{% trans 'Promptpay Checkout' %}{% endblock %}
 
 {% block content %}
@@ -31,4 +33,11 @@
 
     </div>
 </div>
+
+<script>
+    const charge = "{{ charge.id }}";
+    const chargeStatusUrl = "{% url 'django_omise:charge_status_json' %}";
+</script>
+<script src="{% static 'django_omise/js/main.js' %}"></script>
+<script src="{% static 'django_omise/js/promptpay.js' %}"></script>
 {% endblock %}

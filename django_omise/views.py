@@ -130,6 +130,46 @@ class PromptpayCheckoutView(DetailView):
         return super().dispatch(*args, **kwargs)
 
 
+def charge_status_json(request):
+
+    if request.method == "POST":
+
+        try:
+            request_body = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return JsonResponse(
+                {"success": False, "message": "The data could not be parsed with JSON"},
+                status=400,
+            )
+
+        charge_id = request_body.get("charge", None)
+
+        if charge_id is None:
+            return JsonResponse(
+                {"success": False, "message": "Value 'charge' required"},
+                status=400,
+            )
+
+        if not Charge.objects.filter(id=charge_id).exists():
+            return JsonResponse(
+                {"success": False, "message": "Object not found"}, status=404
+            )
+
+        charge = Charge.objects.get(id=charge_id)
+
+        if charge.status == ChargeStatus.PENDING:
+            charge = charge.reload_from_omise()
+
+        return JsonResponse(
+            {"success": True, "data": {"status": charge.status}},
+        )
+
+    else:
+        return JsonResponse(
+            {"success": False, "message": "Method not allowed"}, status=400
+        )
+
+
 class ManagePaymentMethodsView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
     form_class = AddCardForm

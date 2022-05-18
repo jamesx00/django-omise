@@ -2,6 +2,7 @@ from django.urls import path, include
 
 from .views import (
     omise_webhook_view,
+    charge_status_json,
     ManagePaymentMethodsView,
     PaymentMethodDeleteView,
     OmiseReturnURIView,
@@ -20,6 +21,7 @@ urlpatterns = [
         PromptpayCheckoutView.as_view(),
         name="promptpay_checkout",
     ),
+    path("charge_status/", charge_status_json, name="charge_status_json"),
     path(
         "payment_methods/",
         include(
