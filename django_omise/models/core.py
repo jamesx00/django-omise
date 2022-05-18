@@ -381,8 +381,8 @@ class Charge(OmiseBaseModel):
     @property
     def human_amount(self) -> float:
         if self.currency == Currency.JPY:
-            return self.amount
-        return self.amount / 100
+            return f"{self.amount:,.2f}"
+        return f"{self.amount / 100:,.2f}"
 
     @classmethod
     def charge(
@@ -553,5 +553,5 @@ class Source(OmiseBaseModel):
     @property
     def human_amount(self) -> float:
         if self.currency == Currency.JPY:
-            return self.amount
-        return self.amount / 100
+            return f"{self.amount:,.2f}"
+        return f"{self.amount / 100:,.2f}"
