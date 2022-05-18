@@ -547,6 +547,7 @@ class Source(OmiseBaseModel):
             "internet_banking_bbl": _("Internet Banking Bangkok Bank"),
             "internet_banking_ktb": _("Internet Banking Krungthai Bank"),
             "internet_banking_scb": _("Internet Banking SCB Bank"),
+            "promptpay": _("Promptpay"),
         }
         return source_types[self.type]
 
