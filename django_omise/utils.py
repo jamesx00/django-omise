@@ -123,6 +123,10 @@ def update_or_create_from_omise_object(
     model = get_model_from_omise_object(
         omise_object=omise_object, raise_if_not_implemented=raise_if_not_implemented
     )
+
+    if model is None:
+        return None
+
     new_object = model.update_or_create_from_omise_object(omise_object=omise_object)
     return new_object
 
