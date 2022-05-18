@@ -152,9 +152,9 @@ def get_model_from_omise_object(
         omise.Event: get_current_app_model(model_name="Event"),
     }
 
-    if raise_if_not_implemented and type(omise.Object) not in model_map:
+    if raise_if_not_implemented and type(omise_object) not in model_map:
         raise ValueError(
-            f"The object {str(type(omise.Object))} has not been implemented"
+            f"The object {str(type(omise_object))} has not been implemented"
         )
 
     return model_map.get(type(omise_object), None)
