@@ -42,6 +42,15 @@ class OmiseBaseModel(models.Model):
             "-date_created",
         ]
 
+    def get_omise_object(self) -> omise.Base:
+        return self.omise_class.retrieve(self.id)
+
+    def reload_from_omise(self) -> "__class__":
+        omise_object = self.omise_class.retrieve(self.id)
+        return self.__class__.update_or_create_from_omise_object(
+            omise_object=omise_object
+        )
+
     @classmethod
     def update_or_create_from_omise_object(
         cls,
