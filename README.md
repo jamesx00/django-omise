@@ -13,9 +13,14 @@ Django models for Omise. Currently, we support the following features:
 -   Allowing customer to add/delete credit/debit cards
 -   Collect payments with new card with the option to keep the card
 -   Collect payments with saved cards
--   Collect payments with online banking
--   Collect payments with TrueMoney Wallet
--   Basic event webhook handler, saving raw data as an Event object
+-   Collect payments with [Internet Banking](https://www.omise.co/internet-banking)
+-   Collect payments with [TrueMoney Wallet](https://www.omise.co/truemoney-wallet)
+-   Collect payments with [Promptpay](https://www.omise.co/promptpay)
+-   Webhook handler, saving raw data as an Event object and update related objects, currently supporting
+    -   Customer
+    -   Card
+    -   Charge
+    -   Source
 -   3DS pending charges handling
 
 See the [roadmap](#roadmap-and-contributions) for the plan of this project. Contributions are welcome!
@@ -51,8 +56,9 @@ OMISE_CHARGE_RETURN_HOST = localhost:8000
 # You must specify additional payment methods.
 OMISE_PAYMENT_METHODS = [
     "card",
-    "internet_banking", # Additional for internet banking
-    "truemoney_wallet", # Required for TrueMoney Wallet
+    "internet_banking", # Internet Banking
+    "truemoney_wallet", # TrueMoney Wallet
+    "promptpay", # Promptpay
 ]
 ```
 
@@ -91,7 +97,7 @@ OMISE_PAYMENT_METHODS = [
     Customer.objects.live().first().add_card(token=omise_token)
     ```
 
-3. Charge a customer (Currently supporting only credit/debit card payment)
+3. Charge a customer (Currently supporting new/saved cards, [Internet Banking](https://www.omise.co/internet-banking), [TrueMoney Wallet](https://www.omise.co/truemoney-wallet), [Promptpay](https://www.omise.co/promptpay))
 
     3.1 With the build-in mixin
 
@@ -155,7 +161,7 @@ Omise Features
 -   Create charge with Sources
     -   [x] Internet banking
     -   [x] TrueMoney Wallet
-    -   [ ] Promptpay
+    -   [x] Promptpay
     -   [ ] Installment
 
 Others
