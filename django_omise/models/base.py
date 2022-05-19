@@ -98,12 +98,9 @@ class OmiseBaseModel(models.Model):
                     defaults[f"{field.name}_id"] = value
                 else:
 
-                    if type(value) in [omise.Card, omise.Source]:
-                        new_object = update_or_create_from_omise_object(
-                            omise_object=value
-                        )
+                    new_object = update_or_create_from_omise_object(omise_object=value)
 
-                        defaults[field.name] = new_object
+                    defaults[field.name] = new_object
 
                 continue
 

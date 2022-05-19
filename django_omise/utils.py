@@ -150,6 +150,7 @@ def get_model_from_omise_object(
         omise.Charge: get_current_app_model(model_name="Charge"),
         omise.Source: get_current_app_model(model_name="Source"),
         omise.Event: get_current_app_model(model_name="Event"),
+        omise.Refund: get_current_app_model(model_name="Refund"),
     }
 
     if raise_if_not_implemented and type(omise_object) not in model_map:

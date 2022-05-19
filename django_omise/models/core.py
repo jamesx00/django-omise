@@ -558,3 +558,40 @@ class Source(OmiseBaseModel):
         if self.currency == Currency.JPY:
             return f"{self.amount:,.2f}"
         return f"{self.amount / 100:,.2f}"
+
+
+class Refund(OmiseBaseModel):
+
+    charge = models.ForeignKey(
+        Charge,
+        related_name="refunds",
+        on_delete=models.PROTECT,
+    )
+
+    amount = models.IntegerField(
+        help_text="Refund amount in smallest unit of charge currency.",
+    )
+
+    currency = models.CharField(
+        max_length=3,
+        choices=Currency.choices,
+    )
+
+    funding_amount = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text=_(
+            "For multi-currency charges, amount after exchange into account funding currency."
+        ),
+    )
+
+    funding_currency = models.CharField(
+        max_length=3,
+        choices=Currency.choices,
+    )
+
+    metadata = models.JSONField(
+        default=dict, blank=True, help_text=_("Custom metadata for this refund.")
+    )
+
+    voided = models.BooleanField()

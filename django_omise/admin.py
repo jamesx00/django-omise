@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 # Register your models here.
-from .models.core import Customer, Card, Charge, Source
+from .models.core import Customer, Card, Charge, Source, Refund
 from .models.event import Event
 
 
@@ -93,6 +93,37 @@ class CardAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Refund)
+class RefundAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "livemode",
+        "data",
+        "date_created",
+        "date_updated",
+        "uid",
+        "charge",
+        "amount",
+        "currency",
+        "funding_amount",
+        "funding_currency",
+        "metadata",
+        "voided",
+    )
+    list_filter = (
+        "livemode",
+        "date_created",
+        "date_updated",
+        "voided",
+    )
+    search_fields = [
+        "charge__id",
+    ]
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = (
@@ -122,6 +153,15 @@ class EventAdmin(admin.ModelAdmin):
 
     def event_data(self, obj=None):
         return format_html("<pre>{}</pre>", json.dumps(obj.data, indent=4))
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+class RefundInline(admin.StackedInline):
+    model = Refund
+
+    extra = 0
 
     def has_change_permission(self, request, obj=None):
         return False
@@ -190,6 +230,10 @@ class ChargeAdmin(admin.ModelAdmin):
         "voided",
         "zero_interest_installments",
     )
+
+    inlines = [
+        RefundInline,
+    ]
 
     readonly_fields = ("uid",)
 
