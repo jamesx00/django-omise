@@ -187,6 +187,8 @@ class Card(OmiseBaseModel):
     expiration_month = models.CharField(max_length=2, blank=True)
     expiration_year = models.CharField(max_length=4, blank=True)
 
+    fingerprint = models.TextField(blank=True)
+
     financing = models.CharField(max_length=10, blank=True)
 
     deleted = models.BooleanField(
