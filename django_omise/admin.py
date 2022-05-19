@@ -98,16 +98,12 @@ class RefundAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "livemode",
-        "data",
         "date_created",
-        "date_updated",
-        "uid",
         "charge",
         "amount",
         "currency",
         "funding_amount",
         "funding_currency",
-        "metadata",
         "voided",
     )
     list_filter = (
