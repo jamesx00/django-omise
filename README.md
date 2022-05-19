@@ -21,6 +21,7 @@ Django models for Omise. Currently, we support the following features:
     -   Card
     -   Charge
     -   Source
+    -   Refund
 -   3DS pending charges handling
 
 See the [roadmap](#roadmap-and-contributions) for the plan of this project. Contributions are welcome!
@@ -156,7 +157,7 @@ Here are our immediate plans for this package, and more will be added! All contr
 
 Omise Features
 
--   Handle refunds API
+-   [x] Handle refunds API
 -   Handle webhook events and update related objects
 -   Create charge with Sources
     -   [x] Internet banking
