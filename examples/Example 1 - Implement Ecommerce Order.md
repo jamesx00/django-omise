@@ -52,7 +52,7 @@ class RevertFailedOrderView(View):
     def get(self, request, pk):
         order = Order.objects.get(pk=pk)
         order.revert_to_cart()
-        return redirect(reverse("ecommerce:checkout"))
+        return redirect(reverse("my_app:checkout"))
 
 ```
 
@@ -131,7 +131,7 @@ class CartItem(models.Model):
 
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(
-        ProductPrice,
+        Product,
         on_delete=models.CASCADE,
     )
     qty = models.PositiveIntegerField(default=1)
