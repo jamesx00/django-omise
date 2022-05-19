@@ -1,0 +1,64 @@
+{% extends 'django_omise/base.html' %}
+{% load i18n %}
+
+{% block head_title %}{% trans 'Omise Account and Capability' %}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-6">
+    <h1 class="text-xl mb-4">{% trans 'Omise account and capability' %}</h1>
+    <div class="p-4 border rounded-lg mb-4 text-sm">
+        <h2 class="text-xl mb-4"><a href="https://www.omise.co/account-api" target="_blank" class="text-blue-500">Account</a></h2>
+        <ul>
+            <li class="mb-2">id: <strong>{{ account.id }}</strong></li>
+            <li class="mb-2">team: <strong>{{ account.team }}</strong></li>
+            <li class="mb-2">livemode: <strong>{{ account.livemode }}</strong></li>
+            <li class="mb-2">country: <strong>{{ account.country }}</strong></li>
+            <li class="mb-2">currency: <strong>{{ account.currency }}</strong></li>
+            <li class="mb-2">email: <strong>{{ account.email }}</strong></li>
+            <li class="mb-2">created_at: <strong>{{ account.created_at }}</strong></li>
+            <li class="mb-2">supported_currencies: <strong>{{ account.supported_currencies|join:", " }}</strong></li>
+            <li class="mb-2">api_version: <strong>{{ account.api_version }}</strong></li>
+            <li class="mb-2">auto_activate_recipients: <strong>{{ account.auto_activate_recipients }}</strong></li>
+            <li class="mb-2">chain_enabled: <strong>{{ account.chain_enabled }}</strong></li>
+            <li class="mb-2">zero_interest_installments: <strong>{{ account.zero_interest_installments }}</strong></li>
+            <li class="mb-2">chain_return_uri: <strong>{{ account.chain_return_uri }}</strong></li>
+            <li class="mb-2">webhook_uri: <strong>{{ account.webhook_uri }}</strong></li>
+            <li class="mb-2">metadata_export_keys: <strong>{{ account.metadata_export_keys }}</strong></li>
+            <li class="mb-2">last_updated_api_version : <strong>{{ account.last_updated_api_version }}</strong></li>
+        </ul>
+    </div>
+    <div class="p-4 border rounded-lg mb-4 text-sm">
+        <h2 class="text-xl mb-4"><a href="https://www.omise.co/capability-api" class="text-blue-500" target="_blank">Capability</a></h2>
+        <ul>
+            <li class="mb-2">banks: <strong>{{ capability.banks|join:", " }}</strong></li>
+            <li class="mb-2">tokenization_methods: <strong>{{ capability.tokenization_methods|join:", " }}</strong></li>
+            <li class="mb-2">country: <strong>{{ capability.country}}</strong></li>
+            <li class="mb-2">zero_interest_installments: <strong>{{ capability.zero_interest_installments }}</strong></li>
+            <li class="mb-2">
+                <p class="mb-2">payment_methods</p>
+                <ul>
+                    {% for payment_method in capability.payment_methods %}
+                        <li class="ml-4 mb-4">
+                            <p>
+                                name: <strong>{{ payment_method.name }}</strong><br />
+                                currencies: <strong>{{ payment_method.currencies|join:", " }}</strong><br />
+                                {% if payment_method.card_brands %}
+                                card_brands: <strong>{{ payment_method.card_brands|join:", "|default_if_none:"-" }}</strong><br />
+                                {% endif %}
+                                
+                                {% if payment_method.installment_terms %}
+                                installment_terms: <strong>{{ payment_method.installment_terms|join:", "|default_if_none:"-" }}</strong><br />
+                                {% endif %}
+
+                                {% if payment_method.banks %}
+                                banks: <strong>{{ payment_method.banks|join:", " }}</strong><br />
+                                {% endif %}
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

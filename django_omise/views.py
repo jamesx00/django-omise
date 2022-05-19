@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import FormView, UpdateView, View, DetailView
+from django.views.generic import FormView, UpdateView, View, DetailView, TemplateView
 
 from django.http import JsonResponse
 
@@ -290,19 +290,26 @@ class CheckoutView(CheckoutMixin):
         )
 
 
-class OmiseAccountAndCapabilityJsonView(View):
-    def get(self, request):
-        if not request.user.is_authenticated or not self.request.user.is_superuser:
+class OmiseAccountAndCapabilityJsonView(TemplateView):
+
+    template_name = "django_omise/account_and_compatibility.html"
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if not self.request.user.is_authenticated or not self.request.user.is_superuser:
             return JsonResponse(
                 {"message": "You have no permission to view this page"},
                 status=403,
             )
 
-        return JsonResponse(
-            {
-                "account": dict(omise.Account.retrieve().__dict__.get("_attributes")),
-                "capability": dict(
-                    omise.Capability.retrieve().__dict__.get("_attributes")
-                ),
-            }
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        context["account"] = dict(omise.Account.retrieve().__dict__.get("_attributes"))
+
+        context["capability"] = dict(
+            omise.Capability.retrieve().__dict__.get("_attributes")
         )
+        return context
