@@ -288,3 +288,21 @@ class CheckoutView(CheckoutMixin):
                 failed_url=self.request.get_full_path(),
             )
         )
+
+
+class OmiseAccountAndCapabilityJsonView(View):
+    def get(self, request):
+        if not request.user.is_authenticated or not self.request.user.is_superuser:
+            return JsonResponse(
+                {"message": "You have no permission to view this page"},
+                status=403,
+            )
+
+        return JsonResponse(
+            {
+                "account": dict(omise.Account.retrieve().__dict__.get("_attributes")),
+                "capability": dict(
+                    omise.Capability.retrieve().__dict__.get("_attributes")
+                ),
+            }
+        )
