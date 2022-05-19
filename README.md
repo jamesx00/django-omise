@@ -101,7 +101,7 @@ OMISE_PAYMENT_METHODS = [
 
     3.1 With the build-in mixin
 
-    This package comes with a built-in mixin, with which you can create a class-based-view and write a few methods to charge a customer. See below for an example:
+    This package comes with a built-in mixin, with which you can create a class-based-view and write a few methods to charge a customer. See below for an example or see [Example 1](./examples/):
 
     ```python
     from django.contrib.auth.mixins import LoginRequiredMixin
