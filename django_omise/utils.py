@@ -143,22 +143,19 @@ def get_model_from_omise_object(
 
     :returns: The corresponding model class.
     """
-    app_label = "django_omise"
     model_map = {
-        omise.Card: get_current_app_model(model_name="Card"),
-        omise.Customer: get_current_app_model(model_name="Customer"),
-        omise.Charge: get_current_app_model(model_name="Charge"),
-        omise.Source: get_current_app_model(model_name="Source"),
-        omise.Event: get_current_app_model(model_name="Event"),
-        omise.Refund: get_current_app_model(model_name="Refund"),
+        "card": get_current_app_model(model_name="Card"),
+        "customer": get_current_app_model(model_name="Customer"),
+        "charge": get_current_app_model(model_name="Charge"),
+        "source": get_current_app_model(model_name="Source"),
+        "event": get_current_app_model(model_name="Event"),
+        "refund": get_current_app_model(model_name="Refund"),
     }
 
-    if raise_if_not_implemented and type(omise_object) not in model_map:
-        raise ValueError(
-            f"The object {str(type(omise_object))} has not been implemented"
-        )
+    if raise_if_not_implemented and omise_object.object not in model_map:
+        raise ValueError(f"The object {omise_object.object} has not been implemented")
 
-    return model_map.get(type(omise_object), None)
+    return model_map.get(omise_object.object, None)
 
 
 def get_current_app_model(model_name: str) -> models.Model:
