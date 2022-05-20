@@ -59,3 +59,23 @@ class SourceFlow(models.TextChoices):
     REDIRECT = "redirect", _("Redirect")
     OFFLINE = "offline", _("Offline")
     APP_REDIRECT = "app_redirect", _("App Redirect")
+
+
+class ScheduleStatus(models.TextChoices):
+    RUNNING = "running", _("Running")
+    EXPIRING = "expiring", _("Expiring")
+    EXPIRED = "expired", _("Expired")
+    DELETED = "deleted", _("Deleted")
+    SUSPENDED = "suspended", _("Suspended")
+
+
+class SchedulePeriod(models.TextChoices):
+    DAY = "day", _("Day")
+    WEEK = "week", _("Week")
+    MONTH = "month", _("Month")
+
+
+class OccurrenceStatus(models.TextChoices):
+    SKIPPED = "skipped", _("Skipped")
+    FAILED = "failed", _("Failed")
+    SUCCESSFUL = "successful", _("Successful")
