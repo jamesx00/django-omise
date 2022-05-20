@@ -48,6 +48,18 @@ class Customer(OmiseBaseModel):
         default=False, help_text=_("Whether this customer was deleted.")
     )
 
+    default_card = models.ForeignKey(
+        "Card", on_delete=models.SET_NULL, blank=True, null=True, related_name="+"
+    )
+
+    description = models.TextField(blank=True)
+
+    email = models.EmailField(blank=True)
+
+    metadata = models.JSONField(
+        default=dict, blank=True, help_text=_("Custom metadata for this customer.")
+    )
+
     objects = NotDeletedManager()
 
     def __str__(self) -> str:
