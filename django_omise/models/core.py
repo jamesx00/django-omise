@@ -1,4 +1,4 @@
-from .base import OmiseBaseModel
+from .base import OmiseBaseModel, OmiseMetadata
 from .choices import Currency, ChargeStatus, ChargeSourceType, SourceFlow
 from .managers import NotDeletedManager
 
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     User = get_user_model()
 
 
-class Customer(OmiseBaseModel):
+class Customer(OmiseBaseModel, OmiseMetadata):
 
     """
     A card representing Omise Customer object.
@@ -55,10 +55,6 @@ class Customer(OmiseBaseModel):
     description = models.TextField(blank=True)
 
     email = models.EmailField(blank=True)
-
-    metadata = models.JSONField(
-        default=dict, blank=True, help_text=_("Custom metadata for this customer.")
-    )
 
     objects = NotDeletedManager()
 
@@ -221,7 +217,7 @@ class Card(OmiseBaseModel):
         self.save()
 
 
-class Charge(OmiseBaseModel):
+class Charge(OmiseBaseModel, OmiseMetadata):
     """
     A class representing Omise Charge object.
 
@@ -331,10 +327,6 @@ class Charge(OmiseBaseModel):
         help_text=_(
             "IP address provided to Omise at charge creation. May be IPv4 or IPv6."
         ),
-    )
-
-    metadata = models.JSONField(
-        default=dict, blank=True, help_text=_("Custom metadata for this charge.")
     )
 
     net = models.IntegerField(
@@ -461,26 +453,6 @@ class Charge(OmiseBaseModel):
 
         return cls.update_or_create_from_omise_object(omise_object=charge, uid=uid)
 
-    def set_metadata(self, metadata: Optional[Dict] = None) -> "Charge":
-        """
-        Set the charge's medata both on Omise and the Charge object.
-
-        :params metadata: A dictionary for medatada
-
-        :returns: The charge instance.
-        """
-
-        if metadata is None:
-            metadata = {}
-
-        charge = omise.Charge.retrieve(self.id)
-        charge.update(metadata=metadata)
-
-        self.metadata = metadata
-        self.save()
-
-        return self
-
 
 class Source(OmiseBaseModel):
     """
@@ -572,7 +544,7 @@ class Source(OmiseBaseModel):
         return f"{self.amount / 100:,.2f}"
 
 
-class Refund(OmiseBaseModel):
+class Refund(OmiseBaseModel, OmiseMetadata):
 
     charge = models.ForeignKey(
         Charge,
@@ -600,10 +572,6 @@ class Refund(OmiseBaseModel):
     funding_currency = models.CharField(
         max_length=3,
         choices=Currency.choices,
-    )
-
-    metadata = models.JSONField(
-        default=dict, blank=True, help_text=_("Custom metadata for this refund.")
     )
 
     voided = models.BooleanField()

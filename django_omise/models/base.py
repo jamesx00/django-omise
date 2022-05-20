@@ -6,11 +6,44 @@ from django.db import models
 
 from django_omise.omise import omise
 from django_omise.utils import (
-    is_omise_object_instances,
     update_or_create_from_omise_object,
 )
 
-from typing import Optional
+from django.utils.translation import gettext_lazy as _
+
+from typing import Optional, Dict
+
+
+class OmiseMetadata(models.Model):
+
+    metadata = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_("Custom metadata for this object."),
+    )
+
+    def set_metadata(self, metadata: Optional[Dict] = None) -> "OmiseBaseModel":
+        """
+        Set the object's medata both on Omise and the Django object.
+
+        :params metadata: A dictionary for medatada
+
+        :returns: Currenct object.
+        """
+
+        if metadata is None:
+            metadata = {}
+
+        omise_object = self.omise_class.retrieve(self.id)
+        omise_object.update(metadata=metadata)
+
+        self.metadata = metadata
+        self.save()
+
+        return self
+
+    class Meta:
+        abstract = True
 
 
 class OmiseBaseModel(models.Model):
