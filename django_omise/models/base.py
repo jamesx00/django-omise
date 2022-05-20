@@ -12,6 +12,7 @@ from django_omise.utils import (
 from django.utils.translation import gettext_lazy as _
 
 from typing import Optional, Dict
+from .managers import DeletableManager
 
 
 class OmiseMetadata(models.Model):
@@ -168,3 +169,15 @@ class OmiseBaseModel(models.Model):
             new_object.save()
 
         return new_object
+
+
+class OmiseDeletableModel(models.Model):
+    deleted = models.BooleanField(
+        default=False,
+        help_text=_("Whether this object is marked as deleted on Omise's server"),
+    )
+
+    objects = DeletableManager()
+
+    class Meta:
+        abstract = True
