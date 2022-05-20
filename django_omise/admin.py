@@ -18,6 +18,10 @@ class CardInline(admin.TabularInline):
         "deleted",
     )
 
+    classes = [
+        "collapse",
+    ]
+
     extra = 0
 
     def has_change_permission(self, request, obj=None):
@@ -29,6 +33,10 @@ class ChargeInline(admin.StackedInline):
     model = Charge
     extra = 0
     can_delete = False
+
+    classes = [
+        "collapse",
+    ]
 
     def has_change_permission(self, request, obj=None):
         return False
@@ -156,6 +164,10 @@ class EventAdmin(admin.ModelAdmin):
 
 class RefundInline(admin.StackedInline):
     model = Refund
+
+    classes = [
+        "collapse",
+    ]
 
     extra = 0
 
