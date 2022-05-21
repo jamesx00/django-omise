@@ -15,7 +15,7 @@ from django.http import JsonResponse
 from .forms import AddCardForm
 from .mixins import CheckoutMixin
 from .models.core import Customer, Card, Charge
-from .models.event import Event
+from .models.event import Event, EventType
 from .models.choices import ChargeStatus, Currency
 from .omise import omise
 from .utils.core_utils import update_or_create_from_omise_object
@@ -59,7 +59,8 @@ def omise_webhook_view(request):
     )
 
     event_data = omise_event.data
-    event_data.reload()
+    if omise_event.key not in [EventType.CARD_DESTROY.value]:
+        event_data.reload()
 
     related_object = update_or_create_from_omise_object(omise_object=event_data)
 
