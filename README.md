@@ -17,11 +17,16 @@ Django models for Omise. Currently, we support the following features:
 -   Collect payments with [TrueMoney Wallet](https://www.omise.co/truemoney-wallet)
 -   Collect payments with [Promptpay](https://www.omise.co/promptpay)
 -   Webhook handler, saving raw data as an Event object and update related objects, currently supporting
+
     -   Customer
     -   Card
     -   Charge
     -   Source
     -   Refund
+    -   Schedule
+    -   Scheduled Charge
+    -   Schedule Occurrence
+
 -   3DS pending charges handling
 
 See the [roadmap](#roadmap-and-contributions) for the plan of this project. Contributions are welcome!
@@ -164,6 +169,9 @@ Omise Features
     -   [x] TrueMoney Wallet
     -   [x] Promptpay
     -   [ ] Installment
+-   Schedule
+    -   [x] Scheduled Charges
+    -   [ ] Scheduled Transfer
 
 Others
 
