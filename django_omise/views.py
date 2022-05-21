@@ -55,7 +55,10 @@ def omise_webhook_view(request):
         },
     )
 
-    related_object = update_or_create_from_omise_object(omise_object=omise_event.data)
+    event_data = omise_event.data
+    event_data.reload()
+
+    related_object = update_or_create_from_omise_object(omise_object=event_data)
 
     if related_object is not None:
         event.event_object = related_object
