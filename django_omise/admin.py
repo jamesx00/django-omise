@@ -165,7 +165,14 @@ class CardAdmin(admin.ModelAdmin):
         "date_updated",
     )
 
-    readonly_fields = ("uid",)
+    readonly_fields = (
+        "uid",
+        "id",
+        "livemode",
+        "customer",
+        "financing",
+        "fingerprint",
+    )
     search_fields = ("customer__user__email", "customer__user__username", "id")
 
     inlines = [
