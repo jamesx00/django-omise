@@ -219,10 +219,10 @@ class EventAdmin(admin.ModelAdmin):
     fields = (
         "id",
         "livemode",
+        "event_object",
         "event_type",
         "event_data",
         "uid",
-        "event_object",
         "content_type",
         "object_id",
     )
