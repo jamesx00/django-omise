@@ -5,7 +5,6 @@ from .managers import NotDeletedManager
 import uuid
 
 from django_omise.omise import omise
-from django_omise.utils import is_omise_object_instances
 
 from django.conf import settings
 from django.contrib.auth import get_user_model

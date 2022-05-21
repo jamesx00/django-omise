@@ -18,7 +18,7 @@ from .models.core import Customer, Card, Charge
 from .models.event import Event
 from .models.choices import ChargeStatus, Currency
 from .omise import omise
-from .utils import update_or_create_from_omise_object
+from .utils.core_utils import update_or_create_from_omise_object
 
 from typing import Dict
 

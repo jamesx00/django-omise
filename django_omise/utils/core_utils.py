@@ -150,6 +150,9 @@ def get_model_from_omise_object(
         "source": get_current_app_model(model_name="Source"),
         "event": get_current_app_model(model_name="Event"),
         "refund": get_current_app_model(model_name="Refund"),
+        "scheduled_charge": get_current_app_model(model_name="ChargeSchedule"),
+        "occurrence": get_current_app_model(model_name="Occurrence"),
+        "schedule": get_current_app_model(model_name="Schedule"),
     }
 
     if raise_if_not_implemented and omise_object.object not in model_map:

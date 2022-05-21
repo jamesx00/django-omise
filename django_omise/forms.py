@@ -4,7 +4,7 @@ from django.conf import settings
 from .models.core import Customer, Card
 from .models.choices import Currency, ChargeSourceType
 from .omise import omise
-from .utils import get_payment_methods_for_form
+from .utils.core_utils import get_payment_methods_for_form
 
 from django.utils.translation import gettext_lazy as _
 
