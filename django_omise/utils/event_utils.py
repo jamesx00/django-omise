@@ -54,3 +54,9 @@ def post_event_handle(omise_event: omise.Event, event_object: Event, raw_event: 
         charge = event_object.event_object
         charge.schedule = schedule
         charge.save()
+
+    if omise_event.key.startswith("customer."):
+
+        customer = event_object.event_object
+        for schedule in customer.schedules:
+            schedule.reload_from_omise()

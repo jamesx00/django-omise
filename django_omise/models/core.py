@@ -4,6 +4,7 @@ from .managers import NotDeletedManager
 
 import uuid
 
+from django.apps import apps
 from django_omise.omise import omise
 
 from django.conf import settings
@@ -84,6 +85,18 @@ class Customer(OmiseBaseModel, OmiseMetadata):
         new_card.save()
 
         return new_card
+
+    @property
+    def schedules(self):
+        """
+        Get a list of all charge schedules belonging to this customer.
+
+        :returns: A list of django_omise.models.schedule.Schedule
+        """
+        schedule_model = apps.get_model(app_label="django_omise", model_name="Schedule")
+        schedule_ids = self.charge_schedules.all().values_list("schedule", flat=True)
+        schedules = [schedule_model.objects.get(pk=pk) for pk in schedule_ids]
+        return schedules
 
     def remove_card(self, card: "Card") -> None:
         """

@@ -93,7 +93,11 @@ class ChargeSchedule(OmiseBaseModel, OmiseMetadata):
     )
 
     card = models.ForeignKey(
-        "django_omise.Card", on_delete=models.PROTECT, related_name="charge_schedules"
+        "django_omise.Card",
+        on_delete=models.PROTECT,
+        related_name="charge_schedules",
+        blank=True,
+        null=True,
     )
 
     customer = models.ForeignKey(
