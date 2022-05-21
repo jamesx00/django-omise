@@ -19,7 +19,7 @@ from .models.event import Event
 from .models.choices import ChargeStatus, Currency
 from .omise import omise
 from .utils.core_utils import update_or_create_from_omise_object
-from .utils.event_utils import handle_event
+from .utils.event_utils import pre_event_handle, post_event_handle
 
 from typing import Dict
 
@@ -46,7 +46,7 @@ def omise_webhook_view(request):
             status=404,
         )
 
-    handle_event(omise_event)
+    pre_event_handle(omise_event=omise_event)
 
     event, created = Event.objects.update_or_create(
         id=omise_event.id,
@@ -66,6 +66,8 @@ def omise_webhook_view(request):
     if related_object is not None:
         event.event_object = related_object
         event.save()
+
+    post_event_handle(omise_event=omise_event, event_object=event)
 
     response = {}
 
