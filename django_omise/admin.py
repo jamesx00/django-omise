@@ -5,6 +5,7 @@ from django.utils.html import format_html
 
 # Register your models here.
 from .models.core import Customer, Card, Charge, Source, Refund
+from .models.schedule import Schedule, Occurrence, ChargeSchedule
 from .models.event import Event
 
 
@@ -27,8 +28,59 @@ class CardInline(admin.TabularInline):
 
     show_change_link = True
 
+    can_delete = False
+
     def has_change_permission(self, request, obj=None):
         return False
+
+
+class ChargeScheduleInline(admin.TabularInline):
+
+    model = ChargeSchedule
+
+    fields = [
+        "id",
+        "livemode",
+        "human_amount",
+        "currency",
+        "card",
+        "default_card",
+        "schedule",
+        "schedule_status",
+        "next_occurrence_on",
+        "schedule_in_words",
+    ]
+
+    readonly_fields = [
+        "human_amount",
+        "schedule",
+        "schedule_status",
+        "next_occurrence_on",
+        "schedule_in_words",
+    ]
+
+    extra = 0
+    can_delete = False
+    show_change_link = True
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def schedule(self, obj=None):
+        if obj:
+            return obj.schedule
+
+    def schedule_status(self, obj=None):
+        if obj:
+            return obj.schedule.status
+
+    def next_occurrence_on(self, obj=None):
+        if obj and obj.schedule.next_occurrences_on:
+            return obj.schedule.next_occurrences_on[0]
+
+    def schedule_in_words(self, obj=None):
+        if obj:
+            return obj.schedule.in_words
 
 
 class ChargeInline(admin.TabularInline):
@@ -83,6 +135,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
     inlines = [
         CardInline,
+        ChargeScheduleInline,
         ChargeInline,
     ]
 
