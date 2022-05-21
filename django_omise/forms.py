@@ -8,7 +8,7 @@ from .utils.core_utils import get_payment_methods_for_form
 
 from django.utils.translation import gettext_lazy as _
 
-from typing import List, Dict
+from typing import Optional, List, Dict
 
 
 class AddCardForm(forms.Form):
@@ -228,7 +228,15 @@ class CheckoutForm(
         initial=settings.OMISE_PUBLIC_KEY,
     )
 
-    def __init__(self, user, amount: int, currency: Currency, *args, **kwargs):
+    def __init__(
+        self,
+        user,
+        amount: int,
+        currency: Currency,
+        payment_methods: Optional[List[str]] = None,
+        *args,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
 
         self.user = user
@@ -246,7 +254,7 @@ class CheckoutForm(
         payment_methods = {
             key: value
             for key, value in all_payment_methods.items()
-            if key in get_payment_methods_for_form()
+            if key in get_payment_methods_for_form(payment_methods)
         }
 
         if user is None or user.is_authenticated == False:

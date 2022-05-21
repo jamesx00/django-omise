@@ -13,13 +13,15 @@ if TYPE_CHECKING:
     from django_omise.models.base import OmiseBaseModel
 
 
-def get_payment_methods_for_form() -> List[str]:
+def get_payment_methods_for_form(payment_methods: Optional[List[str]] = None) -> List[str]:
     """
     Get the payment method as per setting for checkout form
 
     :returns: List of payment methods by setting OMISE_PAYMENT_METHODS or default to credit card only.
     """
-    payment_methods = get_payment_methods()
+    if payment_methods is None:
+        payment_methods = get_payment_methods()
+
     if "card" in payment_methods:
         payment_methods += ["old_card", "new_card"]
 
