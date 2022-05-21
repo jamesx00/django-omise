@@ -14,29 +14,48 @@ class CardInline(admin.TabularInline):
 
     fields = (
         "id",
-        "last_digits",
+        "livemode",
         "deleted",
+        "last_digits",
     )
 
-    classes = [
-        "collapse",
-    ]
+    # classes = [
+    #     "collapse",
+    # ]
 
     extra = 0
+
+    show_change_link = True
 
     def has_change_permission(self, request, obj=None):
         return False
 
 
-class ChargeInline(admin.StackedInline):
+class ChargeInline(admin.TabularInline):
 
     model = Charge
     extra = 0
     can_delete = False
 
-    classes = [
-        "collapse",
+    show_change_link = True
+
+    fields = [
+        "id",
+        "livemode",
+        "status",
+        "human_amount",
+        "currency",
+        "refunded_amount",
+        "schedule",
+        "card",
+        "source",
     ]
+
+    # classes = [
+    #     "collapse",
+    # ]
+
+    readonly_fields = ("human_amount",)
 
     def has_change_permission(self, request, obj=None):
         return False
@@ -162,17 +181,18 @@ class EventAdmin(admin.ModelAdmin):
         return False
 
 
-class RefundInline(admin.StackedInline):
+class RefundInline(admin.TabularInline):
     model = Refund
-
-    classes = [
-        "collapse",
-    ]
 
     extra = 0
 
+    fields = ["id", "livemode", "human_amount", "currency", "voided"]
+    readonly_fields = ("human_amount",)
+
     def has_change_permission(self, request, obj=None):
         return False
+
+    show_change_link = True
 
 
 @admin.register(Charge)
