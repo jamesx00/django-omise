@@ -405,12 +405,34 @@ class ScheduleAdmin(admin.ModelAdmin):
         "active",
     )
 
+    fields = [
+        "id",
+        "livemode",
+        "data",
+        "deleted",
+        "active",
+        "charge",
+        "charge_amount",
+        "end_on",
+        "ended_at",
+        "every",
+        "in_words",
+        "next_occurrences_on",
+        "period",
+        "start_on",
+        "status",
+    ]
+
     inlines = [
         OccurrenceInline,
     ]
 
     def has_change_permission(self, request, obj=None):
         return False
+
+    def charge_amount(self, obj=None):
+        if obj and obj.charge:
+            return f"{obj.charge.human_amount} {obj.charge.currency}"
 
 
 @admin.register(Occurrence)
