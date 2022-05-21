@@ -5,7 +5,7 @@ from django.apps import apps
 from django.db import models
 
 from django_omise.omise import omise
-from django_omise.utils import (
+from django_omise.utils.core_utils import (
     update_or_create_from_omise_object,
 )
 
@@ -13,6 +13,8 @@ from django.utils.translation import gettext_lazy as _
 
 from typing import Optional, Dict
 from .managers import DeletableManager
+
+from typing import List
 
 
 class OmiseMetadata(models.Model):
@@ -91,16 +93,21 @@ class OmiseBaseModel(models.Model):
     def update_or_create_from_omise_object(
         cls,
         omise_object: omise.Base,
+        ignore_fields: Optional[List[str]] = None,
         uid: Optional[uuid.UUID] = None,
     ) -> OmiseBaseModel:
         """
         Update existing charge or create a new charge from Omise Charge object.
 
         :param omise_object: An instance of Omise object
+        :param ignore_fields optional: List of field names to ignore
         :param uuid optional: A unique id for new object.
 
         :returns: An instance of current class
         """
+        if ignore_fields is None:
+            ignore_fields = []
+
         fields = cls._meta.get_fields()
 
         defaults = {}
@@ -114,6 +121,9 @@ class OmiseBaseModel(models.Model):
                 continue
 
             if field.name in cls.NON_DEFAULT_FIELDS:
+                continue
+
+            if field.name in ignore_fields:
                 continue
 
             if callable(getattr(omise_object, field.name, None)):

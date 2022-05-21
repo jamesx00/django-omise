@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import omise
+import uuid
 
 from django.apps import apps
 from django.conf import settings
@@ -110,13 +111,18 @@ def is_omise_object_instances(value) -> bool:
 
 
 def update_or_create_from_omise_object(
-    omise_object: omise.Base, raise_if_not_implemented: bool = False
+    omise_object: omise.Base,
+    raise_if_not_implemented: bool = False,
+    ignore_fields: Optional[List[str]] = None,
+    uid: Optional[uuid.UUID] = None,
 ) -> models.Model:
     """
     Update or create a new Django object from Omise object.
 
     :param omise_object: Any of the Omise object.
     :param raise_if_not_implemented: Whether to raise error if there is no model for Omise object. Default is False.
+    :param ignore_fields optional: List of field names to ignore
+    :param uuid optional: A unique id for new object.
 
     :returns: The corresponding model instance.
     """
@@ -127,7 +133,9 @@ def update_or_create_from_omise_object(
     if model is None:
         return None
 
-    new_object = model.update_or_create_from_omise_object(omise_object=omise_object)
+    new_object = model.update_or_create_from_omise_object(
+        omise_object=omise_object, ignore_fields=ignore_fields, uid=uid
+    )
     return new_object
 
 
