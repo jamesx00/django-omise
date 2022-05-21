@@ -138,7 +138,7 @@ class OmiseBaseModel(models.Model):
                     update_or_create_from_omise_object(omise_object=value)
                 continue
 
-            if type(field) is models.ForeignKey:
+            if type(field) in [models.ForeignKey, models.OneToOneField]:
                 value = getattr(omise_object, field.name, None)
 
                 if value is None or type(value) is str:
