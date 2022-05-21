@@ -28,7 +28,7 @@ from typing import Dict
 def omise_webhook_view(request):
 
     try:
-        event_data = json.loads(request.body)
+        raw_event_data = json.loads(request.body)
     except json.decoder.JSONDecodeError:
         return JsonResponse(
             {"success": False, "message": "The data could not be parsed with JSON"},
@@ -36,17 +36,17 @@ def omise_webhook_view(request):
         )
 
     try:
-        omise_event = omise.Event.retrieve(event_data.get("id"))
+        omise_event = omise.Event.retrieve(raw_event_data.get("id"))
     except omise.errors.NotFoundError:
         return JsonResponse(
             {
                 "success": False,
-                "message": f"Could not find the event with the id {event_data.get('id')}.",
+                "message": f"Could not find the event with the id {raw_event_data.get('id')}.",
             },
             status=404,
         )
 
-    pre_event_handle(omise_event=omise_event)
+    pre_event_handle(omise_event=omise_event, raw_event=raw_event_data)
 
     event, created = Event.objects.update_or_create(
         id=omise_event.id,
@@ -54,7 +54,7 @@ def omise_webhook_view(request):
         defaults={
             "event_type": omise_event.key,
             "date_created": omise_event.created_at,
-            "data": event_data,
+            "data": raw_event_data,
         },
     )
 
@@ -67,7 +67,9 @@ def omise_webhook_view(request):
         event.event_object = related_object
         event.save()
 
-    post_event_handle(omise_event=omise_event, event_object=event)
+    post_event_handle(
+        omise_event=omise_event, event_object=event, raw_event=raw_event_data
+    )
 
     response = {}
 
