@@ -176,6 +176,7 @@ class CardAdmin(admin.ModelAdmin):
     search_fields = ("customer__user__email", "customer__user__username", "id")
 
     inlines = [
+        ChargeScheduleInline,
         ChargeInline,
     ]
 
