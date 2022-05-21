@@ -258,38 +258,40 @@ class ChargeAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "livemode",
-        "status",
         "date_created",
         "date_updated",
-        "amount",
-        # "authorize_uri",
-        "authorized",
-        "capturable",
-        "capture",
-        # "card",
+        "status",
         "currency",
+        "amount",
+        "refunded_amount",
+        "refundable",
+        # "authorize_uri",
+        # "authorized",
+        # "capturable",
+        # "capture",
+        # "card",
+        "source_type",
+        "schedule",
         # "customer",
         "description",
-        "disputable",
-        "expired",
-        "expired_at",
-        "expires_at",
-        "failure_code",
+        # "disputable",
+        # "expired",
+        # "expired_at",
+        # "expires_at",
+        # "failure_code",
         "failure_message",
-        "fee",
-        "fee_vat",
-        "funding_amount",
-        "funding_currency",
-        "interest",
-        "interest_vat",
-        "ip",
-        "net",
-        "paid",
-        "paid_at",
-        "refundable",
-        "refunded_amount",
-        "reversed",
-        # "source",
+        # "fee",
+        # "fee_vat",
+        # "funding_amount",
+        # "funding_currency",
+        # "interest",
+        # "interest_vat",
+        # "ip",
+        # "net",
+        # "paid",
+        # "paid_at",
+        # "reversed",
+        "source",
         "voided",
         "zero_interest_installments",
     )
@@ -316,7 +318,15 @@ class ChargeAdmin(admin.ModelAdmin):
         RefundInline,
     ]
 
-    readonly_fields = ("uid",)
+    readonly_fields = ("uid", "source_type")
+
+    def source_type(self, obj=None):
+
+        if obj and obj.card:
+            return f"card ends with {obj.card.last_digits}"
+
+        if obj and obj.source:
+            return obj.source.get_type_display()
 
 
 @admin.register(Source)
@@ -348,6 +358,100 @@ class SourceAdmin(admin.ModelAdmin):
         "name",
     )
     readonly_fields = ("uid",)
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+class OccurrenceInline(admin.TabularInline):
+    model = Occurrence
+
+    extra = 0
+
+    show_change_link = True
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Schedule)
+class ScheduleAdmin(admin.ModelAdmin):
+    list_display = (
+        "status",
+        "id",
+        "livemode",
+        "date_created",
+        "date_updated",
+        "deleted",
+        "active",
+        "every",
+        "in_words",
+        "period",
+        "start_on",
+    )
+    list_filter = (
+        "livemode",
+        "date_created",
+        "date_updated",
+        "deleted",
+        "active",
+    )
+
+    inlines = [
+        OccurrenceInline,
+    ]
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Occurrence)
+class OccurrenceAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "livemode",
+        "date_created",
+        "date_updated",
+        "message",
+        "processed_at",
+        "retry_on",
+        "schedule",
+        "schduled_on",
+        "status",
+    )
+    list_filter = (
+        "livemode",
+        "date_created",
+        "date_updated",
+        "processed_at",
+        "retry_on",
+        "schedule",
+        "schduled_on",
+    )
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(ChargeSchedule)
+class ChargeScheduleAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "livemode",
+        "date_created",
+        "date_updated",
+        "amount",
+        "currency",
+        "card",
+        "customer",
+        "default_card",
+    )
+    list_filter = (
+        "livemode",
+        "date_created",
+        "date_updated",
+        "default_card",
+    )
 
     def has_change_permission(self, request, obj=None):
         return False

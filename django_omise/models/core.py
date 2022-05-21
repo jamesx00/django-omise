@@ -31,6 +31,7 @@ class Customer(OmiseBaseModel, OmiseMetadata):
     NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
         "charges",
         "user",
+        "charge_schedules",
     ]
 
     omise_class = omise.Customer
@@ -166,6 +167,7 @@ class Card(OmiseBaseModel):
     NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
         "charges",
         "customer",
+        "charge_schedules",
     ]
 
     customer = models.ForeignKey(
@@ -357,7 +359,13 @@ class Charge(OmiseBaseModel, OmiseMetadata):
         help_text=_("Whether charge authorization is able to be reversed."),
     )
 
-    # To be implemented # schedule = models.ForeignKey(Schedule, on_delete=models.PROTECT, )
+    schedule = models.ForeignKey(
+        "django_omise.Schedule",
+        on_delete=models.PROTECT,
+        related_name="charges",
+        blank=True,
+        null=True,
+    )
 
     source = models.ForeignKey(
         "Source",
