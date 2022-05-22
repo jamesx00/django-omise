@@ -112,20 +112,20 @@ class Customer(OmiseBaseModel, OmiseMetadata):
 
     def create_schedule(
         self,
-        card: "Card",
         amount: int,
         currency: Currency,
         every: int,
         period: str,
         start_date: datetime.date,
         end_date: datetime.date,
-        on: Dict,
+        card: Optional["Card"] = None,
+        on: Optional[Dict] = None,
         description: Optional[str] = None,
     ) -> models.Model:
         """
         Create a new charge schedule for the customer
 
-        :params card: The card to create a schedule with.
+        :params card optional: The card to create a schedule with. Leave blank will default to customer's default card.
         :params amount: The charge amount in the smallest unit.
         :currency: Charge currency
 
@@ -138,9 +138,14 @@ class Customer(OmiseBaseModel, OmiseMetadata):
         :start_date: The start date of the schedule
         :end_date: The end date of the schedule. Cannot be more than 1 year from the start date.
 
-        :on: Object specifying schedule timing.
-            Can either be {'weekday_of_month': str}
+        :on optional: Object specifying schedule timing. Required when period is not day.
+
+            When period is month, can either be {'weekday_of_month': str}
             or {'days_of_month': List[int]}
+
+            When period is week, has to be {'weekdays': List[str]}
+
+        :description optional: The description for charge
 
         :returns: An instance of Django Schedule object django_omise.models.schedule.Schedule
 
@@ -152,7 +157,7 @@ class Customer(OmiseBaseModel, OmiseMetadata):
             "currency": currency,
         }
 
-        if self.default_card != card:
+        if card is not None:
             charge["card"] = card.id
 
         if description is not None:
