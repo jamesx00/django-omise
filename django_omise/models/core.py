@@ -2,10 +2,12 @@ from .base import OmiseBaseModel, OmiseMetadata
 from .choices import Currency, ChargeStatus, ChargeSourceType, SourceFlow
 from .managers import NotDeletedManager
 
+import datetime
 import uuid
 
 from django.apps import apps
 from django_omise.omise import omise
+from django_omise.utils.core_utils import update_or_create_from_omise_object
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -107,6 +109,65 @@ class Customer(OmiseBaseModel, OmiseMetadata):
         :returns: None
         """
         self.cards.filter(id=card.id).delete()
+
+    def create_schedule(
+        self,
+        card: "Card",
+        amount: int,
+        currency: Currency,
+        every: int,
+        period: str,
+        start_date: datetime.date,
+        end_date: datetime.date,
+        on: Dict,
+        description: Optional[str] = None,
+    ) -> models.Model:
+        """
+        Create a new charge schedule for the customer
+
+        :params card: The card to create a schedule with.
+        :params amount: The charge amount in the smallest unit.
+        :currency: Charge currency
+
+        :every: How often schedule should run when applied to period.
+                For example, if set to 3 and period is set to week, schedule should run every 3 weeks.
+
+        period: Period to use for every. One of day, week or month.
+                For example, if set to week and every is set to 3 schedule should run every 3 weeks.
+
+        :start_date: The start date of the schedule
+        :end_date: The end date of the schedule. Cannot be more than 1 year from the start date.
+
+        :on: Object specifying schedule timing.
+            Can either be {'weekday_of_month': str}
+            or {'days_of_month': List[int]}
+
+        :returns: An instance of Django Schedule object django_omise.models.schedule.Schedule
+
+        """
+
+        charge = {
+            "customer": self.id,
+            "amount": amount,
+            "currency": currency,
+        }
+
+        if self.default_card != card:
+            charge["card"] = card.id
+
+        if description is not None:
+            charge["description"] = description
+
+        schedule = omise.Schedule.create(
+            every=every,
+            period=period,
+            start_date=str(start_date),
+            end_date=str(end_date),
+            charge=charge,
+            on=on,
+        )
+
+        return update_or_create_from_omise_object(omise_object=schedule)
 
     def charge_with_card(
         self,
