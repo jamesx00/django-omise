@@ -56,6 +56,7 @@ class ChargeScheduleInline(admin.TabularInline):
         "human_amount",
         "currency",
         "card",
+        "card_available",
         "default_card",
         "schedule_status",
         "next_occurrence_on",
@@ -70,6 +71,7 @@ class ChargeScheduleInline(admin.TabularInline):
         "next_occurrence_on",
         "schedule_in_words",
         "schedule_period",
+        "card_available",
     ]
 
     extra = 0
@@ -98,6 +100,12 @@ class ChargeScheduleInline(admin.TabularInline):
     def schedule_period(self, obj=None):
         if obj:
             return f"{obj.schedule.start_on} - {obj.schedule.end_on}"
+
+    def card_available(self, obj=None):
+        if obj and obj.card:
+            return not obj.card.deleted
+
+    card_available.boolean = True
 
 
 class ChargeInline(admin.TabularInline):
