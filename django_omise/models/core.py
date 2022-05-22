@@ -167,7 +167,12 @@ class Customer(OmiseBaseModel, OmiseMetadata):
             on=on,
         )
 
-        return update_or_create_from_omise_object(omise_object=schedule)
+        return update_or_create_from_omise_object(
+            omise_object=schedule,
+            ignore_fields=[
+                "occurrences",
+            ],
+        )
 
     def charge_with_card(
         self,
