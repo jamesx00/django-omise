@@ -443,6 +443,7 @@ class ScheduleAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
+        ChargeInline,
         OccurrenceInline,
     ]
 
