@@ -16,6 +16,7 @@ Django models for Omise. Currently, we support the following features:
 -   Collect payments with [Internet Banking](https://www.omise.co/internet-banking)
 -   Collect payments with [TrueMoney Wallet](https://www.omise.co/truemoney-wallet)
 -   Collect payments with [Promptpay](https://www.omise.co/promptpay)
+-   Collect payments with [Rabbit LINE Pay](https://www.omise.co/rabbit-linepay)
 -   Webhook handler, saving raw data as an Event object and update related objects, currently supporting
 
     -   Customer
@@ -168,6 +169,7 @@ Omise Features
     -   [x] Internet banking
     -   [x] TrueMoney Wallet
     -   [x] Promptpay
+    -   [x] Rabbit LINE Pay
     -   [ ] Installment
 -   Schedule
     -   [x] Scheduled Charges
