@@ -16,9 +16,14 @@ class CardInline(admin.TabularInline):
     fields = (
         "id",
         "livemode",
+        "default_card",
         "deleted",
         "last_digits",
     )
+
+    readonly_fields = [
+        "default_card",
+    ]
 
     # classes = [
     #     "collapse",
@@ -33,22 +38,29 @@ class CardInline(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+    def default_card(self, obj=None):
+        if obj and obj.customer:
+            return obj.customer.default_card == obj
+
+    default_card.boolean = True
+
 
 class ChargeScheduleInline(admin.TabularInline):
 
     model = ChargeSchedule
 
     fields = [
-        "id",
+        # "id",
+        "schedule",
         "livemode",
         "human_amount",
         "currency",
         "card",
         "default_card",
-        "schedule",
         "schedule_status",
         "next_occurrence_on",
         "schedule_in_words",
+        "schedule_period",
     ]
 
     readonly_fields = [
@@ -57,6 +69,7 @@ class ChargeScheduleInline(admin.TabularInline):
         "schedule_status",
         "next_occurrence_on",
         "schedule_in_words",
+        "schedule_period",
     ]
 
     extra = 0
@@ -81,6 +94,10 @@ class ChargeScheduleInline(admin.TabularInline):
     def schedule_in_words(self, obj=None):
         if obj:
             return obj.schedule.in_words
+
+    def schedule_period(self, obj=None):
+        if obj:
+            return f"{obj.schedule.start_on} - {obj.schedule.end_on}"
 
 
 class ChargeInline(admin.TabularInline):
