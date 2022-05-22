@@ -248,7 +248,8 @@ class CheckoutForm(
             "new_card": _("Pay with a new card"),
             "internet_banking": _("Internet banking"),
             "truemoney_wallet": _("TrueMoney Wallet"),
-            ChargeSourceType.PROMPTPAY: _("Promptpay"),
+            ChargeSourceType.PROMPTPAY: ChargeSourceType.PROMPTPAY.label,
+            ChargeSourceType.RABBIT_LINEPAY: ChargeSourceType.RABBIT_LINEPAY.label,
         }
 
         payment_methods = {
@@ -349,8 +350,11 @@ class CheckoutForm(
                 "phone_number": self.cleaned_data["phone_number"],
             }
 
-        if payment_method == ChargeSourceType.PROMPTPAY:
-            charge_details["source"] = {"type": ChargeSourceType.PROMPTPAY}
+        if payment_method in [
+            ChargeSourceType.PROMPTPAY,
+            ChargeSourceType.RABBIT_LINEPAY,
+        ]:
+            charge_details["source"] = {"type": payment_method}
 
         return charge_details
 

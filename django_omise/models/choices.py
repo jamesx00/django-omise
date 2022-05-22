@@ -53,6 +53,7 @@ class ChargeSourceType(models.TextChoices):
     INTERNET_BANKING_KTB = "internet_banking_ktb", _("Krungthai Bank")
     INTERNET_BANKING_SCB = "internet_banking_scb", _("SCB Bank")
     PROMPTPAY = "promptpay", _("Promptpay")
+    RABBIT_LINEPAY = "rabbit_linepay", _("Rabbit LINE Pay")
 
 
 class SourceFlow(models.TextChoices):

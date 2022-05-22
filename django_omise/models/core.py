@@ -550,12 +550,13 @@ class Source(OmiseBaseModel):
     @property
     def source_type_name(self):
         source_types = {
-            "truemoney": _("TrueMoney Wallet"),
             "internet_banking_bay": _("Internet Banking Krungsri Bank"),
             "internet_banking_bbl": _("Internet Banking Bangkok Bank"),
             "internet_banking_ktb": _("Internet Banking Krungthai Bank"),
             "internet_banking_scb": _("Internet Banking SCB Bank"),
-            "promptpay": _("Promptpay"),
+            ChargeSourceType.PROMPTPAY: ChargeSourceType.PROMPTPAY.label,
+            ChargeSourceType.RABBIT_LINEPAY: ChargeSourceType.RABBIT_LINEPAY.label,
+            ChargeSourceType.TRUEMONEY_WALLET: ChargeSourceType.TRUEMONEY_WALLET.label,
         }
         return source_types[self.type]
 
