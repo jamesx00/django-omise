@@ -66,6 +66,7 @@ OMISE_PAYMENT_METHODS = [
     "internet_banking", # Internet Banking
     "truemoney_wallet", # TrueMoney Wallet
     "promptpay", # Promptpay
+    "rabbit_linepay", # Rabbit LINE Pay
 ]
 ```
 
