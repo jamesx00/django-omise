@@ -155,6 +155,33 @@ OMISE_PAYMENT_METHODS = [
         # Do something else
     ```
 
+4. Create a charge schedule for a customer:
+
+At the moment, you can create a new schedule for a customer manually by calling the method create_schedule from a Custoemr object. See below for an example:
+
+```python
+import datetime
+from django_omise.models.choices import Currency
+from django_omise.models.core import Customer
+
+customer = Customer.objects.first()
+card = customer.default_card
+
+customer.create_schedule(
+    amount=100000,
+    currency=Currency.THB,
+    card=card,
+    every=1,
+    period="month",
+    start_date=datetime.date(year=2022, month=5, day=22),
+    end_date=datetime.date(year=2032, month=5, day=22),
+    on={
+        'days_of_month': [22],
+    },
+    description="Monthly subscription",
+)
+```
+
 ### Roadmap and contributions
 
 ---
