@@ -6,7 +6,7 @@ class ChargeStatus(models.TextChoices):
     FAILED = "failed", _("Failed")
     EXPIRED = "expired", _("Expired")
     PENDING = "pending", _("Pending")
-    REVERSED = "reverse", _("Reversed")
+    REVERSED = "reversed", _("Reversed")
     SUCCESSFUL = "successful", _("Successful")
     UNKNOWN = "unknown", _("Unknown")
 
