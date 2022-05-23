@@ -124,6 +124,7 @@ class ChargeInline(admin.TabularInline):
         "currency",
         "refunded_amount",
         "refundable",
+        "capturable",
         "schedule",
         "card",
         "source",
