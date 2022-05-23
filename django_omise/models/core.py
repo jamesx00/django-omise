@@ -186,6 +186,8 @@ class Customer(OmiseBaseModel, OmiseMetadata):
         card: "Card",
         return_uri: str = None,
         metadata: dict = None,
+        capture: bool = True,
+        description: Optional[str] = None,
     ) -> "Charge":
         """
         Charge the customer with provided card.
@@ -198,6 +200,8 @@ class Customer(OmiseBaseModel, OmiseMetadata):
             card=card,
             return_uri=return_uri,
             metadata=metadata,
+            capture=capture,
+            description=description,
         )
 
     @classmethod
@@ -491,8 +495,10 @@ class Charge(OmiseBaseModel, OmiseMetadata):
         token: Optional[omise.Token] = None,
         card: Optional[Card] = None,
         source: Optional[Dict] = None,
-        return_uri: str = None,
-        metadata: dict = None,
+        return_uri: Optional[str] = None,
+        metadata: Optional[dict] = None,
+        capture: Optional[bool] = False,
+        description: Optional[str] = None,
     ) -> "Charge":
         """
         Charge the customer with provided payment_method.
@@ -504,6 +510,9 @@ class Charge(OmiseBaseModel, OmiseMetadata):
         :param source: The source to charge.
         :param return_uri optional: The return uri.
         :param metadata optional: The charge metadata.
+        :param capture: Whether to capture this charge immediately.
+        :param description: The charge description.
+
         :returns: An instace of Charge object.
         """
         if [token, card, source].count(None) == 3:
@@ -541,6 +550,8 @@ class Charge(OmiseBaseModel, OmiseMetadata):
             currency=currency,
             metadata=metadata,
             return_uri=return_uri,
+            capture=capture,
+            description=description,
             **charge_details,
         )
 
