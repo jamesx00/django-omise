@@ -497,7 +497,7 @@ class Charge(OmiseBaseModel, OmiseMetadata):
         source: Optional[Dict] = None,
         return_uri: Optional[str] = None,
         metadata: Optional[dict] = None,
-        capture: Optional[bool] = False,
+        capture: Optional[bool] = True,
         description: Optional[str] = None,
     ) -> "Charge":
         """
