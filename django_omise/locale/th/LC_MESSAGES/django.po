@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-26 02:59+0700\n"
+"POT-Creation-Date: 2022-05-26 03:19+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,55 +18,99 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: forms.py:70 forms.py:171
+#: forms.py:28 forms.py:126
+msgid "Card number"
+msgstr "หมายเลขบัตร"
+
+#: forms.py:33 forms.py:131
+msgid "Name on card"
+msgstr "ชื่อบนบัตร"
+
+#: forms.py:38 forms.py:136
+msgid "Expiration month"
+msgstr "เดือนหมดอายุ"
+
+#: forms.py:43 forms.py:141
+msgid "Expiration year"
+msgstr "ปีหมดอายุ"
+
+#: forms.py:48 forms.py:146
+msgid "Security number"
+msgstr "รหัสเพื่อความปลอดภัย"
+
+#: forms.py:75 forms.py:189
 msgid "Error processing the card. Please try again."
 msgstr "เกิดปัญหาขัดข้องระหว่างชำระเงิน กรุณาลองอีกครั้ง"
 
-#: forms.py:199 models/choices.py:51
+#: forms.py:96
+msgid "Your card"
+msgstr "บัตรของคุณ"
+
+#: forms.py:152
+msgid "Keep card"
+msgstr "ใช้บัตรซ้ำ"
+
+#: forms.py:212
+msgid "Saved cards"
+msgstr "บัตรของคุณ"
+
+#: forms.py:220 models/choices.py:51
 msgid "Krungsri Bank"
 msgstr "ธนาคารกรุงศรีอยุธยา"
 
-#: forms.py:200 models/choices.py:52
+#: forms.py:221 models/choices.py:52
 msgid "Bangkok Bank"
 msgstr "ธนาคารกรุงเทพ"
 
-#: forms.py:201 models/choices.py:53
+#: forms.py:222 models/choices.py:53
 msgid "Krungthai Bank"
 msgstr "ธนาคารกรุงไทย"
 
-#: forms.py:202 models/choices.py:54
+#: forms.py:223 models/choices.py:54
 msgid "SCB Bank"
 msgstr "ธนาคารไทยพาณิชย์"
 
-#: forms.py:247
+#: forms.py:228
+msgid "Bank"
+msgstr "ธนาคาร"
+
+#: forms.py:236
+msgid "Phone Number"
+msgstr "เบอร์โทรศัพท์"
+
+#: forms.py:252
+msgid "Payment method"
+msgstr "วิธีชำระเงิน"
+
+#: forms.py:277
 msgid "Pay with your card"
 msgstr "ชำระด้วยบัตรเดิม"
 
-#: forms.py:248
+#: forms.py:278
 msgid "Pay with a new card"
 msgstr "ชำระด้วยบัตรใหม่"
 
-#: forms.py:249
+#: forms.py:279
 msgid "Internet banking"
 msgstr "อินเตอร์เน็ตแบงค์กิ้ง"
 
-#: forms.py:250 models/choices.py:50
+#: forms.py:280 models/choices.py:50
 msgid "TrueMoney Wallet"
-msgstr ""
+msgstr "ทรูมันนี่ วอลเล็ท"
 
-#: forms.py:297
+#: forms.py:327
 msgid "You need to provide a new card details"
 msgstr "กรุณาเพิ่มรายละเอียดบัตรเครดิต/เดบิท"
 
-#: forms.py:302
+#: forms.py:332
 msgid "You need to select at least one card"
 msgstr "กรุณาเลือกอย่างน้อยหนึ่งวิธีชำระเงิน"
 
-#: forms.py:307
+#: forms.py:337
 msgid "You need to select at least one bank"
 msgstr "กรุณาเลือกอย่างน้อยหนึ่งธนาคาร"
 
-#: forms.py:315
+#: forms.py:345
 msgid "Mobile number is required for TrueMoney Wallet payment"
 msgstr "ต้องใช้เบอร์มือถือในการชำระเงินผ่านทรูมันนี่"
 
@@ -84,7 +128,7 @@ msgstr ""
 
 #: models/choices.py:6 models/choices.py:81
 msgid "Failed"
-msgstr "ล้มเหลว"
+msgstr ""
 
 #: models/choices.py:7 models/choices.py:68
 msgid "Expired"

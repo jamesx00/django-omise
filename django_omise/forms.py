@@ -25,22 +25,27 @@ class AddCardForm(forms.Form):
 
     card_number = forms.CharField(
         required=False,
+        label=_("Card number"),
     )
 
     name_on_card = forms.CharField(
         required=False,
+        label=_("Name on card"),
     )
 
     expiration_month = forms.CharField(
         required=False,
+        label=_("Expiration month"),
     )
 
     expiration_year = forms.CharField(
         required=False,
+        label=_("Expiration year"),
     )
 
     security_number = forms.CharField(
         required=False,
+        label=_("Security number"),
     )
 
     class Media:
@@ -85,7 +90,11 @@ class AddCardForm(forms.Form):
 
 class CheckoutWithCardsForm(forms.Form):
 
-    card = forms.ModelChoiceField(queryset=None, widget=forms.RadioSelect)
+    card = forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.RadioSelect,
+        label=_("Your card"),
+    )
 
     def __init__(self, *args, **kwargs):
 
@@ -114,25 +123,34 @@ class PayWithNewCardForm(forms.Form):
 
     card_number = forms.CharField(
         required=False,
+        label=_("Card number"),
     )
 
     name_on_card = forms.CharField(
         required=False,
+        label=_("Name on card"),
     )
 
     expiration_month = forms.CharField(
         required=False,
+        label=_("Expiration month"),
     )
 
     expiration_year = forms.CharField(
         required=False,
+        label=_("Expiration year"),
     )
 
     security_number = forms.CharField(
         required=False,
+        label=_("Security number"),
     )
 
-    keep_card = forms.BooleanField(initial=False, required=False)
+    keep_card = forms.BooleanField(
+        initial=False,
+        required=False,
+        label=_("Keep card"),
+    )
 
     class Media:
         js = (
@@ -188,7 +206,10 @@ class PayWithNewCardForm(forms.Form):
 class PayWithExistingCardForm(forms.Form):
 
     card = forms.ModelChoiceField(
-        queryset=None, widget=forms.RadioSelect, required=False
+        queryset=None,
+        widget=forms.RadioSelect,
+        required=False,
+        label=_("Saved cards"),
     )
 
 
@@ -204,11 +225,16 @@ class PayWithInternetBankingForm(forms.Form):
         widget=forms.RadioSelect,
         required=False,
         initial="internet_banking_bay",
+        label=_("Bank"),
     )
 
 
 class PayWithTrueMoneyForm(forms.Form):
-    phone_number = forms.CharField(max_length=10, required=False)
+    phone_number = forms.CharField(
+        max_length=10,
+        required=False,
+        label=_("Phone Number"),
+    )
 
 
 class CheckoutForm(
@@ -219,7 +245,11 @@ class CheckoutForm(
 ):
 
     payment_method = forms.ChoiceField(
-        choices=(), required=True, widget=forms.RadioSelect, initial="new_card"
+        choices=(),
+        required=True,
+        widget=forms.RadioSelect,
+        initial="new_card",
+        label=_("Payment method"),
     )
 
     omise_public_key = forms.CharField(
