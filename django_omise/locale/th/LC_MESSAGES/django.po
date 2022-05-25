@@ -1,0 +1,433 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-05-26 02:59+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: forms.py:70 forms.py:171
+msgid "Error processing the card. Please try again."
+msgstr "เกิดปัญหาขัดข้องระหว่างชำระเงิน กรุณาลองอีกครั้ง"
+
+#: forms.py:199 models/choices.py:51
+msgid "Krungsri Bank"
+msgstr "ธนาคารกรุงศรีอยุธยา"
+
+#: forms.py:200 models/choices.py:52
+msgid "Bangkok Bank"
+msgstr "ธนาคารกรุงเทพ"
+
+#: forms.py:201 models/choices.py:53
+msgid "Krungthai Bank"
+msgstr "ธนาคารกรุงไทย"
+
+#: forms.py:202 models/choices.py:54
+msgid "SCB Bank"
+msgstr "ธนาคารไทยพาณิชย์"
+
+#: forms.py:247
+msgid "Pay with your card"
+msgstr "ชำระด้วยบัตรเดิม"
+
+#: forms.py:248
+msgid "Pay with a new card"
+msgstr "ชำระด้วยบัตรใหม่"
+
+#: forms.py:249
+msgid "Internet banking"
+msgstr "อินเตอร์เน็ตแบงค์กิ้ง"
+
+#: forms.py:250 models/choices.py:50
+msgid "TrueMoney Wallet"
+msgstr ""
+
+#: forms.py:297
+msgid "You need to provide a new card details"
+msgstr "กรุณาเพิ่มรายละเอียดบัตรเครดิต/เดบิท"
+
+#: forms.py:302
+msgid "You need to select at least one card"
+msgstr "กรุณาเลือกอย่างน้อยหนึ่งวิธีชำระเงิน"
+
+#: forms.py:307
+msgid "You need to select at least one bank"
+msgstr "กรุณาเลือกอย่างน้อยหนึ่งธนาคาร"
+
+#: forms.py:315
+msgid "Mobile number is required for TrueMoney Wallet payment"
+msgstr "ต้องใช้เบอร์มือถือในการชำระเงินผ่านทรูมันนี่"
+
+#: mixins.py:128 mixins.py:215
+msgid "Payment successful."
+msgstr "การชำระเงินสำเร็จ"
+
+#: models/base.py:25
+msgid "Custom metadata for this object."
+msgstr ""
+
+#: models/base.py:187
+msgid "Whether this object is marked as deleted on Omise's server"
+msgstr ""
+
+#: models/choices.py:6 models/choices.py:81
+msgid "Failed"
+msgstr "ล้มเหลว"
+
+#: models/choices.py:7 models/choices.py:68
+msgid "Expired"
+msgstr ""
+
+#: models/choices.py:8
+msgid "Pending"
+msgstr ""
+
+#: models/choices.py:9
+msgid "Reversed"
+msgstr ""
+
+#: models/choices.py:10 models/choices.py:82
+msgid "Successful"
+msgstr ""
+
+#: models/choices.py:11
+msgid "Unknown"
+msgstr ""
+
+#: models/choices.py:17
+msgid "United States Dollar"
+msgstr ""
+
+#: models/choices.py:21
+msgid "Thai Baht"
+msgstr ""
+
+#: models/choices.py:25
+msgid "Singapore Dollar"
+msgstr ""
+
+#: models/choices.py:29
+msgid "Japanese Yen"
+msgstr ""
+
+#: models/choices.py:33
+msgid "Pound Sterling"
+msgstr ""
+
+#: models/choices.py:37
+msgid "Euro"
+msgstr ""
+
+#: models/choices.py:41
+msgid "Chinese Yuan"
+msgstr ""
+
+#: models/choices.py:45
+msgid "Australian Dollar"
+msgstr ""
+
+#: models/choices.py:55
+msgid "Promptpay"
+msgstr "พร้อมเพย์"
+
+#: models/choices.py:56
+msgid "Rabbit LINE Pay"
+msgstr ""
+
+#: models/choices.py:60
+msgid "Redirect"
+msgstr ""
+
+#: models/choices.py:61
+msgid "Offline"
+msgstr ""
+
+#: models/choices.py:62
+msgid "App Redirect"
+msgstr ""
+
+#: models/choices.py:66
+msgid "Running"
+msgstr ""
+
+#: models/choices.py:67
+msgid "Expiring"
+msgstr ""
+
+#: models/choices.py:69
+msgid "Deleted"
+msgstr ""
+
+#: models/choices.py:70
+msgid "Suspended"
+msgstr ""
+
+#: models/choices.py:74
+msgid "Day"
+msgstr "วัน"
+
+#: models/choices.py:75
+msgid "Week"
+msgstr ""
+
+#: models/choices.py:76
+msgid "Month"
+msgstr "เดือน"
+
+#: models/choices.py:80
+msgid "Skipped"
+msgstr ""
+
+#: models/core.py:51
+msgid "Whether this customer was deleted."
+msgstr ""
+
+#: models/core.py:292
+msgid "Whethe this card was deleted."
+msgstr ""
+
+#: models/core.py:321
+msgid "Status of this charge."
+msgstr ""
+
+#: models/core.py:329
+msgid "URI for payment authorization (e.g. 3-D Secure)."
+msgstr ""
+
+#: models/core.py:334
+msgid "Whether charge has been authorized."
+msgstr ""
+
+#: models/core.py:339
+msgid "Whether charge is able to be captured (paid)."
+msgstr ""
+
+#: models/core.py:344
+msgid "Whether charge is set to be automatically captured (paid)."
+msgstr ""
+
+#: models/core.py:353
+msgid "Card that was charged (if card was charged)."
+msgstr ""
+
+#: models/core.py:367
+msgid "Customer associated with charge."
+msgstr ""
+
+#: models/core.py:374
+msgid "Whether this charge has expired."
+msgstr ""
+
+#: models/core.py:390 models/core.py:675
+msgid ""
+"For multi-currency charges, amount after exchange into account funding "
+"currency."
+msgstr ""
+
+#: models/core.py:403
+msgid ""
+"Interest paid by customer or merchant over the course of an installment term."
+msgstr ""
+
+#: models/core.py:410
+msgid "Value-added Tax (VAT) applied to interest."
+msgstr ""
+
+#: models/core.py:417
+msgid "IP address provided to Omise at charge creation. May be IPv4 or IPv6."
+msgstr ""
+
+#: models/core.py:422
+msgid "funding_amount after fees, interest, and VAT deducted."
+msgstr ""
+
+#: models/core.py:425
+msgid "Whether charge has been captured (paid)."
+msgstr ""
+
+#: models/core.py:428
+msgid "Whether charge is able to be refunded."
+msgstr ""
+
+#: models/core.py:434
+msgid "Refunded amount in smallest unit of currency."
+msgstr ""
+
+#: models/core.py:440
+msgid ""
+"URI to which customer is redirected after 3-D Secure card authorization or "
+"other redirect-based authorization."
+msgstr ""
+
+#: models/core.py:447
+msgid "Whether charge authorization is able to be reversed."
+msgstr ""
+
+#: models/core.py:470
+msgid ""
+"Whether, in the case of a refund, charge was voided instead. Charges are "
+"voided if refund is processed before settlement time."
+msgstr ""
+
+#: models/core.py:478
+msgid ""
+"Whether merchant absorbs the interest for installment payments; must match "
+"value in associated source."
+msgstr ""
+
+#: models/core.py:575 models/core.py:583
+msgid "Source amount in smallest unit of source currency"
+msgstr ""
+
+#: models/core.py:589
+msgid "Status of charge created using this source (if any)"
+msgstr ""
+
+#: models/core.py:598
+msgid "The payer's email"
+msgstr ""
+
+#: models/core.py:604
+msgid ""
+"The payment flow payers need to go through to complete the payment. One of "
+"redirect, offline, or app_redirect"
+msgstr ""
+
+#: models/core.py:610
+msgid "Installment term in months"
+msgstr ""
+
+#: models/core.py:613
+msgid "Payer's name"
+msgstr ""
+
+#: models/core.py:619
+msgid ""
+"Platform from which payer is making a payment. One of WEB, IOS, or ANDROID"
+msgstr ""
+
+#: models/core.py:635
+msgid "Internet Banking Krungsri Bank"
+msgstr "อินเตอร์เน็ตแบงค์กิ้ง ธนาคารกรุงศรีอยุธยา"
+
+#: models/core.py:636
+msgid "Internet Banking Bangkok Bank"
+msgstr "อินเตอร์เน็ตแบงค์กิ้ง ธนาคารกรุงเทพ"
+
+#: models/core.py:637
+msgid "Internet Banking Krungthai Bank"
+msgstr "อินเตอร์เน็ตแบงค์กิ้ง ธนาคารกรุงไทย"
+
+#: models/core.py:638
+msgid "Internet Banking SCB Bank"
+msgstr "อินเตอร์เน็ตแบงค์กิ้ง ธนาคารไทยพาณิชย์"
+
+#: models/schedule.py:20
+msgid "Whether schedule is status running or expiring."
+msgstr ""
+
+#: models/schedule.py:32
+msgid "End date of schedule in ISO 8601 format."
+msgstr ""
+
+#: models/schedule.py:38
+msgid "Actual end date of schedule in ISO 8601 format."
+msgstr ""
+
+#: models/schedule.py:45
+msgid ""
+"How often schedule should run when applied to period. For example, if set to "
+"3 and period is set to week, schedule should run every 3 weeks."
+msgstr ""
+
+#: models/schedule.py:55
+msgid "Start date of schedule in ISO 8601 format."
+msgstr ""
+
+#: templates/django_omise/account_and_compatibility.html:4
+msgid "Omise Account and Capability"
+msgstr ""
+
+#: templates/django_omise/account_and_compatibility.html:8
+msgid "Omise account and capability"
+msgstr ""
+
+#: templates/django_omise/card_confirm_delete.html:4
+msgid "Delete Payment Method"
+msgstr "ลบวิธีชำระเงิน"
+
+#: templates/django_omise/card_confirm_delete.html:8
+msgid "Delete Card"
+msgstr "ลบบัตร"
+
+#: templates/django_omise/card_confirm_delete.html:12
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+#: templates/django_omise/card_confirm_delete.html:13
+msgid "Delete card"
+msgstr "ลบบัตร"
+
+#: templates/django_omise/checkout.html:66
+msgid "Make the payment"
+msgstr "ชำระเงิน"
+
+#: templates/django_omise/manage_payment_methods.html:4
+msgid "Manage Payment Methods"
+msgstr "จัดการวิธีชำระเงิน"
+
+#: templates/django_omise/manage_payment_methods.html:15
+msgid "Add new card"
+msgstr "เพิ่มบัตรใหม่"
+
+#: templates/django_omise/manage_payment_methods.html:19
+msgid "Add card"
+msgstr "เพิ่มบัตร"
+
+#: templates/django_omise/manage_payment_methods.html:26
+msgid "Your payment methods"
+msgstr "วิธีชำระเงินของคุณ"
+
+#: templates/django_omise/promptpay_checkout.html:5
+msgid "Promptpay Checkout"
+msgstr "ชำระเงินผ่านพร้อมเพย์"
+
+#: templates/django_omise/promptpay_checkout.html:15
+msgid "Complete the payment with the QR code below."
+msgstr "ชำระเงินผ่านการ QR ​Code ด้านล่าง"
+
+#: templates/django_omise/promptpay_checkout.html:18
+msgid "Total"
+msgstr "ยอดรวม"
+
+#: templates/django_omise/promptpay_checkout.html:22
+msgid "Payment completed"
+msgstr "การชำระเงินเสร็จสิ้น"
+
+#: templates/django_omise/promptpay_checkout.html:26
+msgid "Payment failed"
+msgstr "การชำระเงินล้มเหลว"
+
+#: views.py:116
+msgid "Payment successful"
+msgstr "การชำระเงินสำเร็จ"
+
+#: views.py:188
+msgid "A new payment method has been added."
+msgstr "เพิ่มวิธีการชำระเงินเสร็จสิ้น"
+
+#: views.py:225
+msgid "A card has been deleted."
+msgstr "ลบวิธีชำระเงินเสร็จสิ้น"
