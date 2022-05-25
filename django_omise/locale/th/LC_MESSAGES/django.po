@@ -48,7 +48,7 @@ msgstr "บัตรของคุณ"
 
 #: forms.py:152
 msgid "Keep card"
-msgstr "ใช้บัตรซ้ำ"
+msgstr "บันทึกเพื่อใช้ในอนาคต"
 
 #: forms.py:212
 msgid "Saved cards"
