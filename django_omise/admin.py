@@ -110,19 +110,19 @@ class ChargeScheduleInline(admin.TabularInline):
         if obj:
             if obj.schedule.status == ScheduleStatus.RUNNING:
                 return format_html(
-                    "<span style='background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<div style='display:inline-block; background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                     obj.schedule.status,
                 )
 
             if obj.schedule.status == ScheduleStatus.EXPIRING:
                 return format_html(
-                    "<span style='background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<div style='display:inline-block; background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                     obj.schedule.status,
                 )
 
             if obj.schedule.status == ScheduleStatus.EXPIRED:
                 return format_html(
-                    "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<div style='display:inline-block; background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                     obj.schedule.status,
                 )
 
@@ -131,12 +131,12 @@ class ChargeScheduleInline(admin.TabularInline):
                 ScheduleStatus.SUSPENDED,
             ]:
                 return format_html(
-                    "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<div style='display:inline-block; background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                     obj.schedule.status,
                 )
 
             return format_html(
-                "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                "<div style='display:inline-block; background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                 obj.schedule.status,
             )
 
@@ -175,27 +175,27 @@ class ChargeInline(admin.TabularInline):
 
     def colorized_status(self, obj=None):
         if obj:
-            if obj.status == ChargeStatus.SUCCESSFUL:
+            if obj.extended_status == ChargeStatus.SUCCESSFUL:
                 return format_html(
-                    "<span style='background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
-                    obj.status,
+                    "<div style='display:inline-block; background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
+                    obj.extended_status,
                 )
 
-            if obj.status == ChargeStatus.FAILED:
+            if obj.extended_status == ChargeStatus.FAILED:
                 return format_html(
-                    "<span style='background-color: red; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
-                    obj.status,
+                    "<div style='display:inline-block; background-color: red; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
+                    obj.extended_status,
                 )
 
-            if obj.status == ChargeStatus.PENDING:
+            if obj.extended_status == ChargeStatus.PENDING:
                 return format_html(
-                    "<span style='background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</span>",
-                    obj.status,
+                    "<div style='display:inline-block; background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</div>",
+                    obj.extended_status,
                 )
 
             return format_html(
-                "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
-                obj.status,
+                "<div style='display:inline-block; background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
+                obj.extended_status,
             )
 
     colorized_status.short_description = "status"
@@ -424,27 +424,27 @@ class ChargeAdmin(admin.ModelAdmin):
 
     def colorized_status(self, obj=None):
         if obj:
-            if obj.status == ChargeStatus.SUCCESSFUL:
+            if obj.extended_status == ChargeStatus.SUCCESSFUL:
                 return format_html(
-                    "<span style='background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
-                    obj.status,
+                    "<div style='display:inline-block; background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
+                    obj.extended_status,
                 )
 
-            if obj.status == ChargeStatus.FAILED:
+            if obj.extended_status == ChargeStatus.FAILED:
                 return format_html(
-                    "<span style='background-color: red; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
-                    obj.status,
+                    "<div style='display:inline-block; background-color: red; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
+                    obj.extended_status,
                 )
 
-            if obj.status == ChargeStatus.PENDING:
+            if obj.extended_status == ChargeStatus.PENDING:
                 return format_html(
-                    "<span style='background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</span>",
-                    obj.status,
+                    "<div style='display:inline-block; background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</div>",
+                    obj.extended_status,
                 )
 
             return format_html(
-                "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
-                obj.status,
+                "<div style='display:inline-block; background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
+                obj.extended_status,
             )
 
     colorized_status.short_description = "status"
@@ -563,30 +563,30 @@ class ScheduleAdmin(admin.ModelAdmin):
         if obj:
             if obj.status == ScheduleStatus.RUNNING:
                 return format_html(
-                    "<span style='background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<div style='display:inline-block; background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                     obj.status,
                 )
 
             if obj.status == ScheduleStatus.EXPIRING:
                 return format_html(
-                    "<span style='background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<div style='display:inline-block; background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                     obj.status,
                 )
 
             if obj.status == ScheduleStatus.EXPIRED:
                 return format_html(
-                    "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<div style='display:inline-block; background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                     obj.status,
                 )
 
             if obj.status in [ScheduleStatus.DELETED, ScheduleStatus.SUSPENDED]:
                 return format_html(
-                    "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<div style='display:inline-block; background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                     obj.status,
                 )
 
             return format_html(
-                "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                "<div style='display:inline-block; background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</div>",
                 obj.status,
             )
 

@@ -480,6 +480,16 @@ class Charge(OmiseBaseModel, OmiseMetadata):
     )
 
     @property
+    def extended_status(self):
+        if self.refunded_amount == self.amount:
+            return "refunded"
+
+        if self.refunded_amount != 0 and self.refunded_amount < self.amount:
+            return "partially refunded"
+
+        return self.status
+
+    @property
     def human_amount(self) -> float:
         if not self.pk:
             return 0
