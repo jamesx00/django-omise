@@ -5,6 +5,7 @@ from django.utils.html import format_html
 
 # Register your models here.
 from .models.core import Customer, Card, Charge, Source, Refund
+from .models.choices import ChargeStatus
 from .models.schedule import Schedule, Occurrence, ChargeSchedule
 from .models.event import Event
 
@@ -119,7 +120,7 @@ class ChargeInline(admin.TabularInline):
     fields = [
         "id",
         "livemode",
-        "status",
+        "colorized_status",
         "human_amount",
         "currency",
         "refunded_amount",
@@ -134,7 +135,34 @@ class ChargeInline(admin.TabularInline):
     #     "collapse",
     # ]
 
-    readonly_fields = ("human_amount",)
+    readonly_fields = ("human_amount", "colorized_status")
+
+    def colorized_status(self, obj=None):
+        if obj:
+            if obj.status == ChargeStatus.SUCCESSFUL:
+                return format_html(
+                    "<span style='background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            if obj.status == ChargeStatus.FAILED:
+                return format_html(
+                    "<span style='background-color: red; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            if obj.status == ChargeStatus.PENDING:
+                return format_html(
+                    "<span style='background-color: yellow; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            return format_html(
+                "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                obj.status,
+            )
+
+    colorized_status.short_description = "status"
 
     def has_change_permission(self, request, obj=None):
         return False
@@ -295,7 +323,8 @@ class ChargeAdmin(admin.ModelAdmin):
         "livemode",
         "date_created",
         "date_updated",
-        "status",
+        # "status",
+        "colorized_status",
         # "amount",
         "human_amount",
         "currency",
@@ -332,6 +361,7 @@ class ChargeAdmin(admin.ModelAdmin):
         "zero_interest_installments",
     )
     list_filter = (
+        "status",
         "livemode",
         "date_created",
         "date_updated",
@@ -354,7 +384,34 @@ class ChargeAdmin(admin.ModelAdmin):
         RefundInline,
     ]
 
-    readonly_fields = ("uid", "source_type")
+    readonly_fields = ("uid", "source_type", "colorized_status")
+
+    def colorized_status(self, obj=None):
+        if obj:
+            if obj.status == ChargeStatus.SUCCESSFUL:
+                return format_html(
+                    "<span style='background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            if obj.status == ChargeStatus.FAILED:
+                return format_html(
+                    "<span style='background-color: red; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            if obj.status == ChargeStatus.PENDING:
+                return format_html(
+                    "<span style='background-color: yellow; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            return format_html(
+                "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                obj.status,
+            )
+
+    colorized_status.short_description = "status"
 
     def source_type(self, obj=None):
 
@@ -413,8 +470,8 @@ class OccurrenceInline(admin.TabularInline):
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
     list_display = (
-        "status",
         "id",
+        "status",
         "livemode",
         "date_created",
         "date_updated",
@@ -449,6 +506,12 @@ class ScheduleAdmin(admin.ModelAdmin):
         "period",
         "start_on",
         "status",
+    ]
+
+    search_fields = [
+        "id",
+        "charge__customer__user__username",
+        "charge__customer__user__email",
     ]
 
     inlines = [
