@@ -116,7 +116,7 @@ class ChargeScheduleInline(admin.TabularInline):
 
             if obj.schedule.status == ScheduleStatus.EXPIRING:
                 return format_html(
-                    "<span style='background-color: yellow; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<span style='background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</span>",
                     obj.schedule.status,
                 )
 
@@ -189,7 +189,7 @@ class ChargeInline(admin.TabularInline):
 
             if obj.status == ChargeStatus.PENDING:
                 return format_html(
-                    "<span style='background-color: yellow; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<span style='background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</span>",
                     obj.status,
                 )
 
@@ -438,7 +438,7 @@ class ChargeAdmin(admin.ModelAdmin):
 
             if obj.status == ChargeStatus.PENDING:
                 return format_html(
-                    "<span style='background-color: yellow; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<span style='background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</span>",
                     obj.status,
                 )
 
@@ -569,7 +569,7 @@ class ScheduleAdmin(admin.ModelAdmin):
 
             if obj.status == ScheduleStatus.EXPIRING:
                 return format_html(
-                    "<span style='background-color: yellow; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    "<span style='background-color: yellow; padding: 0.25rem; border-radius: 5px;'>{}</span>",
                     obj.status,
                 )
 
