@@ -349,7 +349,11 @@ class RefundInline(admin.TabularInline):
 
 @admin.register(Charge)
 class ChargeAdmin(admin.ModelAdmin):
-    search_fields = ("id",)
+    search_fields = (
+        "id",
+        "customer__user__email",
+        "customer__user__username",
+    )
 
     def has_change_permission(self, request, obj=None):
         return False
