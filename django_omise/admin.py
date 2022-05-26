@@ -5,7 +5,7 @@ from django.utils.html import format_html
 
 # Register your models here.
 from .models.core import Customer, Card, Charge, Source, Refund
-from .models.choices import ChargeStatus
+from .models.choices import ChargeStatus, ScheduleStatus
 from .models.schedule import Schedule, Occurrence, ChargeSchedule
 from .models.event import Event
 
@@ -59,7 +59,7 @@ class ChargeScheduleInline(admin.TabularInline):
         "card",
         "card_available",
         "default_card",
-        "schedule_status",
+        "colorized_status",
         "next_occurrence_on",
         "schedule_in_words",
         "schedule_period",
@@ -68,7 +68,7 @@ class ChargeScheduleInline(admin.TabularInline):
     readonly_fields = [
         "human_amount",
         "schedule",
-        "schedule_status",
+        "colorized_status",
         "next_occurrence_on",
         "schedule_in_words",
         "schedule_period",
@@ -105,6 +105,42 @@ class ChargeScheduleInline(admin.TabularInline):
     def card_available(self, obj=None):
         if obj and obj.card:
             return not obj.card.deleted
+
+    def colorized_status(self, obj=None):
+        if obj:
+            if obj.schedule.status == ScheduleStatus.RUNNING:
+                return format_html(
+                    "<span style='background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.schedule.status,
+                )
+
+            if obj.schedule.status == ScheduleStatus.EXPIRING:
+                return format_html(
+                    "<span style='background-color: yellow; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.schedule.status,
+                )
+
+            if obj.schedule.status == ScheduleStatus.EXPIRED:
+                return format_html(
+                    "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.schedule.status,
+                )
+
+            if obj.schedule.status in [
+                ScheduleStatus.DELETED,
+                ScheduleStatus.SUSPENDED,
+            ]:
+                return format_html(
+                    "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.schedule.status,
+                )
+
+            return format_html(
+                "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                obj.schedule.status,
+            )
+
+    colorized_status.short_description = "Schedule status"
 
     card_available.boolean = True
 
@@ -471,7 +507,7 @@ class OccurrenceInline(admin.TabularInline):
 class ScheduleAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "status",
+        "colorized_status",
         "livemode",
         "date_created",
         "date_updated",
@@ -508,6 +544,10 @@ class ScheduleAdmin(admin.ModelAdmin):
         "status",
     ]
 
+    read_only_fields = [
+        "colorized_status",
+    ]
+
     search_fields = [
         "id",
         "charge__customer__user__username",
@@ -518,6 +558,39 @@ class ScheduleAdmin(admin.ModelAdmin):
         ChargeInline,
         OccurrenceInline,
     ]
+
+    def colorized_status(self, obj=None):
+        if obj:
+            if obj.status == ScheduleStatus.RUNNING:
+                return format_html(
+                    "<span style='background-color: green; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            if obj.status == ScheduleStatus.EXPIRING:
+                return format_html(
+                    "<span style='background-color: yellow; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            if obj.status == ScheduleStatus.EXPIRED:
+                return format_html(
+                    "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            if obj.status in [ScheduleStatus.DELETED, ScheduleStatus.SUSPENDED]:
+                return format_html(
+                    "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                    obj.status,
+                )
+
+            return format_html(
+                "<span style='background-color: gray; color: white; padding: 0.25rem; border-radius: 5px;'>{}</span>",
+                obj.status,
+            )
+
+    colorized_status.short_description = "Status"
 
     def has_change_permission(self, request, obj=None):
         return False
