@@ -4,10 +4,10 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 # Register your models here.
-from .models.core import Customer, Card, Charge, Source, Refund
-from .models.choices import ChargeStatus, ScheduleStatus
-from .models.schedule import Schedule, Occurrence, ChargeSchedule
-from .models.event import Event
+from django_omise.models.core import Customer, Card, Charge, Source, Refund
+from django_omise.models.choices import ChargeStatus, ScheduleStatus
+from django_omise.models.schedule import Schedule, Occurrence, ChargeSchedule
+from django_omise.models.event import Event
 
 
 class CardInline(admin.TabularInline):

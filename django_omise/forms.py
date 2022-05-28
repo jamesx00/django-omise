@@ -11,6 +11,19 @@ from django.utils.translation import gettext_lazy as _
 from typing import Optional, List, Dict
 
 
+class IssueRefundForm(forms.Form):
+    def __init__(self, charge, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.charge = charge
+        self.fields["refund_amount"].initial = (
+            self.charge.amount - self.charge.refunded_amount
+        )
+
+    refund_amount = forms.IntegerField(
+        label=_("Refund Amount"),
+    )
+
+
 class AddCardForm(forms.Form):
 
     omise_token = forms.CharField(

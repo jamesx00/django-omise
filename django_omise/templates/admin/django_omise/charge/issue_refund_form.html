@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Issue refund for charge {{ form.charge.id }}{% endblock %}
+
+{% block content %}
+{{ block.super }}
+
+<h1>Issue a refund for charge {{ form.charge.id }}</h1>
+<p>
+    Charge details: <br />
+    Amount in currency: {{ form.charge.human_amount }} {{ form.charge.currency }} <br />
+    Amount in smallest unit: {{ form.charge.amount }} <br />
+    Refunded: {{ form.charge.refunded_amount }}
+</p>
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button>Issue refund</button>
+</form>
+
+{% endblock %}

@@ -313,6 +313,11 @@ class Charge(OmiseBaseModel, OmiseMetadata):
     Official documentation: https://www.omise.co/charges-api
     """
 
+    class Meta:
+        permissions = [
+            ("issue_refund", "Can issue refunds"),
+        ]
+
     omise_class = omise.Charge
 
     status = models.CharField(

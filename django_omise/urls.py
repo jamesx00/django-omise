@@ -11,6 +11,8 @@ from .views import (
     OmiseAccountAndCapabilityJsonView,
 )
 
+from .admin_views import IssueRefundView
+
 app_name = "django_omise"
 
 urlpatterns = [
@@ -42,6 +44,25 @@ urlpatterns = [
                     PaymentMethodDeleteView.as_view(),
                     name="delete_payment_method",
                 ),
+            ]
+        ),
+    ),
+    path(
+        "custom_model_action/",
+        include(
+            [
+                path(
+                    "charge/",
+                    include(
+                        [
+                            path(
+                                "<pk>/refund/",
+                                IssueRefundView.as_view(),
+                                name="issue_refund",
+                            )
+                        ]
+                    ),
+                )
             ]
         ),
     ),

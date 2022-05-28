@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+
+{% block submit_buttons_bottom %}
+{{ block.super }}
+{% if original and original.refundable %} {# Only show if changing #}
+        <div class="submit-row">
+            <a href="{% url 'django_omise:issue_refund' original.id %}">
+                Issue refund
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
