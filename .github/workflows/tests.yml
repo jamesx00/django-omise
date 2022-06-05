@@ -10,39 +10,39 @@ jobs:
         strategy:
             max-parallel: 4
             matrix:
-            include:
-                - python-version: "3.6"
-                    django-version: Django==2.2
+                include:
+                    - python-version: "3.6"
+                        django-version: Django==2.2
 
-                - python-version: "3.6"
-                    django-version: Django==3.2
+                    - python-version: "3.6"
+                        django-version: Django==3.2
 
-                - python-version: "3.7"
-                    django-version: Django==2.2
+                    - python-version: "3.7"
+                        django-version: Django==2.2
 
-                - python-version: "3.7"
-                    django-version: Django==3.2
+                    - python-version: "3.7"
+                        django-version: Django==3.2
 
-                - python-version: "3.8"
-                    django-version: Django==3.2
+                    - python-version: "3.8"
+                        django-version: Django==3.2
 
-                - python-version: "3.8"
-                    django-version: Django==4.0
+                    - python-version: "3.8"
+                        django-version: Django==4.0
 
-                - python-version: "3.9"
-                    django-version: Django==2.2
+                    - python-version: "3.9"
+                        django-version: Django==2.2
 
-                - python-version: "3.9"
-                    django-version: Django==3.2
+                    - python-version: "3.9"
+                        django-version: Django==3.2
 
-                - python-version: "3.9"
-                    django-version: Django==4.0
+                    - python-version: "3.9"
+                        django-version: Django==4.0
 
-                - python-version: "3.10"
-                    django-version: Django==3.2
+                    - python-version: "3.10"
+                        django-version: Django==3.2
 
-                - python-version: "3.10"
-                    django-version: Django==4.0
+                    - python-version: "3.10"
+                        django-version: Django==4.0
 
         steps:
             - uses: actions/checkout@v3
