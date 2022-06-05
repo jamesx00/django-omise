@@ -3,7 +3,12 @@ import json
 from .mockdata.customer import customer_response, add_card_response
 from .mockdata.token import token_response
 from .mockdata.card import delete_card_response
-from .mockdata.charge import base_charge_response, base_charge_jpy
+from .mockdata.charge import (
+    base_charge_response,
+    base_charge_jpy,
+    partially_refunded_response,
+    fully_refunded_response,
+)
 
 
 class MockResponse:
@@ -43,8 +48,20 @@ def mocked_requests_get(*args, **kwargs):
     return MockResponse(None, 404)
 
 
+def mocked_base_charge_request(*args, **kwargs):
+    return MockResponse(base_charge_response, 200)
+
+
 def mocked_charge_with_card_request(*args, **kwargs):
     return MockResponse(base_charge_response, 200)
+
+
+def mocked_partially_refunded_charge_request(*args, **kwargs):
+    return MockResponse(partially_refunded_response, 200)
+
+
+def mocked_fully_refunded_charge_request(*args, **kwargs):
+    return MockResponse(fully_refunded_response, 200)
 
 
 def mocked_jpy_charge(*args, **kwargs):

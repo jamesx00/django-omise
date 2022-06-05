@@ -4,13 +4,20 @@ from django.contrib.auth import get_user_model
 
 from django_omise.models.core import Customer, Card, Charge
 from django_omise.models.choices import Currency
+from django_omise.omise import omise
+
+from django_omise.utils.core_utils import update_or_create_from_omise_object
 
 from unittest import mock
 
 from .test_utils import (
+    mocked_fully_refunded_charge_request,
     mocked_requests_post,
     mocked_requests_get,
     mocked_charge_with_card_request,
+    mocked_partially_refunded_charge_request,
+    mocked_fully_refunded_charge_request,
+    mocked_base_charge_request,
     mocked_jpy_charge,
 )
 
@@ -63,6 +70,9 @@ class CustomerTestCase(TestCase):
     @mock.patch("requests.post", side_effect=mocked_charge_with_card_request)
     @mock.patch("requests.get", side_effect=mocked_charge_with_card_request)
     def test_charge_human_amount(self, mocked_post_request, mocked_get_request):
+        unsaved_charge = Charge(amount=100000)
+        self.assertEqual(unsaved_charge.human_amount, 0)
+
         charge = Charge.charge(
             amount=100000,
             currency=Currency.THB,
@@ -81,3 +91,24 @@ class CustomerTestCase(TestCase):
         )
 
         self.assertEqual(charge.human_amount, "100,000.00")
+
+    @mock.patch("requests.get", side_effect=mocked_partially_refunded_charge_request)
+    def test_charge_extended_status_partially_refund(self, mocked_api):
+        omise_charge = omise.Charge.retrieve("charge_id")
+        charge = update_or_create_from_omise_object(omise_object=omise_charge)
+
+        self.assertEqual(charge.extended_status, "partially refunded")
+
+    @mock.patch("requests.get", side_effect=mocked_fully_refunded_charge_request)
+    def test_charge_extended_status_fully_refund(self, mocked_api):
+        omise_charge = omise.Charge.retrieve("charge_id")
+        charge = update_or_create_from_omise_object(omise_object=omise_charge)
+
+        self.assertEqual(charge.extended_status, "refunded")
+
+    @mock.patch("requests.get", side_effect=mocked_base_charge_request)
+    def test_charge_extended_status_normal(self, mocked_api):
+        omise_charge = omise.Charge.retrieve("charge_id")
+        charge = update_or_create_from_omise_object(omise_object=omise_charge)
+
+        self.assertEqual(charge.extended_status, omise_charge.status)
