@@ -15,9 +15,15 @@ class CustomerTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="test_user1")
 
-    @mock.patch("requests.post", side_effect=mocked_requests_post)
-    @mock.patch("requests.get", side_effect=mocked_requests_get)
-    def test_create_customer(self, get_api_call, post_api_call):
+        post_patcher = mock.patch("requests.post", side_effect=mocked_requests_post)
+        get_patcher = mock.patch("requests.get", side_effect=mocked_requests_get)
+        post_patcher.start()
+        get_patcher.start()
+
+    def tearDown(self):
+        mock.patch.stopall()
+
+    def test_create_customer(self):
         customer, created = Customer.get_or_create(user=self.user)
         self.assertTrue(created)
 
