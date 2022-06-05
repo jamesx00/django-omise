@@ -10,7 +10,9 @@ settings.configure(
             "ENGINE": "django.db.backends.sqlite3",
         }
     },
-    ROOT_URLCONF="django_omise.urls",
+    ROOT_URLCONF="urls",
+    USE_TZ=True,
+    TIME_ZONE="Asia/Bangkok",
     INSTALLED_APPS=(
         "django.contrib.auth",
         "django.contrib.contenttypes",
