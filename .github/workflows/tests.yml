@@ -21,9 +21,6 @@ jobs:
                       django-version: Django==4.0
 
                     - python-version: '3.9'
-                      django-version: Django==2.2
-
-                    - python-version: '3.9'
                       django-version: Django==3.2
 
                     - python-version: '3.9'
