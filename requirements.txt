@@ -1,0 +1,2 @@
+Django==3.2.11
+git+https://github.com/omise/omise-python@bfcf283378a823139b9f19f10e84d42a98c5b1ac
