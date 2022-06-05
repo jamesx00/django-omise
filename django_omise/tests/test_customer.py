@@ -6,7 +6,11 @@ from django_omise.models.core import Customer, Card
 
 from unittest import mock
 
-from .test_utils import mocked_requests_post, mocked_requests_get
+from .test_utils import (
+    mocked_requests_post,
+    mocked_requests_get,
+    mocked_add_card_request,
+)
 
 User = get_user_model()
 
@@ -15,10 +19,13 @@ class CustomerTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="test_user1")
 
-        post_patcher = mock.patch("requests.post", side_effect=mocked_requests_post)
-        get_patcher = mock.patch("requests.get", side_effect=mocked_requests_get)
-        post_patcher.start()
-        get_patcher.start()
+        self.post_patcher = mock.patch(
+            "requests.post", side_effect=mocked_requests_post
+        )
+        self.get_patcher = mock.patch("requests.get", side_effect=mocked_requests_get)
+
+        self.post_patcher.start()
+        self.get_patcher.start()
 
     def tearDown(self):
         mock.patch.stopall()
@@ -41,3 +48,11 @@ class CustomerTestCase(TestCase):
         omise_customer = customer.get_omise_object()
 
         self.assertEqual(customer.cards.count(), len(omise_customer.cards))
+
+    @mock.patch("requests.patch", side_effect=mocked_add_card_request)
+    def test_add_card_to_customer(self, mocked_request):
+        customer, created = Customer.get_or_create(user=self.user)
+        customer.sync_cards()
+        initial_card_count = customer.cards.count()
+        customer.add_card(token="test_token_id")
+        self.assertEqual(initial_card_count + 1, customer.cards.count())
