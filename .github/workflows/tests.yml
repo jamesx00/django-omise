@@ -10,18 +10,52 @@ jobs:
         strategy:
             max-parallel: 4
             matrix:
-                python-version: [3.7, 3.8, 3.9]
+            include:
+                - python-version: "3.6"
+                    django-version: Django==2.2
+
+                - python-version: "3.6"
+                    django-version: Django==3.2
+
+                - python-version: "3.7"
+                    django-version: Django==2.2
+
+                - python-version: "3.7"
+                    django-version: Django==3.2
+
+                - python-version: "3.8"
+                    django-version: Django==3.2
+
+                - python-version: "3.8"
+                    django-version: Django==4.0
+
+                - python-version: "3.9"
+                    django-version: Django==2.2
+
+                - python-version: "3.9"
+                    django-version: Django==3.2
+
+                - python-version: "3.9"
+                    django-version: Django==4.0
+
+                - python-version: "3.10"
+                    django-version: Django==3.2
+
+                - python-version: "3.10"
+                    django-version: Django==4.0
 
         steps:
             - uses: actions/checkout@v3
             - name: Set up Python ${{ matrix.python-version }}
               uses: actions/setup-python@v3
               with:
-                  python-version: ${{ matrix.python-version }}
+                    python-version: ${{ matrix.python-version }}
             - name: Install Dependencies
               run: |
-                  python -m pip install --upgrade pip
-                  pip install -r requirements.txt
+                    python -m pip install --upgrade pip
+                    pip install coverage
+                    pip install ${{ matrix.django-version }}
+                    pip install -r requirements.txt
             - name: Run Tests
               run: |
-                  python run_tests.py
+                    coverage run run_tests.py
