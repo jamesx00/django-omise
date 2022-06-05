@@ -17,7 +17,7 @@ from django.db import models
 from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
 
-from typing import TYPE_CHECKING, Optional, Dict
+from typing import TYPE_CHECKING, Optional, Dict, Union
 
 if TYPE_CHECKING:
     User = get_user_model()
@@ -66,15 +66,19 @@ class Customer(OmiseBaseModel, OmiseMetadata):
             return f"Omise{self.__class__.__name__}: {str(self.user)}"
         return f"Omise{self.__class__.__name__}: {self.id}"
 
-    def add_card(self, token: omise.Token) -> "Card":
+    def add_card(self, token: Union[omise.Token, str]) -> "Card":
         """
         Add a new card to the user
 
-        :param token: The token retrieved from Omise API.
+        :param token: The token retrieved from Omise API or a token id as string.
 
         :returns: A new card instance.
         """
         omise_customer = omise.Customer.retrieve(self.id)
+
+        if type(token) == str:
+            token = omise.Token.retrieve(token)
+
         omise_customer.update(card=token.id)
 
         card = token.card
