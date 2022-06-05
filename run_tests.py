@@ -21,7 +21,8 @@ settings.configure(
     ),
     SECRET_KEY="django_tests_secret_key",
     OMISE_PUBLIC_KEY="test_omise_public_key",
-    OMISE_PRIVATE_KEY="test_omise_private_key",
+    OMISE_SECRET_KEY="test_omise_secret_key",
+    OMISE_LIVE_MODE=False,
     MIDDLEWARE=(
         "django.contrib.sessions.middleware.SessionMiddleware",
         "django.middleware.common.CommonMiddleware",
