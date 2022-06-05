@@ -39,3 +39,8 @@ def mocked_requests_get(*args, **kwargs):
         return MockResponse(token_response, 200)
 
     return MockResponse(None, 404)
+
+
+def mocked_add_card_request(*args, **kwargs):
+
+    return MockResponse(add_card_response, 200)
