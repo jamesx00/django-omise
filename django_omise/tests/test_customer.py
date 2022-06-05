@@ -32,3 +32,12 @@ class CustomerTestCase(TestCase):
 
         self.assertEqual(customer.user, self.user)
         self.assertEqual(customer.id, customer.get_omise_object().id)
+
+    def test_sync_customer_cards(self):
+        customer, created = Customer.get_or_create(user=self.user)
+        customer = customer.reload_from_omise()
+        customer.sync_cards()
+
+        omise_customer = customer.get_omise_object()
+
+        self.assertEqual(customer.cards.count(), len(omise_customer.cards))
