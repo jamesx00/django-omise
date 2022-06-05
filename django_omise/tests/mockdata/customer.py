@@ -40,7 +40,7 @@ customer_response = """{
         "id": "card_test_5s1jzsw6iy9nw4gzmx3",
         "livemode": false,
         "location": "/customers/cust_test_5s1jz157366mu6wr0ng/cards/card_test_5s1jzsw6iy9nw4gzmx3",
-        "deleted": true,
+        "deleted": false,
         "street1": null,
         "street2": null,
         "city": "Bangkok",
