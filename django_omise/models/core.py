@@ -553,7 +553,8 @@ class Charge(OmiseBaseModel, OmiseMetadata):
 
         uid = uuid.uuid4()
 
-        host = settings.OMISE_CHARGE_RETURN_HOST
+        host = getattr(settings, "OMISE_CHARGE_RETURN_HOST", None)
+
         if return_uri is None:
             return_uri = f'https://{host}{reverse("django_omise:return_uri", kwargs={"uid": uid})}'
 
