@@ -204,6 +204,17 @@ class Customer(OmiseBaseModel, OmiseMetadata):
             description=description,
         )
 
+    def sync_cards(self) -> None:
+        """
+        Sync the customer's cards on the database with Omise's server.
+        """
+        omise_customer = self.get_omise_object()
+        cards = omise_customer.cards
+        for card in cards:
+            card = update_or_create_from_omise_object(omise_object=card)
+            card.customer = self
+            card.save()
+
     @classmethod
     def get_or_create(cls, user: "User") -> "Customer":
         """
