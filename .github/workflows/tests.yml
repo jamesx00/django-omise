@@ -6,6 +6,9 @@ on:
     pull_request:
         branches: ['master']
 
+env:
+    COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -43,9 +46,10 @@ jobs:
             - name: Install Dependencies
               run: |
                   python -m pip install --upgrade pip
-                  pip install coverage
+                  pip install coverage coveralls
                   pip install ${{ matrix.django-version }}
                   pip install -r requirements.txt
             - name: Run Tests
               run: |
                   coverage run run_tests.py
+                  coveralls
