@@ -2,8 +2,12 @@ from django.test import TestCase
 
 from django.contrib.auth import get_user_model
 
-from django_omise.models.core import Customer, Card
-from django_omise.models.choices import Currency
+from django_omise.models.core import Customer
+from django_omise.models.schedule import Schedule, ChargeSchedule
+from django_omise.models.choices import Currency, SchedulePeriod, ScheduleStatus
+
+
+from django.utils import timezone
 
 from unittest import mock
 
@@ -31,35 +35,32 @@ class CustomerTestCase(TestCase):
         self.post_patcher.start()
         self.get_patcher.start()
 
+        self.customer, self.created = Customer.get_or_create(user=self.user)
+        self.customer.sync_cards()
+
     def tearDown(self):
         mock.patch.stopall()
 
     def test_create_customer(self):
-        customer, created = Customer.get_or_create(user=self.user)
-        self.assertTrue(created)
+        self.assertTrue(self.created)
 
-        customer, created = Customer.get_or_create(user=self.user)
+        self.customer, created = Customer.get_or_create(user=self.user)
         self.assertFalse(created)
 
-        self.assertEqual(customer.user, self.user)
-        self.assertEqual(customer.id, customer.get_omise_object().id)
+        self.assertEqual(self.customer.user, self.user)
+        self.assertEqual(self.customer.id, self.customer.get_omise_object().id)
 
     def test_create_customer_wrong_mode(self):
         with self.settings(OMISE_LIVE_MODE=True), self.assertRaises(ValueError):
             customer, created = Customer.get_or_create(user=self.user)
 
     def test_sync_customer_cards(self):
-        customer, created = Customer.get_or_create(user=self.user)
-        customer = customer.reload_from_omise()
-        customer.sync_cards()
+        omise_customer = self.customer.get_omise_object()
 
-        omise_customer = customer.get_omise_object()
-
-        self.assertEqual(customer.cards.count(), len(omise_customer.cards))
+        self.assertEqual(self.customer.cards.count(), len(omise_customer.cards))
 
     def test_customer_str_with_user(self):
-        customer, created = Customer.get_or_create(user=self.user)
-        self.assertIn(str(self.user), str(customer))
+        self.assertIn(str(self.user), str(self.customer))
 
     def test_customer_str_without_user(self):
         customer = Customer.objects.create(id="customer_test_id", livemode=False)
@@ -67,32 +68,56 @@ class CustomerTestCase(TestCase):
 
     @mock.patch("requests.patch", side_effect=mocked_add_card_request)
     def test_add_card_to_customer(self, mocked_request):
-        customer, created = Customer.get_or_create(user=self.user)
-        customer.sync_cards()
-        initial_card_count = customer.cards.count()
-        customer.add_card(token="test_token_id")
-        self.assertEqual(initial_card_count + 1, customer.cards.count())
+        initial_card_count = self.customer.cards.count()
+        self.customer.add_card(token="test_token_id")
+        self.assertEqual(initial_card_count + 1, self.customer.cards.count())
 
     @mock.patch("requests.delete", side_effect=mocked_delete_card_request)
     def test_delete_card(self, mock_request):
-        customer, created = Customer.get_or_create(user=self.user)
-        customer.sync_cards()
-        live_cards_count = customer.cards.live().count()
+        live_cards_count = self.customer.cards.live().count()
 
-        customer.remove_card(card=customer.cards.first())
+        self.customer.remove_card(card=self.customer.cards.first())
 
-        self.assertEqual(live_cards_count - 1, customer.cards.live().count())
+        self.assertEqual(live_cards_count - 1, self.customer.cards.live().count())
 
     @mock.patch("django_omise.models.core.Charge.charge")
     def test_charge_with_card(self, mock_charge):
-        customer, created = Customer.get_or_create(user=self.user)
-        customer.sync_cards()
-
-        customer.charge_with_card(
-            amount=100000, currency=Currency.THB, card=customer.cards.live().first()
+        self.customer.charge_with_card(
+            amount=100000,
+            currency=Currency.THB,
+            card=self.customer.cards.live().first(),
         )
 
         mock_charge.assert_called_once()
 
         args, kwargs = mock_charge.call_args
-        self.assertEqual(kwargs["card"], customer.cards.live().first())
+        self.assertEqual(kwargs["card"], self.customer.cards.live().first())
+
+    def test_schedules(self):
+        self.customer, created = Customer.get_or_create(user=self.user)
+        self.customer.sync_cards()
+
+        charge_schedule = ChargeSchedule.objects.create(
+            id="test_charge_schedule_id",
+            amount=100000,
+            currency=Currency.THB,
+            livemode=False,
+            card=self.customer.cards.live().first(),
+            customer=self.customer,
+            default_card=False,
+        )
+
+        schedule = Schedule.objects.create(
+            id="test_schedule_id",
+            livemode=False,
+            active=True,
+            charge=charge_schedule,
+            end_on=timezone.now().date(),
+            ended_at=timezone.now(),
+            every=1,
+            period=SchedulePeriod.DAY,
+            start_on=timezone.now().date(),
+            status=ScheduleStatus.RUNNING,
+        )
+
+        self.assertIn(schedule, self.customer.schedules.all())
