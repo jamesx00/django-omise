@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from django_omise.models.core import Customer, Card
+from django_omise.models.choices import Currency
 
 from unittest import mock
 
@@ -56,6 +57,14 @@ class CustomerTestCase(TestCase):
 
         self.assertEqual(customer.cards.count(), len(omise_customer.cards))
 
+    def test_customer_str_with_user(self):
+        customer, created = Customer.get_or_create(user=self.user)
+        self.assertIn(str(self.user), str(customer))
+
+    def test_customer_str_without_user(self):
+        customer = Customer.objects.create(id="customer_test_id", livemode=False)
+        self.assertIn("customer_test_id", str(customer))
+
     @mock.patch("requests.patch", side_effect=mocked_add_card_request)
     def test_add_card_to_customer(self, mocked_request):
         customer, created = Customer.get_or_create(user=self.user)
@@ -73,3 +82,17 @@ class CustomerTestCase(TestCase):
         customer.remove_card(card=customer.cards.first())
 
         self.assertEqual(live_cards_count - 1, customer.cards.live().count())
+
+    @mock.patch("django_omise.models.core.Charge.charge")
+    def test_charge_with_card(self, mock_charge):
+        customer, created = Customer.get_or_create(user=self.user)
+        customer.sync_cards()
+
+        customer.charge_with_card(
+            amount=100000, currency=Currency.THB, card=customer.cards.live().first()
+        )
+
+        mock_charge.assert_called_once()
+
+        args, kwargs = mock_charge.call_args
+        self.assertEqual(kwargs["card"], customer.cards.live().first())
