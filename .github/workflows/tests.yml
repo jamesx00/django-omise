@@ -1,3 +1,5 @@
+name: App Auto Testing
+
 on:
     push:
         branches: ['master']
