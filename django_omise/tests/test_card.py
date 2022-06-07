@@ -33,6 +33,15 @@ class CardTestCase(TestCase):
     def tearDown(self):
         mock.patch.stopall()
 
+    def test_card_str(self):
+        customer, created = Customer.get_or_create(user=self.user)
+        customer.sync_cards()
+
+        self.assertIn(
+            customer.cards.live().first().last_digits,
+            str(customer.cards.live().first()),
+        )
+
     @mock.patch("requests.delete", side_effect=mocked_delete_card_request)
     def test_delete_card(self, mocked_request):
         customer, created = Customer.get_or_create(user=self.user)
