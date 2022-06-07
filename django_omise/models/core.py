@@ -675,8 +675,6 @@ class Source(OmiseBaseModel):
 
     @property
     def human_amount(self) -> float:
-        if not self.pk:
-            return 0
         if self.currency == Currency.JPY:
             return f"{self.amount:,.2f}"
         return f"{self.amount / 100:,.2f}"
