@@ -121,3 +121,88 @@ class CustomerTestCase(TestCase):
         )
 
         self.assertIn(schedule, self.customer.schedules.all())
+
+    @mock.patch(
+        "django_omise.models.schedule.Schedule.update_or_create_from_omise_object"
+    )
+    @mock.patch("django_omise.models.core.omise.Schedule.create")
+    def test_create_schedule_without_card(
+        self, mock_schedule_create, mock_update_or_create_method
+    ):
+        self.customer.create_schedule(
+            amount=100000,
+            currency=Currency.THB,
+            every=1,
+            period=SchedulePeriod.DAY,
+            start_date=timezone.now(),
+            end_date=timezone.now(),
+        )
+
+        args, kwargs = mock_schedule_create.call_args
+        charge_schedule = kwargs["charge"]
+        self.assertNotIn("card", charge_schedule)
+
+    @mock.patch(
+        "django_omise.models.schedule.Schedule.update_or_create_from_omise_object"
+    )
+    @mock.patch("django_omise.models.core.omise.Schedule.create")
+    def test_create_schedule_with_card(
+        self, mock_schedule_create, mock_update_or_create_method
+    ):
+        self.customer.create_schedule(
+            amount=100000,
+            currency=Currency.THB,
+            card=self.customer.cards.live().first(),
+            every=1,
+            period=SchedulePeriod.DAY,
+            start_date=timezone.now(),
+            end_date=timezone.now(),
+        )
+
+        args, kwargs = mock_schedule_create.call_args
+        charge_schedule = kwargs["charge"]
+        self.assertIn("card", charge_schedule)
+
+    @mock.patch(
+        "django_omise.models.schedule.Schedule.update_or_create_from_omise_object"
+    )
+    @mock.patch("django_omise.models.core.omise.Schedule.create")
+    def test_create_schedule_without_description(
+        self, mock_schedule_create, mock_update_or_create_method
+    ):
+        self.customer.create_schedule(
+            amount=100000,
+            currency=Currency.THB,
+            card=self.customer.cards.live().first(),
+            every=1,
+            period=SchedulePeriod.DAY,
+            start_date=timezone.now(),
+            end_date=timezone.now(),
+        )
+
+        args, kwargs = mock_schedule_create.call_args
+        charge_schedule = kwargs["charge"]
+        self.assertNotIn("description", charge_schedule)
+
+    @mock.patch(
+        "django_omise.models.schedule.Schedule.update_or_create_from_omise_object"
+    )
+    @mock.patch("django_omise.models.core.omise.Schedule.create")
+    def test_create_schedule_with_description(
+        self, mock_schedule_create, mock_update_or_create_method
+    ):
+        description = "Test description"
+        self.customer.create_schedule(
+            amount=100000,
+            currency=Currency.THB,
+            card=self.customer.cards.live().first(),
+            description=description,
+            every=1,
+            period=SchedulePeriod.DAY,
+            start_date=timezone.now(),
+            end_date=timezone.now(),
+        )
+
+        args, kwargs = mock_schedule_create.call_args
+        charge_schedule = kwargs["charge"]
+        self.assertIn("description", charge_schedule)
