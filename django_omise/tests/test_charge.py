@@ -129,8 +129,7 @@ class CustomerTestCase(TestCase):
             card=self.customer.cards.live().first(),
         )
 
-        kall = mock_omise.call_args
-        args, kwargs = kall
+        args, kwargs = mock_omise.call_args
         self.assertIn("customer", kwargs)
         self.assertIn("card", kwargs)
 
@@ -146,8 +145,7 @@ class CustomerTestCase(TestCase):
 
         charge = Charge.charge(amount=100000, currency=Currency.THB, token="token_id")
 
-        kall = mock_omise.call_args
-        args, kwargs = kall
+        args, kwargs = mock_omise.call_args
         self.assertEqual(kwargs["card"], "token_id")
 
     @mock.patch("django_omise.models.core.Charge.update_or_create_from_omise_object")
@@ -166,8 +164,7 @@ class CustomerTestCase(TestCase):
 
         charge = Charge.charge(amount=100000, currency=Currency.THB, token=token)
 
-        kall = mock_omise.call_args
-        args, kwargs = kall
+        args, kwargs = mock_omise.call_args
         self.assertIn("card", kwargs)
 
     @mock.patch("django_omise.models.core.Charge.update_or_create_from_omise_object")
@@ -184,6 +181,5 @@ class CustomerTestCase(TestCase):
             amount=100000, currency=Currency.THB, source={"type": "promptpay"}
         )
 
-        kall = mock_omise.call_args
-        args, kwargs = kall
+        args, kwargs = mock_omise.call_args
         self.assertIn("source", kwargs)
