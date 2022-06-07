@@ -94,9 +94,6 @@ class CustomerTestCase(TestCase):
         self.assertEqual(kwargs["card"], self.customer.cards.live().first())
 
     def test_schedules(self):
-        self.customer, created = Customer.get_or_create(user=self.user)
-        self.customer.sync_cards()
-
         charge_schedule = ChargeSchedule.objects.create(
             id="test_charge_schedule_id",
             amount=100000,
