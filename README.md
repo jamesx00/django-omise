@@ -8,6 +8,7 @@ pip install git+https://github.com/omise/omise-python@bfcf283378a823139b9f19f10e
 # django-omise Django + Omise
 
 ![Test](https://github.com/jamesx00/django-omise/actions/workflows/tests.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/jamesx00/django-omise/badge.svg?branch=master)](https://coveralls.io/github/jamesx00/django-omise?branch=master)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/jamesx00/django-omise/issues)
 
 Django models for Omise. Currently, we support the following features:
