@@ -71,7 +71,7 @@ class CustomerTestCase(TestCase):
     @mock.patch("requests.get", side_effect=mocked_charge_with_card_request)
     def test_charge_human_amount(self, mocked_post_request, mocked_get_request):
         unsaved_charge = Charge(amount=100000)
-        self.assertEqual(unsaved_charge.human_amount, 0)
+        self.assertEqual(unsaved_charge.human_amount, "1,000.00")
 
         charge = Charge.charge(
             amount=100000,
