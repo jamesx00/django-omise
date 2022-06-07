@@ -112,3 +112,66 @@ class CustomerTestCase(TestCase):
         charge = update_or_create_from_omise_object(omise_object=omise_charge)
 
         self.assertEqual(charge.extended_status, omise_charge.status)
+
+    @mock.patch("django_omise.models.core.Charge.update_or_create_from_omise_object")
+    @mock.patch("django_omise.models.core.omise.Charge.create")
+    @mock.patch("requests.post", side_effect=mocked_base_charge_request)
+    def test_create_charge_with_card_passed_arguments(
+        self,
+        mock_request,
+        mock_omise,
+        mock_update_or_create_method,
+    ):
+
+        charge = Charge.charge(
+            amount=100000,
+            currency=Currency.THB,
+            card=self.customer.cards.live().first(),
+        )
+        self.assertIn("customer", mock_omise.call_args.kwargs)
+        self.assertIn("card", mock_omise.call_args.kwargs)
+
+    @mock.patch("django_omise.models.core.Charge.update_or_create_from_omise_object")
+    @mock.patch("django_omise.models.core.omise.Charge.create")
+    @mock.patch("requests.post", side_effect=mocked_base_charge_request)
+    def test_create_charge_with_token_as_string_passed_arguments(
+        self,
+        mock_request,
+        mock_omise,
+        mock_update_or_create_method,
+    ):
+
+        charge = Charge.charge(amount=100000, currency=Currency.THB, token="token_id")
+        self.assertEqual(mock_omise.call_args.kwargs["card"], "token_id")
+
+    @mock.patch("django_omise.models.core.Charge.update_or_create_from_omise_object")
+    @mock.patch("django_omise.models.core.omise.Charge.create")
+    @mock.patch("requests.post", side_effect=mocked_base_charge_request)
+    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    def test_create_charge_with_token_as_token_instance_passed_arguments(
+        self,
+        mock_get_requests,
+        mock_request,
+        mock_omise,
+        mock_update_or_create_method,
+    ):
+
+        token = omise.Token.retrieve("test_token_id")
+
+        charge = Charge.charge(amount=100000, currency=Currency.THB, token=token)
+        self.assertIn("card", mock_omise.call_args.kwargs)
+
+    @mock.patch("django_omise.models.core.Charge.update_or_create_from_omise_object")
+    @mock.patch("django_omise.models.core.omise.Charge.create")
+    @mock.patch("requests.post", side_effect=mocked_base_charge_request)
+    def test_create_charge_with_source_passed_arguments(
+        self,
+        mock_request,
+        mock_omise,
+        mock_update_or_create_method,
+    ):
+
+        charge = Charge.charge(
+            amount=100000, currency=Currency.THB, source={"type": "promptpay"}
+        )
+        self.assertIn("source", mock_omise.call_args.kwargs)
