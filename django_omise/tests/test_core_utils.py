@@ -2,7 +2,8 @@ from django.test import TestCase
 
 from django.contrib.auth import get_user_model
 
-from django_omise.models.core import Customer, Card
+from django_omise.models.core import Customer, Card, Charge
+from django_omise.models.choices import Currency
 from django_omise.omise import omise
 from django_omise.utils.core_utils import get_model_from_omise_object
 
@@ -12,6 +13,7 @@ from unittest import mock
 from .test_utils import (
     mocked_requests_post,
     mocked_requests_get,
+    mocked_base_charge_request,
 )
 
 User = get_user_model()
@@ -45,3 +47,26 @@ class CoreUtilTestCase(TestCase):
         customer = omise.Customer.retrieve("test_customer_id")
         card = customer.cards[0]
         self.assertEqual(get_model_from_omise_object(omise_object=card), Card)
+
+    @mock.patch("requests.post", side_effect=mocked_base_charge_request)
+    def test_get_model_from_omise_object_charge(self, mock_charge_request):
+        charge = omise.Charge.create(
+            amount=100000,
+            currency=Currency.THB,
+            card=self.customer.cards.live().first().id,
+        )
+
+        self.assertEqual(get_model_from_omise_object(omise_object=charge), Charge)
+
+    def test_get_model_from_omise_object_not_implemented(self):
+        new_object = type("test", (object,), {})()
+        new_object.object = "new_object"
+        self.assertEqual(get_model_from_omise_object(omise_object=new_object), None)
+
+    def test_get_model_from_omise_object_not_implemented_raises(self):
+        new_object = type("test", (object,), {})()
+        new_object.object = "new_object"
+        with self.assertRaises(ValueError):
+            get_model_from_omise_object(
+                omise_object=new_object, raise_if_not_implemented=True
+            )
