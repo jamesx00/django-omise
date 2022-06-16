@@ -137,6 +137,8 @@ class OmiseBaseModel(models.Model):
             ignore_fields=ignore_fields,
         )
 
+        fields = [field for field in fields if field.name not in cls.NON_DEFAULT_FIELDS]
+
         defaults = {}
 
         if uid is not None:
@@ -148,9 +150,6 @@ class OmiseBaseModel(models.Model):
                     omise_object,
                     field.name,
                 ).__dict__.get("_attributes")
-                continue
-
-            if field.name in cls.NON_DEFAULT_FIELDS:
                 continue
 
             if callable(getattr(omise_object, field.name, None)):
