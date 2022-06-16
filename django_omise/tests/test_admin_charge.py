@@ -20,88 +20,40 @@ class AdminTestCase(ClientAndUserBaseTestCase):
         request = MockRequest(user=self.user)
         self.assertEqual(charge_admin.has_change_permission(request=request), False)
 
-    def test_charge_colorized_status_successful(self):
+    @mock.patch("django_omise.admin.admin.format_html")
+    def test_charge_colorized_status_successful(self, mock_format_html):
         charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
 
         charge = self.create_charge(status=ChargeStatus.SUCCESSFUL)
-        try:
-            charge_admin.colorized_status(obj=charge)
-        except Exception as e:
-            self.fail(
-                f"ChargeAdmin.colorized_status should not raise an error. An error was raised {type(e)}: {e}"
-            )
+        charge_admin.colorized_status(obj=charge)
+        mock_format_html.assert_called_once()
 
-    def test_charge_colorized_status_pending(self):
+    @mock.patch("django_omise.admin.admin.format_html")
+    def test_charge_colorized_status_pending(self, mock_format_html):
         charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
 
         charge = self.create_charge(status=ChargeStatus.PENDING)
-        try:
-            charge_admin.colorized_status(obj=charge)
-        except Exception as e:
-            self.fail(
-                f"ChargeAdmin.colorized_status should not raise an error. An error was raised {type(e)}: {e}"
-            )
+        charge_admin.colorized_status(obj=charge)
+        mock_format_html.assert_called_once()
 
-    def test_charge_colorized_status_failed(self):
+    @mock.patch("django_omise.admin.admin.format_html")
+    def test_charge_colorized_status_failed(self, mock_format_html):
         charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
 
         charge = self.create_charge(status=ChargeStatus.FAILED)
-        try:
-            charge_admin.colorized_status(obj=charge)
-        except Exception as e:
-            self.fail(
-                f"ChargeAdmin.colorized_status should not raise an error. An error was raised {type(e)}: {e}"
-            )
+        charge_admin.colorized_status(obj=charge)
+        mock_format_html.assert_called_once()
 
-    def test_charge_colorized_status_failed(self):
-        charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
-
-        charge = self.create_charge(status=ChargeStatus.FAILED)
-        try:
-            charge_admin.colorized_status(obj=charge)
-        except Exception as e:
-            self.fail(
-                f"ChargeAdmin.colorized_status should not raise an error. An error was raised {type(e)}: {e}"
-            )
-
-    def test_charge_colorized_status_failed(self):
-        charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
-
-        charge = self.create_charge(status=ChargeStatus.FAILED)
-        try:
-            charge_admin.colorized_status(obj=charge)
-        except Exception as e:
-            self.fail(
-                f"ChargeAdmin.colorized_status should not raise an error. An error was raised {type(e)}: {e}"
-            )
-
-    def test_charge_colorized_status_partially_refunded(self):
+    @mock.patch("django_omise.admin.admin.format_html")
+    def test_charge_colorized_status_partially_refunded(self, mock_format_html):
         charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
 
         charge = self.create_charge(
             status=ChargeStatus.SUCCESSFUL,
             refunded_amount=10000,
         )
-        try:
-            charge_admin.colorized_status(obj=charge)
-        except Exception as e:
-            self.fail(
-                f"ChargeAdmin.colorized_status should not raise an error. An error was raised {type(e)}: {e}"
-            )
-
-    def test_charge_inline_change_permission(self):
-        charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
-
-        charge = self.create_charge(
-            status=ChargeStatus.SUCCESSFUL,
-            refunded_amount=10000,
-        )
-        try:
-            charge_admin.colorized_status(obj=charge)
-        except Exception as e:
-            self.fail(
-                f"ChargeAdmin.colorized_status should not raise an error. An error was raised {type(e)}: {e}"
-            )
+        charge_admin.colorized_status(obj=charge)
+        mock_format_html.assert_called_once()
 
     def create_charge(self, **kwargs):
         default = {
