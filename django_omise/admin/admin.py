@@ -26,10 +26,6 @@ class CardInline(admin.TabularInline):
         "default_card",
     ]
 
-    # classes = [
-    #     "collapse",
-    # ]
-
     extra = 0
 
     show_change_link = True
@@ -166,10 +162,6 @@ class ChargeInline(admin.TabularInline):
         "card",
         "source",
     ]
-
-    # classes = [
-    #     "collapse",
-    # ]
 
     readonly_fields = ("human_amount", "colorized_status")
 
@@ -363,39 +355,15 @@ class ChargeAdmin(admin.ModelAdmin):
         "livemode",
         "date_created",
         "date_updated",
-        # "status",
         "colorized_status",
-        # "amount",
         "human_amount",
         "currency",
         "refunded_amount",
         "refundable",
-        # "authorize_uri",
-        # "authorized",
-        # "capturable",
-        # "capture",
-        # "card",
         "source_type",
         "schedule",
-        # "customer",
         "description",
-        # "disputable",
-        # "expired",
-        # "expired_at",
-        # "expires_at",
-        # "failure_code",
         "failure_message",
-        # "fee",
-        # "fee_vat",
-        # "funding_amount",
-        # "funding_currency",
-        # "interest",
-        # "interest_vat",
-        # "ip",
-        # "net",
-        # "paid",
-        # "paid_at",
-        # "reversed",
         "source",
         "voided",
         "zero_interest_installments",
