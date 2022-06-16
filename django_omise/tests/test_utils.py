@@ -5,6 +5,7 @@ from .mockdata.token import token_response
 from .mockdata.card import delete_card_response
 from .mockdata.charge import (
     base_charge_response,
+    base_charge_with_metadata_response,
     base_charge_jpy,
     partially_refunded_response,
     fully_refunded_response,
@@ -50,6 +51,10 @@ def mocked_requests_get(*args, **kwargs):
 
 def mocked_base_charge_request(*args, **kwargs):
     return MockResponse(base_charge_response, 200)
+
+
+def mocked_set_charge_metadata_request(*args, **kwargs):
+    return MockResponse(base_charge_with_metadata_response, 200)
 
 
 def mocked_charge_with_card_request(*args, **kwargs):
