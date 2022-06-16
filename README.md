@@ -211,3 +211,25 @@ Others
 
 -   Implement tests
 -   Add documentations
+
+### Development
+
+---
+
+You can run tests with either coverage or pytest.
+
+To run with pytest
+
+```shell
+pip install pytest-django
+python -m pytest [--verbose]
+```
+
+To run with coverage
+
+```shell
+pip install coverage
+coverage run run_tests.py
+coverage report
+coverage html
+```
