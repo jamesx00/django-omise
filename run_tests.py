@@ -1,53 +1,21 @@
 import django, sys, os
 from django.conf import settings
-
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+from django_omise.tests import test_settings
+from django.conf import global_settings
 
 settings.configure(
-    DEBUG=True,
-    DATABASES={
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-        }
-    },
-    ROOT_URLCONF="urls",
-    USE_TZ=True,
-    TIME_ZONE="Asia/Bangkok",
-    INSTALLED_APPS=(
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.messages",
-        "django.contrib.admin",
-        "django_omise",
-    ),
-    SECRET_KEY="django_tests_secret_key",
-    OMISE_PUBLIC_KEY="test_omise_public_key",
-    OMISE_SECRET_KEY="test_omise_secret_key",
-    OMISE_LIVE_MODE=False,
-    MIDDLEWARE=(
-        "django.contrib.sessions.middleware.SessionMiddleware",
-        "django.middleware.common.CommonMiddleware",
-        "django.middleware.csrf.CsrfViewMiddleware",
-        "django.contrib.auth.middleware.AuthenticationMiddleware",
-        "django.contrib.messages.middleware.MessageMiddleware",
-        "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    ),
-    TEMPLATES=[
-        {
-            "BACKEND": "django.template.backends.django.DjangoTemplates",
-            "DIRS": [],
-            "APP_DIRS": True,
-            "OPTIONS": {
-                "context_processors": [
-                    "django.template.context_processors.debug",
-                    "django.template.context_processors.request",
-                    "django.contrib.auth.context_processors.auth",
-                    "django.contrib.messages.context_processors.messages",
-                ],
-            },
-        },
-    ],
+    default_settings=global_settings,
+    INSTALLED_APPS=test_settings.INSTALLED_APPS,
+    SECRET_KEY=test_settings.SECRET_KEY,
+    OMISE_PUBLIC_KEY=test_settings.OMISE_PUBLIC_KEY,
+    OMISE_SECRET_KEY=test_settings.OMISE_SECRET_KEY,
+    OMISE_LIVE_MODE=test_settings.OMISE_LIVE_MODE,
+    MIDDLEWARE=test_settings.MIDDLEWARE,
+    TEMPLATES=test_settings.TEMPLATES,
+    ROOT_URLCONF=test_settings.ROOT_URLCONF,
+    DATABASES=test_settings.DATABASES,
+    USE_TZ=test_settings.USE_TZ,
+    TIME_ZONE=test_settings.TIME_ZONE,
 )
 
 try:

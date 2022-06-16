@@ -1,4 +1,5 @@
 DEBUG = True
+ROOT_URLCONF = "urls"
 
 DATABASES = {
     "default": {
@@ -6,7 +7,6 @@ DATABASES = {
     }
 }
 
-ROOT_URLCONF = "urls"
 USE_TZ = True
 TIME_ZONE = "Asia/Bangkok"
 
@@ -20,9 +20,11 @@ INSTALLED_APPS = (
 )
 
 SECRET_KEY = "django_tests_secret_key"
+
 OMISE_PUBLIC_KEY = "test_omise_public_key"
 OMISE_SECRET_KEY = "test_omise_secret_key"
 OMISE_LIVE_MODE = False
+
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -31,6 +33,7 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 )
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
