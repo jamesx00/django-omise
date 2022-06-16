@@ -222,7 +222,7 @@ To run with pytest
 
 ```shell
 pip install pytest-django
-python -m pytest [--verbose]
+python -m pytest [path_to_file] [--verbose -s --cov-report=html]
 ```
 
 To run with coverage
