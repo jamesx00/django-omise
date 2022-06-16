@@ -19,6 +19,9 @@ class NotDeletedManager(models.Manager):
     def live(self):
         return self.get_queryset().live()
 
+    def not_deleted(self):
+        return self.get_queryset().not_deleted()
+
     def deleted(self):
         return self.get_queryset().deleted()
 

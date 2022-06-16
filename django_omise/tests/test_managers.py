@@ -35,6 +35,15 @@ class ManagerTestCase(TestCase):
         self.assertTrue(Customer.objects.deleted().filter(id=self.customer.id).exists())
         self.assertFalse(Customer.objects.live().filter(id=self.customer.id).exists())
 
+    def test_not_deleted_queryset(self):
+        self.customer.deleted = True
+        self.customer.save()
+
+        self.assertTrue(Customer.objects.deleted().filter(id=self.customer.id).exists())
+        self.assertFalse(
+            Customer.objects.not_deleted().filter(id=self.customer.id).exists()
+        )
+
     def test_deletable_manager_not_deleted_queryset(self):
         self.assertTrue(
             Schedule.objects.not_deleted().filter(id=self.schedule.id).exists()
