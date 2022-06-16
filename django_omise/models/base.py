@@ -62,7 +62,6 @@ class OmiseBaseModel(models.Model):
 
     NON_DEFAULT_FIELDS = [
         "id",
-        "livemode",
         "date_created",
         "date_updated",
         "data",
@@ -105,12 +104,43 @@ class OmiseBaseModel(models.Model):
 
         :returns: An instance of current class
         """
-        if ignore_fields is None:
-            ignore_fields = []
+        defaults = cls.build_defaults_from_omise_object(
+            omise_object=omise_object,
+            ignore_fields=ignore_fields,
+            uid=uid,
+        )
 
-        fields = cls._meta.get_fields()
+        new_object, created = cls.objects.update_or_create(
+            pk=omise_object.id,
+            defaults=defaults,
+        )
+
+        return new_object
+
+    @classmethod
+    def build_defaults_from_omise_object(
+        cls,
+        omise_object: omise.Base,
+        ignore_fields: Optional[List[str]] = None,
+        uid: Optional[uuid.UUID] = None,
+    ) -> Dict:
+        """
+        Create a dictionary of fields and values to use in objects.update_or_create method.
+
+        :param omise_object: Any of the object from omise package. e.g. omise.Charge, omise.Customer, omise.Card
+        :param ignore_fields: List of field names as a string to ignore.
+        :param uid: The uid of the object. If this is not specify, a new uid will be created for the object.
+
+        :returns: Dictionary of fields and values as keys and values
+        """
+        fields = cls.get_field_names(
+            ignore_fields=ignore_fields,
+        )
 
         defaults = {}
+
+        if uid is not None:
+            defaults["uid"] = uid
 
         for field in fields:
             if field.name == "metadata":
@@ -121,9 +151,6 @@ class OmiseBaseModel(models.Model):
                 continue
 
             if field.name in cls.NON_DEFAULT_FIELDS:
-                continue
-
-            if field.name in ignore_fields:
                 continue
 
             if callable(getattr(omise_object, field.name, None)):
@@ -168,17 +195,26 @@ class OmiseBaseModel(models.Model):
 
             defaults[field.name] = getattr(omise_object, field.name, None)
 
-        new_object, created = cls.objects.update_or_create(
-            pk=omise_object.id,
-            livemode=omise_object.livemode,
-            defaults=defaults,
-        )
+        return defaults
 
-        if uid:
-            new_object.uid = uid
-            new_object.save()
+    @classmethod
+    def get_field_names(
+        cls,
+        ignore_fields: Optional[List[str]] = None,
+    ) -> List[models.fields.Field]:
+        """
+        Get a list of fields of the class.
 
-        return new_object
+        :param ignore_fields: List of field names as a string to ignore.
+        :param additional_fields: List of field names as tuple of field name and field type
+        """
+        ignore_fields = [] if ignore_fields is None else ignore_fields
+
+        fields = [
+            field for field in cls._meta.get_fields() if field.name not in ignore_fields
+        ]
+
+        return fields
 
 
 class OmiseDeletableModel(models.Model):
