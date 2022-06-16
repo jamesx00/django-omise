@@ -1,7 +1,6 @@
 from django.test import TestCase
 
-from django_omise.omise import omise
-from django_omise.models.core import Customer, Card, Charge
+from django_omise.models.core import Customer
 
 from django_omise.tests.mockdata.charge import (
     base_charge_response,
@@ -54,3 +53,23 @@ class BaseModelTestCase(OmiseBaseTestCase):
         mock_set_metadata.assert_called_once()
 
         self.assertEqual(django_charge.metadata, metadata)
+
+    @mock.patch("omise.Charge.retrieve")
+    def test_get_omise_object(self, mock_omise_retrieve):
+        charge = self.create_charge()
+        charge.get_omise_object()
+        mock_omise_retrieve.assert_called_once_with(charge.id)
+
+    @mock.patch(
+        "django_omise.models.base.OmiseBaseModel.update_or_create_from_omise_object"
+    )
+    @mock.patch("requests.get", side_effect=mocked_base_charge_request)
+    def test_reload_from_omise(self, mock_get_charge, mock_update_or_create_method):
+        charge = self.create_charge()
+        customer = self.create_customer(id="cust_test_5s1jz157366mu6wr0ng")
+        charge.reload_from_omise()
+        mock_update_or_create_method.assert_called_once()
+
+    def test_str_method(self):
+        charge = self.create_charge()
+        self.assertIsInstance(str(charge), str)
