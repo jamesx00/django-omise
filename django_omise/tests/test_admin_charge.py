@@ -2,7 +2,7 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 
 from django_omise.admin import ChargeAdmin, ChargeInline
-from django_omise.models.core import Charge
+from django_omise.models.core import Charge, Source, Card
 from django_omise.models.choices import Currency, ChargeStatus
 
 from django_omise.tests.base import ClientAndUserBaseTestCase
@@ -101,6 +101,41 @@ class AdminTestCase(ClientAndUserBaseTestCase):
         request = MockRequest(user=self.user)
 
         self.assertEqual(charge_inline.has_change_permission(request=request), False)
+
+    def test_charge_source_type_with_card(self):
+        charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
+
+        card = self.create_card()
+        charge = self.create_charge(status=ChargeStatus.SUCCESSFUL, card=card)
+        self.assertIn("card", charge_admin.source_type(obj=charge))
+
+    def test_charge_source_type_with_source(self):
+        charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
+
+        source = self.create_source()
+        charge = self.create_charge(status=ChargeStatus.SUCCESSFUL, source=source)
+        self.assertNotIn("card", charge_admin.source_type(obj=charge))
+
+    def create_card(self, **kwargs):
+        default = {
+            "id": "test_card_id",
+            "livemode": False,
+        }
+
+        default.update(kwargs)
+
+        return Card.objects.create(**default)
+
+    def create_source(self, **kwargs):
+        default = {
+            "id": "test_source_id",
+            "livemode": True,
+            "amount": 100000,
+            "currency": Currency.THB,
+        }
+
+        default.update(kwargs)
+        return Source.objects.create(**default)
 
     def create_charge(self, **kwargs):
         default = {
