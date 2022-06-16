@@ -5,7 +5,7 @@ from django_omise.admin import ChargeAdmin, ChargeInline
 from django_omise.models.core import Charge, Source, Card
 from django_omise.models.choices import Currency, ChargeStatus
 
-from django_omise.tests.base import ClientAndUserBaseTestCase
+from django_omise.tests.base import ClientAndUserBaseTestCase, OmiseBaseTestCase
 from django_omise.tests.mock_django import MockRequest
 
 from unittest import mock
@@ -14,7 +14,7 @@ from unittest import mock
 User = get_user_model()
 
 
-class AdminTestCase(ClientAndUserBaseTestCase):
+class AdminChargeTestCase(ClientAndUserBaseTestCase, OmiseBaseTestCase):
     def test_charge_chage_permission(self):
         charge_admin = ChargeAdmin(model=Charge, admin_site=AdminSite())
         request = MockRequest(user=self.user)
@@ -115,44 +115,3 @@ class AdminTestCase(ClientAndUserBaseTestCase):
         source = self.create_source()
         charge = self.create_charge(status=ChargeStatus.SUCCESSFUL, source=source)
         self.assertNotIn("card", charge_admin.source_type(obj=charge))
-
-    def create_card(self, **kwargs):
-        default = {
-            "id": "test_card_id",
-            "livemode": False,
-        }
-
-        default.update(kwargs)
-
-        return Card.objects.create(**default)
-
-    def create_source(self, **kwargs):
-        default = {
-            "id": "test_source_id",
-            "livemode": True,
-            "amount": 100000,
-            "currency": Currency.THB,
-        }
-
-        default.update(kwargs)
-        return Source.objects.create(**default)
-
-    def create_charge(self, **kwargs):
-        default = {
-            "id": "test_charge_id",
-            "livemode": False,
-            "status": ChargeStatus.SUCCESSFUL,
-            "amount": 1000000,
-            "currency": Currency.THB,
-            "fee": 0,
-            "fee_vat": 0,
-            "net": 0,
-            "paid": True,
-            "refundable": True,
-            "refunded_amount": 0,
-        }
-        default.update(kwargs)
-        charge = Charge.objects.create(
-            **default,
-        )
-        return charge
