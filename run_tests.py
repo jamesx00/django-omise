@@ -54,13 +54,13 @@ try:
     # Django < 1.8
     from django.test.simple import DjangoTestSuiteRunner
 
-    test_runner = DjangoTestSuiteRunner(verbosity=1)
+    test_runner = DjangoTestSuiteRunner(verbosity=2)
 except ImportError:
     # Django >= 1.8
     django.setup()
     from django.test.runner import DiscoverRunner
 
-    test_runner = DiscoverRunner(verbosity=1)
+    test_runner = DiscoverRunner(verbosity=2)
 
 failures = test_runner.run_tests(["django_omise"])
 if failures:
