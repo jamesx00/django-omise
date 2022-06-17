@@ -39,8 +39,9 @@ class ViewTestCase(ClientAndUserBaseTestCase, OmiseBaseTestCase):
 
     @mock.patch("requests.get", side_effect=mocked_requests_event_schedule)
     def test_webhook_schedule(self, mock_get_event):
-        self.client.post(
+        response = self.client.post(
             reverse("django_omise:webhook"),
             schedule_with_one_charge_event_response,
             content_type="application/json",
         )
+        self.assertEqual(response.status_code, 200)
