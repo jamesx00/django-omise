@@ -62,7 +62,9 @@ def omise_webhook_view(request):
     if omise_event.key not in [EventType.CARD_DESTROY.value]:
         event_data.reload()
 
-    related_object = update_or_create_from_omise_object(omise_object=event_data)
+    related_object = update_or_create_from_omise_object(
+        omise_object=event_data, raw_event_data=raw_event_data
+    )
 
     if related_object is not None:
         event.event_object = related_object
