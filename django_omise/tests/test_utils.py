@@ -55,6 +55,10 @@ def mocked_requests_get(*args, **kwargs):
     return MockResponse(None, 404)
 
 
+def mocked_base_customer_request(*args, **kwargs):
+    return MockResponse(customer_response, 200)
+
+
 def mocked_base_charge_request(*args, **kwargs):
     return MockResponse(base_charge_response, 200)
 

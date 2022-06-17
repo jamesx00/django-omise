@@ -282,10 +282,15 @@ def get_model_from_omise_object(
         "schedule": get_current_app_model(model_name="Schedule"),
     }
 
-    if raise_if_not_implemented and omise_object.object not in model_map:
-        raise ValueError(f"The object {omise_object.object} has not been implemented")
+    if (
+        raise_if_not_implemented
+        and getattr(omise_object, "object", None) not in model_map
+    ):
+        raise ValueError(
+            f"The object {getattr(omise_object, 'object', None) } has not been implemented"
+        )
 
-    return model_map.get(omise_object.object, None)
+    return model_map.get(getattr(omise_object, "object", None), None)
 
 
 def get_current_app_model(model_name: str) -> models.Model:

@@ -5,6 +5,8 @@ from django_omise.models.choices import Currency
 from django_omise.omise import omise
 from django_omise.utils.core_utils import (
     get_model_from_omise_object,
+    is_omise_object_instances,
+    update_or_create_from_omise_object_action,
 )
 
 from django_omise.tests.base import OmiseBaseTestCase
@@ -16,6 +18,7 @@ from .test_utils import (
     mocked_requests_post,
     mocked_requests_get,
     mocked_base_charge_request,
+    mocked_base_customer_request,
 )
 
 User = get_user_model()
@@ -72,3 +75,14 @@ class CoreUtilTestCase(OmiseBaseTestCase):
             get_model_from_omise_object(
                 omise_object=new_object, raise_if_not_implemented=True
             )
+
+    @mock.patch("requests.get", side_effect=mocked_base_customer_request)
+    def test_is_omise_instance_charge(self, mock_get_charge):
+        customer = omise.Customer.retrieve("test_customer_id")
+        self.assertTrue(is_omise_object_instances(customer))
+
+    def test_update_or_create_with_non_omise_object(self):
+        non_omise_object = type("test", (), {})()
+        self.assertIsNone(
+            update_or_create_from_omise_object_action(omise_object=non_omise_object)
+        )
