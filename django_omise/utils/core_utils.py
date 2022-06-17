@@ -223,7 +223,7 @@ def after_update_or_create_from_omise_object_action(
 
     if omise_object.object == "customer":
 
-        customer = omise_object
+        customer = saved_object
 
         for schedule in customer.schedules:
             schedule.reload_from_omise()
