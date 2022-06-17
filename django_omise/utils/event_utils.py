@@ -17,17 +17,7 @@ def pre_event_handle(omise_event: omise.Event, raw_event: Dict):
 
     :returns: None
     """
-    if omise_event.key == EventType.REFUND_CREATE.value:
-        charge = Charge.objects.get(pk=omise_event.data.charge)
-        charge.reload_from_omise()
-
-    if omise_event.key.startswith("schedule."):
-        update_or_create_from_omise_object(
-            omise_object=omise_event.data,
-            ignore_fields=[
-                "occurrences",
-            ],
-        )
+    pass
 
 
 def post_event_handle(omise_event: omise.Event, event_object: Event, raw_event: Dict):
@@ -40,23 +30,4 @@ def post_event_handle(omise_event: omise.Event, event_object: Event, raw_event: 
 
     :returns: None
     """
-
-    if omise_event.key.startswith("charge."):
-
-        schedule_id = raw_event.get("data", {}).get("schedule", None)
-        omise_schedule = None
-        schedule = None
-
-        if schedule_id:
-            omise_schedule = omise.Schedule.retrieve(schedule_id)
-            schedule = update_or_create_from_omise_object(omise_object=omise_schedule)
-
-        charge = event_object.event_object
-        charge.schedule = schedule
-        charge.save()
-
-    if omise_event.key.startswith("customer."):
-
-        customer = event_object.event_object
-        for schedule in customer.schedules:
-            schedule.reload_from_omise()
+    pass
