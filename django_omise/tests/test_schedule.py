@@ -24,3 +24,11 @@ class CustomerTestCase(OmiseBaseTestCase):
         omise_schedule = omise.Schedule.retrieve("test_schedule_id")
         schedule = update_or_create_from_omise_object(omise_object=omise_schedule)
         self.assertEqual(Schedule.objects.count(), 1)
+
+    @mock.patch("requests.get", side_effect=mocked_base_schedule_request)
+    def test_schedule_occurrence(self, mock_get_schedule):
+        omise_schedule = omise.Schedule.retrieve("test_schedule_id")
+        schedule = update_or_create_from_omise_object(omise_object=omise_schedule)
+        self.assertEqual(
+            schedule.occurrences.all().count(), len(omise_schedule.occurrences)
+        )

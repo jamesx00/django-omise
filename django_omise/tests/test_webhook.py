@@ -23,5 +23,5 @@ class WebhookTestCase(OmiseBaseTestCase):
     def test_schedule_webhook(self, mock_schedule_event):
         event = omise.Event.retrieve("test_event_id")
         event_data = event.data
-        print(event_data)
-        update_or_create_from_omise_object(omise_object=event_data)
+        schedule = update_or_create_from_omise_object(omise_object=event_data)
+        self.assertTrue(Schedule.objects.filter(id=schedule.id).exists())
