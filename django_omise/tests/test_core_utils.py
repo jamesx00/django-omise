@@ -1,11 +1,13 @@
-from django.test import TestCase
-
 from django.contrib.auth import get_user_model
 
 from django_omise.models.core import Customer, Card, Charge
 from django_omise.models.choices import Currency
 from django_omise.omise import omise
-from django_omise.utils.core_utils import get_model_from_omise_object
+from django_omise.utils.core_utils import (
+    get_model_from_omise_object,
+)
+
+from django_omise.tests.base import OmiseBaseTestCase
 
 from unittest import mock
 
@@ -19,7 +21,7 @@ from .test_utils import (
 User = get_user_model()
 
 # Create your tests here.
-class CoreUtilTestCase(TestCase):
+class CoreUtilTestCase(OmiseBaseTestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username="test_user1", email="test_user1@email.com"
