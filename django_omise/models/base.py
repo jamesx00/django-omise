@@ -81,11 +81,18 @@ class OmiseBaseModel(models.Model):
         """Fetch the object from Omise's server."""
         return self.omise_class.retrieve(self.id)
 
-    def reload_from_omise(self) -> OmiseBaseModel:
-        """Reload the data from Omise's server and return the saved object"""
+    def reload_from_omise(
+        self, ignore_fields: Optional[List[str]] = None
+    ) -> OmiseBaseModel:
+        """
+        Reload the data from Omise's server and return the saved object
+
+        :param ignore_fields: List of field names to ignore.
+        """
         omise_object = self.omise_class.retrieve(self.id)
         return self.__class__.update_or_create_from_omise_object(
-            omise_object=omise_object
+            omise_object=omise_object,
+            ignore_fields=ignore_fields,
         )
 
     @classmethod
