@@ -2,3 +2,8 @@
 exclude_lines =
     if TYPE_CHECKING:
     widget.attrs\["placeholder"\]
+
+[coverage:run]
+omit =
+    setup.py
+    run_tests.py
