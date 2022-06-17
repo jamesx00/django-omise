@@ -7,6 +7,7 @@ from .mockdata.charge import (
     base_charge_jpy,
     partially_refunded_response,
     fully_refunded_response,
+    charge_with_schedule_response,
 )
 from .mockdata.customer import customer_response, add_card_response
 from .mockdata.event import schedule_with_one_charge_event_response
@@ -61,6 +62,10 @@ def mocked_set_charge_metadata_request(*args, **kwargs):
 
 def mocked_charge_with_card_request(*args, **kwargs):
     return MockResponse(base_charge_response, 200)
+
+
+def mocked_charge_with_schedule_request(*args, **kwargs):
+    return MockResponse(charge_with_schedule_response, 200)
 
 
 def mocked_partially_refunded_charge_request(*args, **kwargs):
