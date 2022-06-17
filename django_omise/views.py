@@ -32,7 +32,7 @@ def omise_webhook_view(request):
     except json.decoder.JSONDecodeError:
         return JsonResponse(
             {"success": False, "message": "The data could not be parsed with JSON"},
-            status=500,
+            status=400,
         )
 
     try:

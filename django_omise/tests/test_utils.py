@@ -89,3 +89,16 @@ def mocked_base_schedule_request(*args, **kwargs):
 
 def mocked_schedule_event_request(*args, **kwargs):
     return MockResponse(schedule_with_one_charge_event_response, 200)
+
+
+def mocked_requests_event_schedule(*args, **kwargs):
+
+    request_url = args[0]
+
+    if "https://api.omise.co/events" in request_url:  # omise.Event.retrieve
+        return MockResponse(schedule_with_one_charge_event_response, 200)
+
+    if "https://api.omise.co/schedules" in request_url:  # omise.Event.retrieve
+        return MockResponse(base_schedule_response, 200)
+
+    return MockResponse(None, 404)
