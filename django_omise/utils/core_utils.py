@@ -207,7 +207,7 @@ def after_update_or_create_from_omise_object_action(
     if omise_object.object == "charge":
 
         charge = omise_object
-        schedule_id = raw_event_data.get("data", {}).get("schedule", None)
+        schedule_id = charge._attributes.get("schedule", None)
         omise_schedule = None
         schedule = None
 
