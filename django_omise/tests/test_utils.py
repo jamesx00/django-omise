@@ -11,7 +11,10 @@ from .mockdata.charge import (
 )
 from .mockdata.customer import customer_response, add_card_response
 from .mockdata.event import schedule_with_one_charge_event_response
-from .mockdata.schedule import base_schedule_response
+from .mockdata.schedule import (
+    base_schedule_response,
+    schedule_response_no_next_occurrences_on,
+)
 from .mockdata.token import token_response
 
 
@@ -90,6 +93,10 @@ def mocked_delete_card_request(*args, **kwargs):
 
 def mocked_base_schedule_request(*args, **kwargs):
     return MockResponse(base_schedule_response, 200)
+
+
+def mocked_schedule_without_next_occurrences_on_request(*args, **kwargs):
+    return MockResponse(schedule_with_one_charge_event_response, 200)
 
 
 def mocked_schedule_event_request(*args, **kwargs):

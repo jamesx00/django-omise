@@ -1,6 +1,6 @@
-from django.test import TestCase
-
+from django_omise.models.schedule import Schedule
 from django_omise.models.core import Customer
+from django_omise.omise import omise
 
 from django_omise.tests.mockdata.charge import (
     base_charge_response,
@@ -10,6 +10,7 @@ from django_omise.tests.mockdata.charge import (
 from django_omise.tests.test_utils import (
     mocked_base_charge_request,
     mocked_set_charge_metadata_request,
+    mocked_schedule_without_next_occurrences_on_request,
 )
 
 from django_omise.tests.base import OmiseBaseTestCase
@@ -31,6 +32,21 @@ class BaseModelTestCase(OmiseBaseTestCase):
             for field in Customer.get_field_names(ignore_fields=[test_field.name])
         ]
         self.assertNotIn(test_field.name, field_names)
+
+    @mock.patch(
+        "requests.get", side_effect=mocked_schedule_without_next_occurrences_on_request
+    )
+    def test_build_defaults_with_default_value(self, mock_get_schedule):
+        schedule = omise.Schedule.retrieve("test_schedule_id")
+        defaults = Schedule.build_defaults_from_omise_object(
+            omise_object=schedule,
+            ignore_fields=[
+                "occurrences",
+                "customer",
+                "charge",
+            ],
+        )
+        self.assertEqual(defaults.get("next_occurrences_on"), [])
 
     @mock.patch("requests.patch", side_effect=mocked_set_charge_metadata_request)
     @mock.patch("requests.get", side_effect=mocked_base_charge_request)
