@@ -24,7 +24,7 @@ from .test_utils import (
 User = get_user_model()
 
 # Create your tests here.
-class CustomerTestCase(TestCase):
+class ChargeTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username="test_user1", email="test_user1@email.com"
