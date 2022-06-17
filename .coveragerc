@@ -7,3 +7,4 @@ exclude_lines =
 omit =
     setup.py
     run_tests.py
+    django_omise/tests/test_utils.py
