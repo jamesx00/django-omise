@@ -6,14 +6,16 @@ import uuid
 from django.apps import apps
 from django.conf import settings
 
-from typing import Optional, Any, TYPE_CHECKING, List
+from typing import Optional, Any, TYPE_CHECKING, List, Dict
 
 if TYPE_CHECKING:
     from django.db import models
     from django_omise.models.base import OmiseBaseModel
 
 
-def get_payment_methods_for_form(payment_methods: Optional[List[str]] = None) -> List[str]:
+def get_payment_methods_for_form(
+    payment_methods: Optional[List[str]] = None,
+) -> List[str]:
     """
     Get the payment method as per setting for checkout form
 
@@ -113,6 +115,121 @@ def is_omise_object_instances(value) -> bool:
 
 
 def update_or_create_from_omise_object(
+    omise_object: omise.Base,
+    raise_if_not_implemented: bool = False,
+    ignore_fields: Optional[List[str]] = None,
+    uid: Optional[uuid.UUID] = None,
+    raw_event_data: Optional[Dict] = None,
+):
+    """
+    Update or create a new Django object from Omise object.
+
+    :param omise_object: Any of the Omise object.
+    :param raise_if_not_implemented: Whether to raise error if there is no model for Omise object. Default is False.
+    :param ignore_fields optional: List of field names to ignore
+    :param uuid optional: A unique id for new object.
+    :param raw_event_data optional: Raw event data from omise webhook.
+
+    :returns: The corresponding model instance.
+    """
+
+    before_update_or_create_from_omise_object_action(
+        omise_object=omise_object,
+        raw_event_data=raw_event_data,
+    )
+
+    saved_object = update_or_create_from_omise_object_action(
+        omise_object=omise_object,
+        raise_if_not_implemented=raise_if_not_implemented,
+        ignore_fields=ignore_fields,
+        uid=uid,
+    )
+
+    after_update_or_create_from_omise_object_action(
+        omise_object=omise_object,
+        saved_object=saved_object,
+        raw_event_data=raw_event_data,
+    )
+
+    return saved_object
+
+
+def before_update_or_create_from_omise_object_action(
+    omise_object: omise.Base,
+    raw_event_data: Optional[Dict] = None,
+):
+    """
+    This method is run before the function update_or_create_from_omise_object_action,
+    allowing an action before the object is created to to database.
+    e.g. Saving schedule object without occurences so that there is no contraint error.
+
+    :param omise_object: An instance of Omise object to perform the action on.
+    """
+    if raw_event_data is None:
+        raw_event_data = {}
+
+    if omise_object.object == "refund":
+        refund = omise_object
+        charge_id = refund.charge
+        omise_charge = omise.Charge.retrieve(charge_id)
+        update_or_create_from_omise_object_action(
+            omise_object=omise_charge,
+            ignore_fields=[
+                "refunds",
+            ],
+        )
+
+    if omise_object.object == "schedule":
+        update_or_create_from_omise_object_action(
+            omise_object=omise_object,
+            ignore_fields=[
+                "occurrences",
+            ],
+        )
+
+
+def after_update_or_create_from_omise_object_action(
+    omise_object: omise.Base,
+    saved_object: OmiseBaseModel,
+    raw_event_data: Optional[Dict] = None,
+):
+    """
+    This method is run before the function update_or_create_from_omise_object_action,
+    allowing an action before the object is created to to database.
+    e.g. Reloading the Charge object in the database when a refund is created.
+
+    :param omise_object: An instance of Omise object to perform the action on.
+    :param saved_object: An object saved to the database.
+    """
+    if raw_event_data is None:
+        raw_event_data = {}
+
+    if omise_object.object == "charge":
+
+        charge = omise_object
+        schedule_id = raw_event_data.get("data", {}).get("schedule", None)
+        omise_schedule = None
+        schedule = None
+
+        if schedule_id:
+            omise_schedule = omise.Schedule.retrieve(schedule_id)
+            schedule = update_or_create_from_omise_object_action(
+                omise_object=omise_schedule
+            )
+
+        charge = saved_object
+        charge.schedule = schedule
+        charge.save()
+
+    if omise_object.object == "customer":
+
+        customer = omise_object
+
+        for schedule in customer.schedules:
+            schedule.reload_from_omise()
+
+
+def update_or_create_from_omise_object_action(
     omise_object: omise.Base,
     raise_if_not_implemented: bool = False,
     ignore_fields: Optional[List[str]] = None,
