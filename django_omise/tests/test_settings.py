@@ -3,7 +3,12 @@ ROOT_URLCONF = "urls"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "django_omise",
+        "USER": "django_omise",
+        "PASSWORD": "django_omise",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
