@@ -1,7 +1,5 @@
 import json
 
-from .mockdata.customer import customer_response, add_card_response
-from .mockdata.token import token_response
 from .mockdata.card import delete_card_response
 from .mockdata.charge import (
     base_charge_response,
@@ -10,6 +8,10 @@ from .mockdata.charge import (
     partially_refunded_response,
     fully_refunded_response,
 )
+from .mockdata.customer import customer_response, add_card_response
+from .mockdata.event import schedule_with_one_charge_event_response
+from .mockdata.schedule import base_schedule_response
+from .mockdata.token import token_response
 
 
 class MockResponse:
@@ -79,3 +81,11 @@ def mocked_add_card_request(*args, **kwargs):
 
 def mocked_delete_card_request(*args, **kwargs):
     return MockResponse(delete_card_response, 200)
+
+
+def mocked_base_schedule_request(*args, **kwargs):
+    return MockResponse(base_schedule_response, 200)
+
+
+def mocked_schedule_event_request(*args, **kwargs):
+    return MockResponse(schedule_with_one_charge_event_response, 200)
