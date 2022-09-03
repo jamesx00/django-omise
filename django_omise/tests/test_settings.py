@@ -1,18 +1,18 @@
 DEBUG = True
 ROOT_URLCONF = "urls"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "django_omise",
-        "USER": "django_omise",
-        "PASSWORD": "django_omise",
-        "HOST": "localhost",
-        "PORT": "5431",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "django_omise",
+#         "USER": "django_omise",
+#         "PASSWORD": "django_omise",
+#         "HOST": "localhost",
+#         "PORT": "5431",
+#     }
+# }
 
-# DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3"}}
+DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3"}}
 
 USE_TZ = True
 TIME_ZONE = "Asia/Bangkok"

@@ -23,6 +23,7 @@ Django = "^3.2.11"
 pytest-django = "4.5.2"
 psycopg2 = "^2.9.3"
 pytest-cov = "^3.0.0"
+coveralls = "^3.3.1"
 
 [build-system]
 requires = ["poetry-core"]
