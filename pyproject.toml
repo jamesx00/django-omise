@@ -8,10 +8,6 @@ readme = "README.md"
 packages = [{include = "django_omise"}]
 repository = "https://github.com/jamesx00/django-omise"
 
-[tool.poetry.scripts]
-test_coverage = "cli.tests:run_test_coverage"
-install_omise = 'cli.dependencies:install_compatible_omise'
-
 [tool.poetry.dependencies]
 python = "^3.7"
 omise = "^0.11.0"
