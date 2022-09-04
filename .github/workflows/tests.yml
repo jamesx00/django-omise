@@ -58,10 +58,10 @@ jobs:
         run: curl -sSL https://install.python-poetry.org | python -
       - name: Install Dependencies
         run: |
-          poetry install
-          poe install_omise
+          poetry install --with dev
+          poetry run poe install_omise
           poetry run pip install ${{ matrix.django-version }}
       - name: Run Tests
         run: |
-          poe test_coverage
-          poe report_coveralls
+          poetry run poe test_coverage
+          poetry run poe report_coveralls
