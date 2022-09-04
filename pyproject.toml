@@ -24,6 +24,13 @@ pytest-django = "4.5.2"
 psycopg2 = "^2.9.3"
 pytest-cov = "^3.0.0"
 coveralls = "^3.3.1"
+poethepoet = "^0.16.2"
+
+[tool.poe.tasks]
+install_omise = 'poetry run pip install --ignore-installed git+https://github.com/omise/omise-python@bfcf283378a823139b9f19f10e84d42a98c5b1ac'
+test = 'pytest --verbose'
+test_coverage = 'poetry run coverage run run_tests.py'
+report_coveralls = 'poetry run coveralls'
 
 [build-system]
 requires = ["poetry-core"]
