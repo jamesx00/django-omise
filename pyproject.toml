@@ -27,6 +27,8 @@ install_omise = 'poetry run pip install --ignore-installed git+https://github.co
 test = 'pytest --verbose'
 test_coverage = 'poetry run coverage run run_tests.py'
 report_coveralls = 'poetry run coveralls'
+test_coverage_html = 'poetry run pytest --cov-report html --cov=.'
+test_coverage_term = 'poetry run pytest --cov-report term --cov=.'
 
 [build-system]
 requires = ["poetry-core"]
