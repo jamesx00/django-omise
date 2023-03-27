@@ -59,7 +59,6 @@ jobs:
       - name: Install Dependencies
         run: |
           poetry install --with dev
-          poetry run poe install_omise
           poetry run pip install ${{ matrix.django-version }}
       - name: Run Tests
         run: |
