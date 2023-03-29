@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/siwatjames/django-omise/issues"
   },
-  "homepage": "https://github.com/siwatjames/django-omise#readme"
+  "homepage": "https://github.com/siwatjames/django-omise#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.3.0"
+  }
 }
