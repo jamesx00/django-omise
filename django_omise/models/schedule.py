@@ -1,3 +1,4 @@
+from typing import Optional
 from .base import OmiseBaseModel, OmiseMetadata, OmiseDeletableModel
 from .choices import Currency, OccurrenceStatus, ScheduleStatus, SchedulePeriod
 
@@ -9,7 +10,6 @@ from django_omise.omise import omise
 
 
 class Schedule(OmiseBaseModel, OmiseDeletableModel):
-
     NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
         "charges",
     ]
@@ -64,7 +64,6 @@ class Schedule(OmiseBaseModel, OmiseDeletableModel):
 
 
 class Occurrence(OmiseBaseModel):
-
     message = models.CharField(max_length=255, blank=True)
     processed_at = models.DateTimeField(blank=True, null=True)
 
@@ -82,7 +81,6 @@ class Occurrence(OmiseBaseModel):
 
 
 class ChargeSchedule(OmiseBaseModel, OmiseMetadata):
-
     amount = models.IntegerField(
         help_text="Refund amount in smallest unit of charge currency.",
     )
@@ -111,7 +109,10 @@ class ChargeSchedule(OmiseBaseModel, OmiseMetadata):
     description = models.TextField(blank=True)
 
     @property
-    def human_amount(self) -> float:
+    def human_amount(self) -> Optional[str]:
+        if self.amount is None:
+            return None
+
         if self.currency == Currency.JPY:
             return f"{self.amount:,.2f}"
         return f"{self.amount / 100:,.2f}"

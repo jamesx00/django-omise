@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-omise"
-version = "0.2.14"
+version = "0.2.15"
 description = "Django models for Omise"
 authors = ["James Tansiri <tansirijames@gmail.com>"]
 license = "MIT"
@@ -21,6 +21,7 @@ psycopg2 = "^2.9.3"
 pytest-cov = "^3.0.0"
 coveralls = "^3.3.1"
 poethepoet = "^0.16.2"
+black = "^23.3.0"
 
 [tool.poe.tasks]
 test = 'pytest --verbose'

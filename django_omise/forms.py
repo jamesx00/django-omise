@@ -232,8 +232,8 @@ class PayWithInternetBankingForm(forms.Form):
         choices=(
             (ChargeSourceType.INTERNET_BANKING_BAY, _("Krungsri Bank")),
             (ChargeSourceType.INTERNET_BANKING_BBL, _("Bangkok Bank")),
-            (ChargeSourceType.INTERNET_BANKING_KTB, _("Krungthai Bank")),
-            (ChargeSourceType.INTERNET_BANKING_SCB, _("SCB Bank")),
+            # (ChargeSourceType.INTERNET_BANKING_KTB, _("Krungthai Bank")),
+            # (ChargeSourceType.INTERNET_BANKING_SCB, _("SCB Bank")),
         ),
         widget=forms.RadioSelect,
         required=False,
