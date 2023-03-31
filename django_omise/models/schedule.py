@@ -111,7 +111,7 @@ class ChargeSchedule(OmiseBaseModel, OmiseMetadata):
     @property
     def human_amount(self) -> Optional[str]:
         if self.amount is None:
-            return None
+            return f"{0:,.2f}"
 
         if self.currency == Currency.JPY:
             return f"{self.amount:,.2f}"

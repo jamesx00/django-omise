@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-omise"
-version = "0.2.15"
+version = "0.2.16"
 description = "Django models for Omise"
 authors = ["James Tansiri <tansirijames@gmail.com>"]
 license = "MIT"
