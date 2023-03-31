@@ -235,7 +235,6 @@ class Customer(OmiseBaseModel, OmiseMetadata):
                 False,
             )
         except Customer.DoesNotExist:
-
             customer_attributes = {}
 
             if user.email:
@@ -510,7 +509,10 @@ class Charge(OmiseBaseModel, OmiseMetadata):
         return self.status
 
     @property
-    def human_amount(self) -> float:
+    def human_amount(self) -> str:
+        if self.amount is None:
+            return f"{0:,.2f}"
+
         if self.currency == Currency.JPY:
             return f"{self.amount:,.2f}"
         return f"{self.amount / 100:,.2f}"
@@ -519,7 +521,7 @@ class Charge(OmiseBaseModel, OmiseMetadata):
     def charge(
         cls,
         amount: int,
-        currency: Currency.choices,
+        currency: Currency,
         token: Optional[omise.Token] = None,
         card: Optional[Card] = None,
         source: Optional[Dict] = None,
@@ -672,14 +674,16 @@ class Source(OmiseBaseModel):
         return source_types[self.type]
 
     @property
-    def human_amount(self) -> float:
+    def human_amount(self) -> str:
+        if self.amount is None:
+            return f"{0:,.2f}"
+
         if self.currency == Currency.JPY:
             return f"{self.amount:,.2f}"
         return f"{self.amount / 100:,.2f}"
 
 
 class Refund(OmiseBaseModel, OmiseMetadata):
-
     charge = models.ForeignKey(
         Charge,
         related_name="refunds",
@@ -711,7 +715,10 @@ class Refund(OmiseBaseModel, OmiseMetadata):
     voided = models.BooleanField()
 
     @property
-    def human_amount(self) -> float:
+    def human_amount(self) -> str:
+        if self.amount is None:
+            return f"{0:,.2f}"
+
         if self.currency == Currency.JPY:
             return f"{self.amount:,.2f}"
         return f"{self.amount / 100:,.2f}"
