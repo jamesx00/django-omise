@@ -1,69 +1,69 @@
 name: Test
 
 on:
-  push:
-    branches: ['master']
-  pull_request:
-    branches: ['master']
+    push:
+        branches: ['master']
+    pull_request:
+        branches: ['master']
 
 env:
-  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+    COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    services:
-      postgres: # we need a postgres docker image to be booted a side car service to run the tests that needs a db
-        image: postgres:12
-        env: # the environment variable must match with app/settings.py if block of DATBASES variable otherwise test will fail due to connectivity issue.
-          POSTGRES_USER: django_omise
-          POSTGRES_PASSWORD: django_omise
-          POSTGRES_DB: django_omise
-        ports:
-          - 5431:5432 # exposing 5432 port for application to use
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-    strategy:
-      max-parallel: 4
-      matrix:
-        include:
-          - python-version: '3.7'
-            django-version: Django==3.2
+    build:
+        runs-on: ubuntu-latest
+        services:
+            postgres: # we need a postgres docker image to be booted a side car service to run the tests that needs a db
+                image: postgres:12
+                env: # the environment variable must match with app/settings.py if block of DATBASES variable otherwise test will fail due to connectivity issue.
+                    POSTGRES_USER: django_omise
+                    POSTGRES_PASSWORD: django_omise
+                    POSTGRES_DB: django_omise
+                ports:
+                    - 5431:5432 # exposing 5432 port for application to use
+                # needed because the postgres container does not provide a healthcheck
+                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        strategy:
+            max-parallel: 4
+            matrix:
+                include:
+                    - python-version: '3.9'
+                      django-version: Django==3.2
 
-          - python-version: '3.8'
-            django-version: Django==3.2
+                    - python-version: '3.9'
+                      django-version: Django==4.0
 
-          - python-version: '3.8'
-            django-version: Django==4.0
+                    - python-version: '3.10'
+                      django-version: Django==3.2
 
-          - python-version: '3.9'
-            django-version: Django==3.2
+                    - python-version: '3.10'
+                      django-version: Django==4.0
 
-          - python-version: '3.9'
-            django-version: Django==4.0
+                    - python-version: '3.10'
+                      django-version: Django==4.2
 
-          - python-version: '3.10'
-            django-version: Django==3.2
+                    - python-version: '3.11'
+                      django-version: Django==4.2
 
-          - python-version: '3.10'
-            django-version: Django==4.0
+                    - python-version: '3.12'
+                      django-version: Django==4.2
 
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install poetry
-        run: |
-          python -m pip install --user pipx
-          python -m pipx ensurepath
-          pipx install poetry
-      - name: Install Dependencies
-        run: |
-          poetry install --with dev
-          poetry run pip install ${{ matrix.django-version }}
-      - name: Run Tests
-        run: |
-          poetry run poe test_coverage
-          poetry run poe report_coveralls
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v3
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install poetry
+              run: |
+                  python -m pip install --user pipx
+                  python -m pipx ensurepath
+                  pipx install poetry
+            - name: Install Dependencies
+              run: |
+                  poetry install --with dev
+                  poetry run pip install ${{ matrix.django-version }}
+            - name: Run Tests
+              run: |
+                  poetry run poe test_coverage
+                  poetry run poe report_coveralls
