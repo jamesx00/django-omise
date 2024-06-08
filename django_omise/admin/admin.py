@@ -1,13 +1,16 @@
 import json
 
 from django.contrib import admin
+from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from django.utils.html import format_html
 
-# Register your models here.
-from django_omise.models.core import Customer, Card, Charge, Source, Refund
 from django_omise.models.choices import ChargeStatus, ScheduleStatus
-from django_omise.models.schedule import Schedule, Occurrence, ChargeSchedule
+
+# Register your models here.
+from django_omise.models.core import Card, Charge, Customer, Refund, Source
 from django_omise.models.event import Event
+from django_omise.models.schedule import ChargeSchedule, Occurrence, Schedule
 
 
 class CardInline(admin.TabularInline):
@@ -229,6 +232,13 @@ class CustomerAdmin(admin.ModelAdmin):
         "deleted",
     )
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Customer]:
+        qs = super().get_queryset(request)
+        qs = qs.select_related(
+            "user",
+        )
+        return qs
+
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
@@ -263,6 +273,11 @@ class CardAdmin(admin.ModelAdmin):
         ChargeInline,
     ]
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Card]:
+        qs = super().get_queryset(request)
+        qs = qs.select_related("customer", "customer__user")
+        return qs
+
 
 @admin.register(Refund)
 class RefundAdmin(admin.ModelAdmin):
@@ -286,6 +301,13 @@ class RefundAdmin(admin.ModelAdmin):
     search_fields = [
         "charge__id",
     ]
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Refund]:
+        qs = super().get_queryset(request)
+        qs = qs.select_related(
+            "charge",
+        )
+        return qs
 
     def has_change_permission(self, request, obj=None):
         return False
@@ -393,6 +415,18 @@ class ChargeAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = ("uid", "source_type", "colorized_status")
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Charge]:
+        qs = super().get_queryset(request)
+        qs = qs.select_related(
+            "card",
+            "customer",
+            "schedule",
+            "source",
+        ).prefetch_related(
+            "refunds",
+        )
+        return qs
 
     def colorized_status(self, obj=None):
         if obj:
@@ -619,6 +653,15 @@ class ChargeScheduleAdmin(admin.ModelAdmin):
         "date_updated",
         "default_card",
     )
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[ChargeSchedule]:
+        qs = super().get_queryset(request)
+        qs = qs.select_related(
+            "card",
+            "customer",
+            "customer__user",
+        )
+        return qs
 
     def has_change_permission(self, request, obj=None):
         return False
