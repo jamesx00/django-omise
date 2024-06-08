@@ -1,6 +1,5 @@
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib import messages
-
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.urls import reverse
 from django.views.generic import FormView
 
@@ -47,6 +46,8 @@ class IssueRefundView(UserPassesTestMixin, FormView):
         except omise.errors.FailedRefundError as e:
             messages.error(self.request, str(e))
             return self.form_invalid(form)
+
+        charge.reload_from_omise()
 
         messages.success(
             self.request,
