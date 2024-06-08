@@ -5,12 +5,13 @@ description = "Django models for Omise"
 authors = ["James Tansiri <tansirijames@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "django_omise"}]
+packages = [{ include = "django_omise" }]
 repository = "https://github.com/jamesx00/django-omise"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 omise = "^0.13.0"
+setuptools = "^70.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.3"
