@@ -8,7 +8,7 @@ concurrency:
     group: ${{ github.workflow }}
 
 jobs:
-    push_to_aws_ecr:
+    release-to-pypi:
         runs-on: ubuntu-latest
         steps:
             - name: Check out code
