@@ -81,10 +81,6 @@ class Occurrence(OmiseBaseModel):
 
 
 class ChargeSchedule(OmiseBaseModel, OmiseMetadata):
-    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
-        "schedule",
-    ]
-
     amount = models.IntegerField(
         help_text="Refund amount in smallest unit of charge currency.",
     )
