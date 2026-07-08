@@ -10,10 +10,6 @@ from django_omise.omise import omise
 
 
 class Schedule(OmiseBaseModel, OmiseDeletableModel):
-    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
-        "charges",
-    ]
-
     omise_class = omise.Schedule
 
     active = models.BooleanField(
