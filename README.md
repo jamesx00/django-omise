@@ -29,6 +29,23 @@ Django models for Omise. Currently, we support the following features:
 
 See the [roadmap](#roadmap-and-contributions) for the plan of this project. Contributions are welcome!
 
+### Upgrading
+
+---
+
+**0.3.0 (breaking change)**
+
+`Charge.charge()` (and `Customer.charge_with_card()`) no longer silently build a broken
+`return_uri` when `OMISE_CHARGE_RETURN_HOST` is unset. Behavior now:
+
+- If you use `CheckoutMixin` / `CheckoutWithCardsMixin`, no change needed — the request is
+  forwarded automatically.
+- If you call `Charge.charge()` or `customer.charge_with_card()` manually outside a request
+  (e.g. management command, background job) and don't pass `return_uri` or `request`, and
+  `OMISE_CHARGE_RETURN_HOST` isn't set, this now raises `ValueError` instead of producing an
+  invalid `return_uri`. Fix by passing `request=` (if available), `return_uri=` directly, or
+  setting `OMISE_CHARGE_RETURN_HOST`.
+
 ### Quick start
 
 ---
@@ -152,10 +169,13 @@ OMISE_CHARGE_RETURN_HOST = localhost:8000
    customer = Customer.objects.first()
    card = customer.cards.live().first()
 
+   # `request` is required unless OMISE_CHARGE_RETURN_HOST is set or you pass
+   # return_uri= directly. See "Upgrading" above.
    charge = customer.charge_with_card(
        amount=100000,
        currency=Currency.THB,
        card=card,
+       request=request,
    )
 
    if charge.status == ChargeStatus.SUCCESSFUL:
