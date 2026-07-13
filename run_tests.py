@@ -10,6 +10,8 @@ settings.configure(
     OMISE_PUBLIC_KEY=test_settings.OMISE_PUBLIC_KEY,
     OMISE_SECRET_KEY=test_settings.OMISE_SECRET_KEY,
     OMISE_LIVE_MODE=test_settings.OMISE_LIVE_MODE,
+    OMISE_CHARGE_RETURN_HOST=test_settings.OMISE_CHARGE_RETURN_HOST,
+    ALLOWED_HOSTS=test_settings.ALLOWED_HOSTS,
     MIDDLEWARE=test_settings.MIDDLEWARE,
     TEMPLATES=test_settings.TEMPLATES,
     ROOT_URLCONF=test_settings.ROOT_URLCONF,

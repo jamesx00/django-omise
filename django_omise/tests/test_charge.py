@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 
 from django.contrib.auth import get_user_model
 
@@ -183,3 +183,58 @@ class ChargeTestCase(TestCase):
 
         args, kwargs = mock_omise.call_args
         self.assertIn("source", kwargs)
+
+    @mock.patch("django_omise.models.core.Charge.update_or_create_from_omise_object")
+    @mock.patch("django_omise.models.core.omise.Charge.create")
+    @mock.patch("requests.post", side_effect=mocked_base_charge_request)
+    def test_charge_return_uri_from_request(
+        self,
+        mock_request,
+        mock_omise,
+        mock_update_or_create_method,
+    ):
+        request = RequestFactory().post("/checkout/", SERVER_NAME="example.com")
+
+        with self.settings(OMISE_CHARGE_RETURN_HOST=None):
+            Charge.charge(
+                amount=100000,
+                currency=Currency.THB,
+                card=self.customer.cards.live().first(),
+                request=request,
+            )
+
+        args, kwargs = mock_omise.call_args
+        self.assertTrue(kwargs["return_uri"].startswith("http://example.com/"))
+
+    @mock.patch("django_omise.models.core.Charge.update_or_create_from_omise_object")
+    @mock.patch("django_omise.models.core.omise.Charge.create")
+    @mock.patch("requests.post", side_effect=mocked_base_charge_request)
+    def test_charge_return_uri_setting_takes_precedence_over_request(
+        self,
+        mock_request,
+        mock_omise,
+        mock_update_or_create_method,
+    ):
+        request = RequestFactory().post("/checkout/", SERVER_NAME="example.com")
+
+        with self.settings(OMISE_CHARGE_RETURN_HOST="configured-host.test"):
+            Charge.charge(
+                amount=100000,
+                currency=Currency.THB,
+                card=self.customer.cards.live().first(),
+                request=request,
+            )
+
+        args, kwargs = mock_omise.call_args
+        self.assertTrue(
+            kwargs["return_uri"].startswith("https://configured-host.test/")
+        )
+
+    def test_charge_return_uri_missing_raises_error(self):
+        with self.settings(OMISE_CHARGE_RETURN_HOST=None):
+            with self.assertRaises(ValueError):
+                Charge.charge(
+                    amount=100000,
+                    currency=Currency.THB,
+                    card=self.customer.cards.live().first(),
+                )

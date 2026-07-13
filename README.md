@@ -54,7 +54,6 @@ See the [roadmap](#roadmap-and-contributions) for the plan of this project. Cont
 OMISE_PUBLIC_KEY = xxxx
 OMISE_SECRET_KEY = xxxx
 OMISE_LIVE_MODE = True | False
-OMISE_CHARGE_RETURN_HOST = localhost:8000
 
 # Optional. The default payment method is credit/debit card only.
 # You must specify additional payment methods.
@@ -65,6 +64,18 @@ OMISE_PAYMENT_METHODS = [
     "promptpay", # Promptpay
     "rabbit_linepay", # Rabbit LINE Pay
 ]
+```
+
+By default, `Charge.charge()` builds the Omise `return_uri` from the host of
+the current request (via `CheckoutMixin`/`CheckoutWithCardsMixin`, or by
+passing `request=` yourself), so each site in a multi-site deployment
+returns to its own host automatically.
+
+```python
+# Optional. Overrides the request-derived host, e.g. when running behind a
+# proxy that reports the wrong host, or when charging outside of a request
+# (management commands, background jobs) without passing return_uri directly.
+OMISE_CHARGE_RETURN_HOST = localhost:8000
 ```
 
 4. Run `python manage.py migrate` to create the Omise models.
