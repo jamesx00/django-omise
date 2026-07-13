@@ -1,5 +1,6 @@
 DEBUG = True
 ROOT_URLCONF = "urls"
+ALLOWED_HOSTS = ["localhost", "example.com", "127.0.0.1", ".localhost", "[::1]"]
 
 # DATABASES = {
 #     "default": {
@@ -31,6 +32,7 @@ SECRET_KEY = "django_tests_secret_key"
 OMISE_PUBLIC_KEY = "test_omise_public_key"
 OMISE_SECRET_KEY = "test_omise_secret_key"
 OMISE_LIVE_MODE = False
+OMISE_CHARGE_RETURN_HOST = "localhost:8000"
 
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",

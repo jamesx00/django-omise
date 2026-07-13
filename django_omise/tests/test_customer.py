@@ -93,6 +93,20 @@ class CustomerTestCase(TestCase):
         args, kwargs = mock_charge.call_args
         self.assertEqual(kwargs["card"], self.customer.cards.live().first())
 
+    @mock.patch("django_omise.models.core.Charge.charge")
+    def test_charge_with_card_forwards_request(self, mock_charge):
+        request = object()
+
+        self.customer.charge_with_card(
+            amount=100000,
+            currency=Currency.THB,
+            card=self.customer.cards.live().first(),
+            request=request,
+        )
+
+        args, kwargs = mock_charge.call_args
+        self.assertIs(kwargs["request"], request)
+
     def test_schedules(self):
         charge_schedule = ChargeSchedule.objects.create(
             id="test_charge_schedule_id",

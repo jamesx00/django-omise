@@ -11,6 +11,7 @@ from django_omise.utils.core_utils import update_or_create_from_omise_object
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.http import HttpRequest
 
 from django.db import models
 
@@ -187,6 +188,7 @@ class Customer(OmiseBaseModel, OmiseMetadata):
         currency: Currency.choices,
         card: "Card",
         return_uri: str = None,
+        request: Optional[HttpRequest] = None,
         metadata: dict = None,
         capture: bool = True,
         description: Optional[str] = None,
@@ -201,6 +203,7 @@ class Customer(OmiseBaseModel, OmiseMetadata):
             currency=currency,
             card=card,
             return_uri=return_uri,
+            request=request,
             metadata=metadata,
             capture=capture,
             description=description,
@@ -522,6 +525,7 @@ class Charge(OmiseBaseModel, OmiseMetadata):
         card: Optional[Card] = None,
         source: Optional[Dict] = None,
         return_uri: Optional[str] = None,
+        request: Optional[HttpRequest] = None,
         metadata: Optional[dict] = None,
         capture: Optional[bool] = True,
         description: Optional[str] = None,
@@ -535,6 +539,8 @@ class Charge(OmiseBaseModel, OmiseMetadata):
         :param card: The card to charge.
         :param source: The source to charge.
         :param return_uri optional: The return uri.
+        :param request optional: The current HttpRequest. Used to derive return_uri's
+            host when return_uri is not given and OMISE_CHARGE_RETURN_HOST is not set.
         :param metadata optional: The charge metadata.
         :param capture: Whether to capture this charge immediately.
         :param description: The charge description.
@@ -549,10 +555,19 @@ class Charge(OmiseBaseModel, OmiseMetadata):
 
         uid = uuid.uuid4()
 
-        host = getattr(settings, "OMISE_CHARGE_RETURN_HOST", None)
-
         if return_uri is None:
-            return_uri = f'https://{host}{reverse("django_omise:return_uri", kwargs={"uid": uid})}'
+            path = reverse("django_omise:return_uri", kwargs={"uid": uid})
+            host = getattr(settings, "OMISE_CHARGE_RETURN_HOST", None)
+
+            if host:
+                return_uri = f"https://{host}{path}"
+            elif request is not None:
+                return_uri = request.build_absolute_uri(path)
+            else:
+                raise ValueError(
+                    "Could not determine return_uri: pass return_uri explicitly, "
+                    "set OMISE_CHARGE_RETURN_HOST, or pass request."
+                )
 
         if metadata is None:
             metadata = {}
