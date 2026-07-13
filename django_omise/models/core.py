@@ -32,9 +32,7 @@ class Customer(OmiseBaseModel, OmiseMetadata):
     """
 
     NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
-        "charges",
         "user",
-        "charge_schedules",
     ]
 
     omise_class = omise.Customer
@@ -267,9 +265,7 @@ class Card(OmiseBaseModel):
     omise_class = omise.Card
 
     NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
-        "charges",
         "customer",
-        "charge_schedules",
     ]
 
     customer = models.ForeignKey(
@@ -597,10 +593,6 @@ class Source(OmiseBaseModel):
     """
 
     omise_class = omise.Source
-
-    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
-        "charges",
-    ]
 
     amount = models.IntegerField(
         help_text=_("Source amount in smallest unit of source currency")

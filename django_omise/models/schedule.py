@@ -10,10 +10,6 @@ from django_omise.omise import omise
 
 
 class Schedule(OmiseBaseModel, OmiseDeletableModel):
-    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
-        "charges",
-    ]
-
     omise_class = omise.Schedule
 
     active = models.BooleanField(
@@ -81,10 +77,6 @@ class Occurrence(OmiseBaseModel):
 
 
 class ChargeSchedule(OmiseBaseModel, OmiseMetadata):
-    NON_DEFAULT_FIELDS = OmiseBaseModel.NON_DEFAULT_FIELDS + [
-        "schedule",
-    ]
-
     amount = models.IntegerField(
         help_text="Refund amount in smallest unit of charge currency.",
     )

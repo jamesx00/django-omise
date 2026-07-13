@@ -171,6 +171,9 @@ class OmiseBaseModel(models.Model):
                     update_or_create_from_omise_object(omise_object=value)
                 continue
 
+            if not field.concrete:
+                continue
+
             if type(field) in [models.ForeignKey, models.OneToOneField]:
                 value = getattr(omise_object, field.name, None)
 
