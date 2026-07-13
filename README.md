@@ -236,24 +236,46 @@ Others
 - Implement tests
 - Add documentations
 
-### Development
+### Contributing
 
 ---
 
-You can run tests with either coverage or pytest.
-
-To run with pytest
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management. Install uv, then:
 
 ```shell
-pip install pytest-django
-python -m pytest [path_to_file] [--verbose -s --cov-report=html --cov=.]
+git clone git@github.com:jamesx00/django-omise.git
+cd django-omise
+uv sync --group dev
 ```
 
-To run with coverage
+This creates a `.venv` and installs the package plus dev dependencies (pytest, black, poethepoet, etc.) pinned in `uv.lock`.
+
+Tests need a Postgres database. Start one with docker-compose:
 
 ```shell
-pip install coverage
-coverage run run_tests.py
-coverage report
-coverage html
+docker-compose up -d
 ```
+
+Then run the test suite with one of the [poe](https://github.com/nat-n/poethepoet) tasks defined in `pyproject.toml`:
+
+```shell
+uv run poe test                # pytest --verbose
+uv run poe test_coverage       # coverage run run_tests.py
+uv run poe test_coverage_html  # pytest with HTML coverage report
+uv run poe test_coverage_term  # pytest with terminal coverage report
+```
+
+Or invoke pytest/coverage directly inside the uv environment:
+
+```shell
+uv run pytest [path_to_file] [--verbose -s --cov-report=html --cov=.]
+uv run coverage run run_tests.py
+```
+
+Format code with black before submitting a PR:
+
+```shell
+uv run black .
+```
+
+Please open an issue or PR against `master` — see [Roadmap and contributions](#roadmap-and-contributions) for areas that need help.
