@@ -103,5 +103,5 @@ jobs:
                   uv pip install ${{ matrix.django-version }}
             - name: Run Tests
               run: |
-                  uv run poe test_coverage
-                  uv run poe report_coveralls
+                  uv run --no-sync poe test_coverage
+                  uv run --no-sync poe report_coveralls
